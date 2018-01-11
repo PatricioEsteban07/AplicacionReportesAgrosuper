@@ -17,6 +17,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
     private static Main instance;
+    public static LocalDataBase localDB = new LocalDataBase();
     
     public static Main getInstance(){
         return instance;
