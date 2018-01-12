@@ -48,8 +48,14 @@ public class MySQLConection
         if (conn != null)
         {
             try
-            (Statement stmt = conn.createStatement()) {
+            (Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                        ResultSet.CONCUR_READ_ONLY);) {
                 this.result = stmt.executeQuery(query);
+                while(this.result.next())
+                {
+                    System.out.println("f:"+this.result);
+                }
+                this.result.beforeFirst();
                 return true;
             }
             catch (SQLException e)

@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 /*Librerías para trabajar con archivos excel*/
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,7 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public class ExcelProcess
 {
-    public boolean generarArchivo(String fileName, String sheetName, ResultSet results) throws IOException
+    public boolean generarArchivo(String fileName, String sheetName, ResultSet results, ArrayList<String> columns) throws IOException, SQLException
     {
        /*La ruta donde se creará el archivo*/
         String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+fileName+".xls";
@@ -37,6 +39,9 @@ public class ExcelProcess
         archivoXLS.createNewFile();
         //----------------------------------------------------------
         
+        
+        
+        
         /*Se crea el libro de excel usando el objeto de tipo Workbook*/
         Workbook libro = new HSSFWorkbook();
         /*Se inicializa el flujo de datos con el archivo xls*/
@@ -45,31 +50,53 @@ public class ExcelProcess
         /*Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente*/
         Sheet hoja = libro.createSheet(sheetName);
         
+        //inicialiar fila de nombres de columnas
+        System.out.println("Creando nombres de columnas...");
+        Row fila = hoja.createRow(0);
+        for (int i = 0; i < columns.size(); i++)
+        {
+            Cell celda = fila.createCell(i);
+            celda.setCellValue(columns.get(i));
+        }
+  
+        
+        //aprox 2 millones, excel soporta aprox 1.048.576 filas y 16.384 columnas
+        
+        
+        /*
+        columns.add("cliente_id");
+        columns.add("cliente_nombre");
+        columns.add("cliente_apellido");
+        columns.add("cliente_edad");
+        columns.add("cliente_sexo");
+        columns.add("cliente_descripcion");
+        columns.add("empresa_id");
+        columns.add("empresa_nombre");
+        columns.add("empresa_direccion");
+        columns.add("empresa_descripcion");
+        */
+        
+        
+        System.out.println("Rellenando tabla con valores...");
         /*Hacemos un ciclo para inicializar los valores de 10 filas de celdas*/
-        for(int f=0;f<10;f++){
+        for(int numFila=1;results!=null && results.next();numFila++){
             /*La clase Row nos permitirá crear las filas*/
-            Row fila = hoja.createRow(f);
+            Row filaAux = hoja.createRow(numFila);
             
+                System.out.println("pase1");
             /*Cada fila tendrá 5 celdas de datos*/
-            for(int c=0;c<5;c++){
+            for(int c=0;c<columns.size();c++){
                 /*Creamos la celda a partir de la fila actual*/
-                Cell celda = fila.createCell(c);
-                
-                /*Si la fila es la número 0, estableceremos los encabezados*/
-                if(f==0){
-                    celda.setCellValue("Encabezado #"+c);
-                }else{
-                    /*Si no es la primera fila establecemos un valor*/
-                    celda.setCellValue("Valor celda "+c+","+f);
-                }
+                Cell celda = filaAux.createCell(c);
+                System.out.println("pase2");
+                celda.setCellValue(results.getString(columns.get(c)));
+                System.out.println("fila "+numFila+" / col "+c);
             }
         }
         /*Escribimos en el libro*/
         libro.write(file);
         /*Cerramos el flujo de datos*/
         file.close();
-        /*Y abrimos el archivo con la clase Desktop*/
-        Desktop.getDesktop().open(archivoXLS);
         
         
         return false;

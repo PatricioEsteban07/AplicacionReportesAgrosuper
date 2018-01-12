@@ -11,21 +11,18 @@ import java.util.HashMap;
  *
  * @author Patricio
  */
-public class Empresa
+public class Empresa extends Indexable
 {
-    public String id;
     public String nombre;
     public String direccion;
     public String descripcion;
-    public HashMap<String,Cliente> clientes;
 
-    public Empresa(String id, String nombre, String direccion, String descripcion)
+    public Empresa(int id, String nombre, String direccion, String descripcion)
     {
-        this.id = id;
+        super(id);
         this.nombre = nombre;
         this.direccion = direccion;
         this.descripcion = descripcion;
-        this.clientes=new HashMap<>();
     }
     
 }

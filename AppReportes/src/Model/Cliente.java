@@ -9,18 +9,17 @@ package Model;
  *
  * @author Patricio
  */
-public class Cliente
+public class Cliente extends Indexable
 {
-    public String id;
     public String nombre;
     public String apellido;
     public int edad;
-    public char sexo;
+    public String sexo;
     public String descripcion;
 
-    public Cliente(String id, String nombre, String apellido, int edad, char sexo, String descripcion)
+    public Cliente(int id, String nombre, String apellido, int edad, String sexo, String descripcion)
     {
-        this.id = id;
+        super(id);
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;

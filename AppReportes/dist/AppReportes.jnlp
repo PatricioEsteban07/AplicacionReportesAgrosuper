@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="AppReportes.jar" size="11483" download="eager" />
+    <jar href="AppReportes.jar" size="21153" download="eager" />
     <jar href="lib\mysql-connector-java-5.1.23-bin.jar" size="834126" download="eager" />
     <jar href="lib\poi-3.9-20121203.jar" size="1869113" download="eager" />
   </resources>
