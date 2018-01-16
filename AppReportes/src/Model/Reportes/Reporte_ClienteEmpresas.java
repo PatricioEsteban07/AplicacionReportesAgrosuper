@@ -12,6 +12,7 @@ import Model.RecursosDB.RecursoDB_Clientes;
 import Model.RecursosDB.RecursoDB_Empresas;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,11 +62,15 @@ public class Reporte_ClienteEmpresas extends Reporte
         try
         {
             //this.generadorExcel.put(this.recursos.get(2).nombre, new GeneradorExcel_Empresas_Cliente());
-            if(!this.generadorExcel.get("Clientes").generarArchivo(this.recursos.get("Clientes")))
+            HashMap<String,RecursoDB> aux=new HashMap<>();
+            aux.put("Clientes",this.recursos.get("Clientes"));
+            if(!this.generadorExcel.get("Clientes").generarArchivo(aux))
             {
                 System.out.println("ERROR: problema generando archivos excel clientes :c");
             }
-            if(!this.generadorExcel.get("Empresas").generarArchivo(this.recursos.get("Empresas")))
+            aux=new HashMap<>();
+            aux.put("Empresas",this.recursos.get("Empresas"));
+            if(!this.generadorExcel.get("Empresas").generarArchivo(aux))
             {
                 System.out.println("ERROR: problema generando archivos excel empresas :c");
             }

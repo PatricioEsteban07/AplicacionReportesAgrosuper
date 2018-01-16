@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -37,7 +38,7 @@ public abstract class GeneradorExcel
         this.columnas = new ArrayList<>();
     }
     
-    public abstract boolean generarArchivo(RecursoDB resource) throws FileNotFoundException, IOException;
+    public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException;
     
     protected HSSFFont createFont(HSSFWorkbook workbook, short fontColor, short fontHeight, short fontBold) {
         HSSFFont font = workbook.createFont();

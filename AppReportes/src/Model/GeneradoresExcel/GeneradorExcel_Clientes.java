@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -42,7 +43,7 @@ public class GeneradorExcel_Clientes extends GeneradorExcel
     }
 
     @Override
-    public boolean generarArchivo(RecursoDB resource) throws FileNotFoundException, IOException
+    public boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException
     {
         //generación de archivo excel base
         String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+nombreTabla+".xls";
@@ -80,7 +81,7 @@ public class GeneradorExcel_Clientes extends GeneradorExcel
             hoja.autoSizeColumn(i);
         }
         
-        ArrayList<Recurso> clientes = resource.getAll();
+        ArrayList<Recurso> clientes = resources.get("Clientes").getAll();
         
         System.out.println("Rellenando tabla con valores...");
         for (int i = 0; clientes!=null && i<clientes.size(); i++)
