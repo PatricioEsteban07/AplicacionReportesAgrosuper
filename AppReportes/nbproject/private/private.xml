@@ -5,13 +5,8 @@
         <group>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/GeneradoresExcel/GeneradorExcel.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/GeneradoresExcel/GeneradorExcel_Clientes.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Reportes/Reporte.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_Clientes.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_Empresas.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/GeneradoresExcel/GeneradorExcel_ClienteEmpresas.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/GeneradoresExcel/GeneradorExcel_Empresas.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Reportes/Reporte_ClienteEmpresas.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Main.java</file>
         </group>
     </open-files>
 </project-private>

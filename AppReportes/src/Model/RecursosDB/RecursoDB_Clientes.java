@@ -8,6 +8,7 @@ package Model.RecursosDB;
 import Model.Cliente;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +25,7 @@ public class RecursoDB_Clientes extends RecursoDB
     }
 
     @Override
-    public boolean obtenerDatos()
+    public boolean obtenerDatos(HashMap<String,RecursoDB> resources)
     {
         try
         {

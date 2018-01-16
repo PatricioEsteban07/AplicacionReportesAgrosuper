@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -84,48 +85,19 @@ public abstract class RecursoDB
         return this.datos;
     }
 
+    //IMPLEMENTAR DE ACUERDO A BUSQUEDA BINARIA
     public Recurso getById(int id)
     {
         if (this.datos == null || this.datos.isEmpty())
         {
             return null;
         }
-        int inicio = 0, fin = this.datos.size() - 1, actual = this.datos.size() / 2;
-        boolean flag = true;
-        while (flag)
+        for (int i = 0; i < this.datos.size(); i++)
         {
-            if (fin - inicio > 1)
+            if(this.datos.get(i).id==id)
             {
-                if (this.datos.get(actual).id < id)
-                {
-                    inicio = actual;
-                }
-                else if (this.datos.get(actual).id > id)
-                {
-                    fin = actual;
-                }
-                else
-                {
-                    return this.datos.get(actual);
-                }
-                actual = ((inicio + fin) / 2) + 1;
+                return this.datos.get(i);
             }
-            else//casos cuando fin==inicio y diferencia es igual a 1
-            {
-                if(this.datos.get(actual).id==id)
-                {
-                    return this.datos.get(actual);
-                }
-                if (this.datos.get(actual).id < id)
-                {
-                    actual++;
-                }
-                flag=false;
-            }
-        }
-        if(actual==this.datos.size())
-        {
-            return this.datos.get(actual);
         }
         return null;
     }
@@ -187,5 +159,5 @@ public abstract class RecursoDB
         return actual;
     }
     
-    public abstract boolean obtenerDatos();
+    public abstract boolean obtenerDatos(HashMap<String,RecursoDB> resources);
 }

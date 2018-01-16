@@ -47,23 +47,19 @@ public class GeneradorExcel_Empresas extends GeneradorExcel
         String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+nombreTabla+".xls";
         File archivoXLS = new File(rutaArchivo);
         
-        //OJO EN ESTA PARTE, A FUTURO REUTILIZAR ARCHIVOS GENERADOS
-        //if(archivoXLS.exists()) archivoXLS.delete();
-        //    archivoXLS.createNewFile();
-        
         //Se crea el libro de excel usando el objeto de tipo Workbook
         HSSFWorkbook libro = new HSSFWorkbook();
         //Se inicializa el flujo de datos con el archivo xls
         FileOutputStream file = new FileOutputStream(archivoXLS);
         
-        // Generate fonts
+       // Generate fonts   
         HSSFFont headerFont  = createFont(libro,HSSFColor.WHITE.index, (short)12, Font.BOLDWEIGHT_BOLD);
         HSSFFont contentFont = createFont(libro,HSSFColor.BLACK.index, (short)10, Font.BOLDWEIGHT_NORMAL);
 
         // Generate styles
-        HSSFCellStyle headerStyle  = createStyle(libro,headerFont,  HSSFCellStyle.ALIGN_CENTER, HSSFColor.BLUE_GREY.index,       true, HSSFColor.WHITE.index);
-        HSSFCellStyle oddRowStyle  = createStyle(libro,contentFont, HSSFCellStyle.ALIGN_LEFT,   HSSFColor.WHITE.index, true, HSSFColor.GREY_80_PERCENT.index);
-        HSSFCellStyle evenRowStyle = createStyle(libro,contentFont, HSSFCellStyle.ALIGN_LEFT,   HSSFColor.GREY_25_PERCENT.index, true, HSSFColor.GREY_80_PERCENT.index);
+        HSSFCellStyle headerStyle  = createStyle(libro, headerFont,  HSSFCellStyle.ALIGN_CENTER, HSSFColor.BLUE_GREY.index,       true, HSSFColor.WHITE.index);
+        HSSFCellStyle oddRowStyle  = createStyle(libro, contentFont, HSSFCellStyle.ALIGN_LEFT, HSSFColor.WHITE.index, true, HSSFColor.GREY_80_PERCENT.index);
+        HSSFCellStyle evenRowStyle = createStyle(libro, contentFont, HSSFCellStyle.ALIGN_LEFT, HSSFColor.GREY_25_PERCENT.index, true, HSSFColor.GREY_80_PERCENT.index);
         
         //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
         HSSFSheet hoja = libro.createSheet(nombreTabla);

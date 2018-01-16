@@ -5,9 +5,11 @@
  */
 package Model.Reportes;
 
+import Model.GeneradoresExcel.GeneradorExcel_ClienteEmpresas;
 import Model.GeneradoresExcel.GeneradorExcel_Clientes;
 import Model.GeneradoresExcel.GeneradorExcel_Empresas;
 import Model.RecursosDB.RecursoDB;
+import Model.RecursosDB.RecursoDB_ClienteEmpresas;
 import Model.RecursosDB.RecursoDB_Clientes;
 import Model.RecursosDB.RecursoDB_Empresas;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class Reporte_ClienteEmpresas extends Reporte
         this.nombre="Reporte de Asignación Cliente-Empresas";
         this.recursos.put("Clientes",new RecursoDB_Clientes());
         this.recursos.put("Empresas",new RecursoDB_Empresas());
-       // this.recursos.put("Clientes-Empresas",null);
+        this.recursos.put("Cliente-Empresas",new RecursoDB_ClienteEmpresas());
     }
 
     @Override
@@ -38,18 +40,27 @@ public class Reporte_ClienteEmpresas extends Reporte
         ArrayList<String> nameRecursos=new ArrayList<>();
         nameRecursos.add("Clientes");
         nameRecursos.add("Empresas");
-        nameRecursos.add("Reporte Clientes-Empresas");
+        nameRecursos.add("Cliente-Empresas");
         int i=0;
         
-        for (String key : this.recursos.keySet())
+        HashMap<String,RecursoDB> recursosClienteEmpresa = new HashMap<>();
+        recursosClienteEmpresa.put("Clientes", this.recursos.get("Clientes"));
+        recursosClienteEmpresa.put("Empresas", this.recursos.get("Empresas"));
+        
+        if( !generarRecurso(this.recursos.get("Clientes"),null) || !generarRecurso(this.recursos.get("Empresas"),null)
+                || !generarRecurso(this.recursos.get("Cliente-Empresas"),recursosClienteEmpresa) )
         {
-            RecursoDB consulta=this.recursos.get(key);
-            //validar si los datos ya existen en otro lado !
-            if(!consulta.obtenerDatos())
-            {
-                System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
-                return false;
-            }
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean generarRecurso(RecursoDB consulta, HashMap<String,RecursoDB> resources)
+    {
+        if(!consulta.obtenerDatos(resources))
+        {
+            System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
+            return false;
         }
         return true;
     }
@@ -59,9 +70,9 @@ public class Reporte_ClienteEmpresas extends Reporte
     {
         this.generadorExcel.put(this.recursos.get("Clientes").nombre, new GeneradorExcel_Clientes());
         this.generadorExcel.put(this.recursos.get("Empresas").nombre, new GeneradorExcel_Empresas());
+        this.generadorExcel.put(this.recursos.get("Cliente-Empresas").nombre, new GeneradorExcel_ClienteEmpresas());
         try
         {
-            //this.generadorExcel.put(this.recursos.get(2).nombre, new GeneradorExcel_Empresas_Cliente());
             HashMap<String,RecursoDB> aux=new HashMap<>();
             aux.put("Clientes",this.recursos.get("Clientes"));
             if(!this.generadorExcel.get("Clientes").generarArchivo(aux))
@@ -73,6 +84,13 @@ public class Reporte_ClienteEmpresas extends Reporte
             if(!this.generadorExcel.get("Empresas").generarArchivo(aux))
             {
                 System.out.println("ERROR: problema generando archivos excel empresas :c");
+            }
+            aux=new HashMap<>();
+            aux.put("Clientes",this.recursos.get("Cliente"));
+            aux.put("Empresas",this.recursos.get("Empresas"));
+            if(!this.generadorExcel.get("Cliente-Empresas").generarArchivo(aux))
+            {
+                System.out.println("ERROR: problema generando archivos excel final :c");
             }
         }
         catch (IOException ex)
