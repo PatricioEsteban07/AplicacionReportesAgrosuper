@@ -5,7 +5,6 @@
  */
 package Model;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,7 +22,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * @author Patricio
  */
 public class ExcelProcess
-{
+{    
     public boolean generarArchivo(String fileName, String sheetName, ResultSet results, ArrayList<String> columns) throws IOException, SQLException
     {
        /*La ruta donde se creará el archivo*/

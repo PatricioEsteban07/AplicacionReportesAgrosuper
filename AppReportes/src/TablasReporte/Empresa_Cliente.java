@@ -8,6 +8,7 @@ package TablasReporte;
 import Model.Cliente;
 import Model.Empresa;
 import java.util.ArrayList;
+import javafx.beans.property.SimpleStringProperty;
 
 /**
  *
@@ -19,6 +20,17 @@ public class Empresa_Cliente
     public int idEmpresa;
     public Cliente cliente;
     public int idCliente;
+    
+    public String cliente_id;
+    public String cliente_nombre;
+    public String cliente_apellido;
+    public String cliente_edad;
+    public String cliente_sexo;
+    public String cliente_descripcion;
+    public String empresa_id;
+    public String empresa_nombre;
+    public String empresa_direccion;
+    public String empresa_descripcion;
 
     public Empresa_Cliente(int idEmpresa, int idCliente)
     {
@@ -52,6 +64,22 @@ public class Empresa_Cliente
                 this.empresa=empresaAux;
             }
         }
+        completaClase();
+    }
+    
+    public void completaClase()
+    {
+        this.cliente_id=(this.idCliente+"");
+        this.cliente_nombre=(this.cliente.nombre+"");
+        this.cliente_apellido=(this.cliente.apellido+"");
+        this.cliente_edad=(this.cliente.edad+"");
+        this.cliente_sexo=(this.cliente.sexo+"");
+        this.cliente_descripcion=(this.cliente.descripcion+"");
+        
+        this.empresa_id=(this.idEmpresa+"");
+        this.empresa_nombre=(this.empresa.nombre+"");
+        this.empresa_direccion=(this.empresa.direccion+"");
+        this.empresa_descripcion=(this.empresa.descripcion+"");
     }
     
     

@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -24,12 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import sun.swing.plaf.synth.StyleAssociation;
 
 /**
  *
@@ -266,10 +260,7 @@ public class DataExtract
                     /*La clase Row nos permitirá crear las filas*/
                     HSSFRow filaAux = hoja.createRow(i+1);
                     
-                    // Style depends on if row is odd or even
-
-                    /*Cada fila tendrá 5 celdas de datos*/
-                        /*Creamos la celda a partir de la fila actual*/
+                    /*Creamos la celda a partir de la fila actual*/
                     HSSFCell celda = filaAux.createCell(0);
                     celda.setCellValue(this.clientes.get(i).id);
                     celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
@@ -296,7 +287,6 @@ public class DataExtract
                     /*La clase Row nos permitirá crear las filas*/
                     HSSFRow filaAux = hoja.createRow(i+1);
 
-                    /*Cada fila tendrá 5 celdas de datos*/
                     /*Creamos la celda a partir de la fila actual*/
                     HSSFCell celda = filaAux.createCell(0);
                     celda.setCellValue(this.empresas.get(i).id);
@@ -313,10 +303,7 @@ public class DataExtract
                 }
                 break;
         }
-        
-        /*Escribimos en el libro*/
         libro.write(file);
-        /*Cerramos el flujo de datos*/
         file.close();
         
         return false;

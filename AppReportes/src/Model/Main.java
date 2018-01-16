@@ -5,6 +5,8 @@
  */
 package Model;
 
+import Model.RecursosDB.RecursoDB;
+import Model.Reportes.Reporte_ClienteEmpresas;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,7 +44,30 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        //launch(args);
+        Reporte_ClienteEmpresas reporte=new Reporte_ClienteEmpresas();
+        if(!reporte.generarRecursos())
+        {
+            System.out.println("ERROR: generar recursos :C");
+        }
+        else
+        {
+            RecursoDB r = reporte.recursos.get("Clientes");
+            System.out.println("Recursos: "+r.nombre);
+            for (int i = 0; i < r.getAll().size(); i++)
+            {
+                System.out.println("Rec: "+((Cliente)(r.getAll().get(i))).id);
+            }
+        }
+        if(!reporte.generarExcel())
+        {
+            System.out.println("ERROR: generar excel :C");
+        }
+        else
+        {
+            System.out.println(":D");
+        }
+        System.exit(0);
     }
     
     public void updateTitle(){

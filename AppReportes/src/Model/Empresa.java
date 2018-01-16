@@ -5,13 +5,11 @@
  */
 package Model;
 
-import java.util.HashMap;
-
 /**
  *
  * @author Patricio
  */
-public class Empresa extends Indexable
+public class Empresa extends Recurso
 {
     public String nombre;
     public String direccion;

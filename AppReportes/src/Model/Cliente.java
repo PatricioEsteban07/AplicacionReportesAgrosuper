@@ -9,7 +9,7 @@ package Model;
  *
  * @author Patricio
  */
-public class Cliente extends Indexable
+public class Cliente extends Recurso
 {
     public String nombre;
     public String apellido;
