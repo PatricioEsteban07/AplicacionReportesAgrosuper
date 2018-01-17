@@ -99,5 +99,11 @@ public class Reporte_ClienteEmpresas extends Reporte
         }
         return true;
     }
+
+    @Override
+    public boolean generarFiltrosBase()
+    {
+        return false;
+    }
     
 }

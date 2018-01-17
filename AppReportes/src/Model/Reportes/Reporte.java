@@ -5,7 +5,7 @@
  */
 package Model.Reportes;
 
-import Model.Filtros.FiltroAbstract;
+import Model.Filtros.Filtro;
 import Model.GeneradoresExcel.GeneradorExcel;
 import Model.RecursosDB.RecursoDB;
 
@@ -17,19 +17,20 @@ import java.util.HashMap;
  */
 public abstract class Reporte
 {
-
     public String nombre;
     public HashMap<String,GeneradorExcel> generadorExcel;
     public HashMap<String,RecursoDB> recursos;
-    public FiltroAbstract filtro;
+    public HashMap<String,Filtro> filtros;
 
     public Reporte()
     {
         this.generadorExcel = new HashMap<>();
         this.recursos = new HashMap<>();
+        this.filtros = new HashMap<>();
     }
     
     public abstract boolean generarRecursos();
     public abstract boolean generarExcel();
+    public abstract boolean generarFiltrosBase();
 
 }

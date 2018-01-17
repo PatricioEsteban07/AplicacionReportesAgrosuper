@@ -5,14 +5,14 @@
  */
 package Controller;
 
+import Model.Cliente;
 import Model.CommandNames;
-import Model.DataExtract;
-import TablasReporte.Empresa_Cliente;
+import Model.RecursosDB.RecursoDB;
+import Model.Reportes.Reporte_ClienteEmpresas;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,14 +25,18 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -40,9 +44,7 @@ import javafx.scene.layout.AnchorPane;
  * @author Patricio
  */
 public class MainController implements Initializable
-{
-    private final DataExtract db = new DataExtract();
-    
+{    
     @FXML
     private MenuItem menu_close;
     @FXML
@@ -55,9 +57,15 @@ public class MainController implements Initializable
     private AnchorPane panelGrafico;
     @FXML
     private AnchorPane panelTabla;
+    @FXML
+    private Accordion accordion_Listado;
+    @FXML
+    private Pane panel_estadoSistema;
+    @FXML
+    private Text text_estadoSistema;
     
     @FXML 
-    private TableView<Empresa_Cliente> ReportesTableView;
+    private TableView<ArrayList<String>> ReportesTableView;
     
 
     /**
@@ -74,6 +82,7 @@ public class MainController implements Initializable
                 Platform.exit();
             }
         });
+        this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
     }
 
     @FXML
@@ -107,108 +116,88 @@ public class MainController implements Initializable
         }
     }
     
-    @FXML
-    public void generarDatosExcel() throws IOException, SQLException, ClassNotFoundException
+    public void actualizarEstadoProceso(String estado, String mensaje) throws InterruptedException
     {
-        System.out.println("generando excel...");
-        
-        ArrayList<String> columns=new ArrayList<>();
-        columns.add("cliente_id");
-        columns.add("cliente_nombre");
-        columns.add("cliente_apellido");
-        columns.add("cliente_edad");
-        columns.add("cliente_sexo");
-        columns.add("cliente_descripcion");
-        columns.add("empresa_id");
-        columns.add("empresa_nombre");
-        columns.add("empresa_direccion");
-        columns.add("empresa_descripcion");
-               
-        db.ejecutarPeticion("cliente", CommandNames.queryClientes);
-        db.generarExcel("cliente", columns);
-        System.out.println("finalizado :)");
+        String style;
+        switch(estado)
+        {
+            case CommandNames.ESTADO_SUCCESS:
+                style="-fx-background-color: lightgreen;";
+                break;
+            case CommandNames.ESTADO_INFO:
+                style="-fx-background-color: yellow;";
+                break;
+            case CommandNames.ESTADO_ERROR:
+                style="-fx-background-color: orange;";
+                break;
+            default:
+                style="-fx-background-color: white;";
+                break;
+        }
+        this.panel_estadoSistema.setStyle(style);
+        this.text_estadoSistema.setText(estado+": "+mensaje);
     }
-
+    
     @FXML
-    public void buttonReporteEjemplo() throws SQLException, ClassNotFoundException, IOException
+    public void buttonReporteEjemplo() throws SQLException, ClassNotFoundException, IOException, InterruptedException
     {
-        System.out.println("obteniendo clientes...");
-        ArrayList<String> columns=new ArrayList<>();
-        ArrayList<String> columnsGeneral=new ArrayList<>();
-        
-        columns.add("cliente_id");
-        columnsGeneral.add("cliente_id");
-        columns.add("cliente_nombre");
-        columnsGeneral.add("cliente_nombre");
-        columns.add("cliente_apellido");
-        columnsGeneral.add("cliente_apellido");
-        columns.add("cliente_edad");
-        columnsGeneral.add("cliente_edad");
-        columns.add("cliente_sexo");
-        columnsGeneral.add("cliente_sexo");
-        columns.add("cliente_descripcion");
-        columnsGeneral.add("cliente_descripcion");
-        
-        this.db.ejecutarPeticion(CommandNames.clientes, CommandNames.queryClientes);
-        this.db.generarExcel(CommandNames.clientes, columns);
-        
-        for (int i = 0; i < this.db.clientes.size(); i++)
+        actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
+        System.out.println("obteniendo reporte...");
+        Reporte_ClienteEmpresas reporte=new Reporte_ClienteEmpresas();
+        if(!reporte.generarRecursos())
         {
-            System.out.println("c: "+this.db.clientes.get(i));
+            System.out.println("ERROR: generar recursos :C");
+            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
         }
-        
-        System.out.println("obteniendo empresas...");
-        columns=new ArrayList<>();
-        columns.add("empresa_id");
-        columnsGeneral.add("empresa_id");
-        columns.add("empresa_nombre");
-        columnsGeneral.add("empresa_nombre");
-        columns.add("empresa_direccion");
-        columnsGeneral.add("empresa_direccion");
-        columns.add("empresa_descripcion");
-        columnsGeneral.add("empresa_descripcion");
-        
-        this.db.ejecutarPeticion(CommandNames.empresas, CommandNames.queryEmpresas);
-        this.db.generarExcel(CommandNames.empresas, columns);
-        
-        for (int i = 0; i < this.db.empresas.size(); i++)
+        else
         {
-            System.out.println("e: "+this.db.empresas.get(i));
+            RecursoDB r = reporte.recursos.get("Clientes");
+            System.out.println("Recursos: "+r.nombre);
+            for (int i = 0; i < r.getAll().size(); i++)
+            {
+                System.out.println("Rec: "+((Cliente)(r.getAll().get(i))).id);
+            }
         }
-        
-        System.out.println("obteniendo relacion cliente-empresa...");
-        columns=new ArrayList<>();
-        columns.add("empresa_id");
-        columns.add("cliente_id");
-        
-        this.db.ejecutarPeticionRelacion(CommandNames.cliente_empresa, CommandNames.queryClienteEmpresa, 
-                new ArrayList<String>(Arrays.asList(CommandNames.empresa, CommandNames.cliente)));
-        
-        for (int i = 0; i < this.db.empresas_clientes.size(); i++)
+        if(!reporte.generarExcel())
         {
-            System.out.println("c-e: "+this.db.empresas_clientes.get(i));
-        }
-        
+            System.out.println("ERROR: generar excel :C");
+            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
+        }        
         //generar tabla con reporte
         this.ReportesTableView=new TableView<>();
         
+        ArrayList<String> columnsGeneral=new ArrayList<>();
+        columnsGeneral.add("cliente_id");
+        columnsGeneral.add("cliente_nombre");
+        columnsGeneral.add("cliente_apellido");
+        columnsGeneral.add("cliente_edad");
+        columnsGeneral.add("cliente_sexo");
+        columnsGeneral.add("cliente_descripcion");
+        columnsGeneral.add("empresa_id");
+        columnsGeneral.add("empresa_nombre");
+        columnsGeneral.add("empresa_direccion");
+        columnsGeneral.add("empresa_descripcion");
+        
         for (int i = 0; i < columnsGeneral.size(); i++)
         {
-            TableColumn<Empresa_Cliente, String> tc = new TableColumn(columnsGeneral.get(i));
-            tc.setCellValueFactory(new PropertyValueFactory<Empresa_Cliente,String>(columnsGeneral.get(i)));
-            
+            TableColumn<ArrayList<String>, String> tc = new TableColumn(columnsGeneral.get(i));
+            tc.setCellValueFactory(new PropertyValueFactory<ArrayList<String>,String>(columnsGeneral.get(i)));
             this.ReportesTableView.getColumns().add(tc);
         }
         
-        ObservableList<Empresa_Cliente> list = FXCollections.observableArrayList();
+        ObservableList<ArrayList<String>> list = FXCollections.observableArrayList();
         //mostrar tabla en app
-        for (int i = 0; i < this.db.empresas_clientes.size(); i++)
+        for (int i = 0; i < 5; i++)
         {
-            this.db.empresas_clientes.get(i).completaClase();
-            list.add(this.db.empresas_clientes.get(i));
+            ArrayList<String> aux=new ArrayList<>();
+            aux.add("hola"); aux.add("hola"); aux.add("hola");
+            aux.add("hola"); aux.add("hola"); aux.add("hola");
+            aux.add("hola"); aux.add("hola"); aux.add("hola");
+            aux.add("hola");
+            list.add(aux);
         }
 
-       // ReportesTableView.getSelectionModel().setCellSelectionEnabled(true);
+        ReportesTableView.getSelectionModel().setCellSelectionEnabled(true);
         ReportesTableView.setItems(list);
         
         ReportesTableView.setPrefSize(panelTabla.getWidth(), panelTabla.getHeight());
@@ -219,7 +208,8 @@ public class MainController implements Initializable
 
         this.panelTabla.getChildren().clear();
         this.panelTabla.getChildren().add(ReportesTableView);
-    }    
+        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
+    }   
     
     @FXML
     public void generarGraficoPrueba() throws SQLException, ClassNotFoundException

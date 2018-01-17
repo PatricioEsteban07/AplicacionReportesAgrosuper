@@ -5,8 +5,14 @@
  */
 package Model;
 
-import Model.RecursosDB.RecursoDB;
-import Model.Reportes.Reporte_ClienteEmpresas;
+import Model.Filtros.Filtro_Fecha;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +25,6 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
     private static Main instance;
-    public static LocalDataBase localDB = new LocalDataBase();
     
     public static Main getInstance(){
         return instance;
@@ -43,40 +48,59 @@ public class Main extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        //launch(args);
-        Reporte_ClienteEmpresas reporte=new Reporte_ClienteEmpresas();
-        if(!reporte.generarRecursos())
-        {
-            System.out.println("ERROR: generar recursos :C");
-        }
-        else
-        {
-            RecursoDB r = reporte.recursos.get("Clientes");
-            System.out.println("Recursos: "+r.nombre);
-            for (int i = 0; i < r.getAll().size(); i++)
-            {
-                System.out.println("Rec: "+((Cliente)(r.getAll().get(i))).id);
-            }
-        }
-        if(!reporte.generarExcel())
-        {
-            System.out.println("ERROR: generar excel :C");
-        }
-        else
-        {
-            System.out.println(":D");
-        }
+    public static void main(String[] args) throws IOException {
+        launch(args);
+        
+        /*
+        Filtro_Fecha f=new Filtro_Fecha();
+        f.setFechaInicio(new Date(2010,04,05));
+        //f.fechaFin=new Date(2010,10,05);
+        HashMap<String,String> data=new HashMap<>();
+        data.put("Dia","dia");
+        data.put("Mes","mes");
+        data.put("Año","año");
+        data.put("Semana","semana");
+        data.put("Fecha","fecha");
+        System.out.println(f.generarWhere(data));
         System.exit(0);
+        */
+        
+        //código para implementar exportación CSV->DB
+        //IMPLEMENTAR
+        //lecturaArchivoPrueba();
     }
     
     public void updateTitle(){
-        System.out.println("Updating title");
         primaryStage.setTitle("Sistema de generación de reportes Agrosuper");
     }
     
     public String getTitle(){
         return primaryStage.getTitle();
     }
+ 
+    public static void lecturaArchivoPrueba() throws FileNotFoundException, IOException
+    {
+        String fileName="ejemplo";
+         BufferedReader br =new BufferedReader(new FileReader(System.getProperty("user.home") + "/Desktop/" + fileName + ".xls"));
+         String line = br.readLine();
+         while (null!=line) {
+            String [] fields = line.split(";");
+            System.out.println(Arrays.toString(fields));
+            
+            fields = removeTrailingQuotes(fields);
+            System.out.println(Arrays.toString(fields));
+            
+         }
+    }
+    
+    private static String[] removeTrailingQuotes(String[] fields) {
+
+      String result[] = new String[fields.length];
+
+      for (int i=0;i<result.length;i++){
+         result[i] = fields[i].replaceAll("^"+"\"", "").replaceAll("\""+"$", "");
+      }
+      return result;
+   }
     
 }

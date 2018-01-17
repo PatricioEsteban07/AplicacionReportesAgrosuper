@@ -10,15 +10,36 @@ package Model;
  * @author Patricio
  */
 public final class CommandNames
-{
-    public final static String clientes="Clientes";
-    public final static String empresas="Empresas";
-    public final static String cliente="cliente";
-    public final static String empresa="empresa";
-    public final static String cliente_empresa="Cliente-Empresa";
+{    
+    public final static String ESTADO_SUCCESS="Éxito";
+    public final static String ESTADO_INFO="Información";
+    public final static String ESTADO_ERROR="Error";
     
-    public final static String queryClientes="SELECT * FROM cliente";
-    public final static String queryEmpresas="SELECT * FROM empresa";
-    public final static String queryClienteEmpresa="SELECT * FROM cliente_empresa";
+    public final static String MSG_SUCCESS_GEN_REPORTE="Operación de generación de reporte realizada exitosamente.";
+    public final static String MSG_SUCCESS_GEN_GRAPHICS="Operación de generación de gráfico realizada exitosamente.";
+    public final static String MSG_INFO_GEN_REPORTE="Generación de tablas para reporte seleccionado en proceso.";
+    public final static String MSG_INFO_GEN_GRAPHICS="Generación de gráficos para reporte seleccionado en proceso.";
+    public final static String MSG_ERROR_GEN_REPORTE="El sistema ha encontrado un error al momento de generar el reporte.";
+    public final static String MSG_ERROR_GEN_GRAPHICS="El sistema ha encontrado un error al momento de generar el gráfico.";
+
+    
+    public final static int MES_ENERO=1;
+    public final static int MES_FEBRERO=2;
+    public final static int MES_MARZO=3;
+    public final static int MES_ABRIL=4;
+    public final static int MES_MAYO=5;
+    public final static int MES_JUNIO=6;
+    public final static int MES_JULIO=7;
+    public final static int MES_AGOSTO=8;
+    public final static int MES_SEPTIEMBRE=9;
+    public final static int MES_OCTUBRE=10;
+    public final static int MES_NOVIEMBRE=11;
+    public final static int MES_DICIEMBRE=12;
+    
+    public final static String CANAL_SUPERMERCADO="Supermercado";
+    public final static String CANAL_FOODSERVICE="Food Service";
+    public final static String CANAL_CALLCENTER="Call Center";
+    public final static String CANAL_TRADICIONAL="Tradicional";
+    public final static String CANAL_CLIENTEIMPORTANTE="Cliente Impotante";
     
 }

@@ -3,13 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model.Filtros;
+package Model;
 
 /**
  *
  * @author Patricio
  */
-public abstract class FiltroAbstract
+public class Zona
 {
-    
+    public String id;
+    public String nombre;
+
+    public Zona(String id, String nombre)
+    {
+        this.id = id;
+        this.nombre = nombre;
+    }
 }
