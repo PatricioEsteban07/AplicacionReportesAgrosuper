@@ -28,15 +28,17 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.controlsfx.control.CheckComboBox;
 
 /**
  * FXML Controller class
@@ -63,6 +65,17 @@ public class MainController implements Initializable
     private Pane panel_estadoSistema;
     @FXML
     private Text text_estadoSistema;
+    @FXML
+    private GridPane gridPane_Filtros;
+    @FXML
+    private GridPane gridPane_otrosFiltros;
+    private CheckComboBox checkComboBox_fechaSemana;
+    private CheckComboBox checkComboBox_fechaMes;
+    private CheckComboBox checkComboBox_fechaAnio;
+    private CheckComboBox checkComboBox_zonas;
+    private CheckComboBox checkComboBox_canales;
+    private CheckComboBox checkComboBox_sucursales;
+    private CheckComboBox checkComboBox_clientes;
     
     @FXML 
     private TableView<ArrayList<String>> ReportesTableView;
@@ -83,6 +96,83 @@ public class MainController implements Initializable
             }
         });
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
+        
+        inicializarFiltros();
+    }
+    
+    public void inicializarFiltros()
+    {
+        inicializarFechas();
+        ObservableList<String> listadoAux = FXCollections.observableArrayList();
+        listadoAux.add("Norte");
+        listadoAux.add("Centro Norte");
+        listadoAux.add("Santiago");
+        listadoAux.add("Centro Sur");
+        listadoAux.add("Sur");
+        this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_zonas.setPrefWidth(300);
+        this.checkComboBox_zonas.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_otrosFiltros.add(checkComboBox_zonas, 1, 0);
+        
+        listadoAux = FXCollections.observableArrayList();
+        listadoAux.add("Supermercado");
+        listadoAux.add("Food Service");
+        listadoAux.add("Call Center");
+        listadoAux.add("Tradicional");
+        listadoAux.add("Cliente Importante");
+        this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_canales.setPrefWidth(300);
+        this.checkComboBox_canales.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_otrosFiltros.add(checkComboBox_canales, 1, 1);
+        
+        listadoAux = FXCollections.observableArrayList();
+        listadoAux.add("Sucursal 1");
+        listadoAux.add("Sucursal 2");
+        listadoAux.add("Sucursal 3");
+        this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_sucursales.setPrefWidth(300);
+        this.checkComboBox_sucursales.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_otrosFiltros.add(checkComboBox_sucursales, 1, 2);
+        
+        listadoAux = FXCollections.observableArrayList();
+        listadoAux.add("Cliente 1");
+        listadoAux.add("Cliente 2");
+        listadoAux.add("Cliente 3");
+        this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_clientes.setPrefWidth(300);
+        this.checkComboBox_clientes.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_otrosFiltros.add(checkComboBox_clientes, 1, 3);
+    }
+    
+    public void inicializarFechas()
+    {
+        ObservableList<String> listadoAux = FXCollections.observableArrayList();
+        for (int i = 1; i < 53; i++)
+        {
+            listadoAux.add(i+"");
+        }
+        this.checkComboBox_fechaSemana = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_fechaSemana.setPrefWidth(300);
+        this.checkComboBox_fechaSemana.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_Filtros.add(checkComboBox_fechaSemana, 1, 1);
+        listadoAux = FXCollections.observableArrayList();
+        for (int i = 1; i < 13; i++)
+        {
+            listadoAux.add(i+"");
+        }
+        this.checkComboBox_fechaMes = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_fechaMes.setPrefWidth(300);
+        this.checkComboBox_fechaMes.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_Filtros.add(checkComboBox_fechaMes, 3, 0);
+        listadoAux = FXCollections.observableArrayList();
+        for (int i = 2015; i < 2031; i++)
+        {
+            listadoAux.add(i+"");
+        }
+        this.checkComboBox_fechaAnio = new CheckComboBox<String>(listadoAux);
+        this.checkComboBox_fechaAnio.setPrefWidth(300);
+        this.checkComboBox_fechaAnio.setStyle("-fx-padding: 0 10 0 0");
+        this.gridPane_Filtros.add(checkComboBox_fechaAnio, 3, 1);
     }
 
     @FXML
@@ -212,8 +302,9 @@ public class MainController implements Initializable
     }   
     
     @FXML
-    public void generarGraficoPrueba() throws SQLException, ClassNotFoundException
+    public void generarGraficoPrueba() throws SQLException, ClassNotFoundException, InterruptedException
     {
+        actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_GRAPHICS);
         System.out.println("Inicio generación grafico prueba");
         
         String s0="Norte", s1="Santiago", s2="Centro", s3="Sur";
@@ -251,5 +342,6 @@ public class MainController implements Initializable
         this.panelGrafico.getChildren().add(chart_ejemplo);
         
         System.out.println("finalizado :)");
+        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_GRAPHICS);
     }
 }
