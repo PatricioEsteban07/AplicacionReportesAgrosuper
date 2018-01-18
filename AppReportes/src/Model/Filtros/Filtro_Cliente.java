@@ -14,14 +14,21 @@ import java.util.HashMap;
  */
 public class Filtro_Cliente extends Filtro
 {
-    private ArrayList<String> clientes;
-    public ArrayList<String> tituloClientes;
+    private ArrayList<String> clientesSeleccionados;
+    public ArrayList<String> clientes;
+
+    public Filtro_Cliente()
+    {
+        super("Filtro_Cliente");
+        this.clientesSeleccionados=new ArrayList<>();
+        this.clientes=new ArrayList<>();
+    }
 
     public Filtro_Cliente(ArrayList<String> titles)
     {
-        super("Cliente");
-        this.clientes=new ArrayList<>();
-        this.tituloClientes=titles;
+        super("Filtro_Cliente");
+        this.clientesSeleccionados=new ArrayList<>();
+        this.clientes=titles;
     }
     
     public boolean addCliente(String value)
@@ -34,15 +41,15 @@ public class Filtro_Cliente extends Filtro
         }
         if(flag)
         {
-            this.clientes.add(value);
+            this.clientesSeleccionados.add(value);
             return true;
         }
         return false;
     }
     
-    public boolean setClientes(ArrayList<String> data)
+    public boolean setClientesSeleccionados(ArrayList<String> data)
     {
-        this.clientes=data;
+        this.clientesSeleccionados=data;
         return true;
     }
 
@@ -50,13 +57,13 @@ public class Filtro_Cliente extends Filtro
     public String generarWhere(HashMap<String, String> data)
     {
         String query="";
-        if(!this.clientes.isEmpty())
+        if(!this.clientesSeleccionados.isEmpty())
         {
             query=query+"(";
-            for (int i = 0; i < this.clientes.size(); i++)
+            for (int i = 0; i < this.clientesSeleccionados.size(); i++)
             {
-                query=query+" "+data.get("Cliente")+" = "+this.clientes.get(i)+" ";
-                if(i<this.clientes.size()-1)
+                query=query+" "+data.get("Cliente")+" = "+this.clientesSeleccionados.get(i)+" ";
+                if(i<this.clientesSeleccionados.size()-1)
                 {
                     query=query+"OR";
                 }
@@ -69,8 +76,20 @@ public class Filtro_Cliente extends Filtro
     @Override
     public boolean vaciarFiltro()
     {
-        this.clientes=new ArrayList<>();
+        this.clientesSeleccionados=new ArrayList<>();
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

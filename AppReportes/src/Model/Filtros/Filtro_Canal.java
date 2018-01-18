@@ -14,14 +14,21 @@ import java.util.HashMap;
  */
 public class Filtro_Canal extends Filtro
 {
+    private ArrayList<String> canalesSeleccionados;
     private ArrayList<String> canales;
-    private ArrayList<String> tituloCanales;
 
+    public Filtro_Canal()
+    {
+        super("Filtro_Canal");
+        this.canalesSeleccionados=new ArrayList<>();
+        this.canales=new ArrayList<>();
+    }
+    
     public Filtro_Canal(ArrayList<String> titles)
     {
-        super("Canal");
-        this.canales=new ArrayList<>();
-        this.tituloCanales=titles;
+        super("Filtro_Canal");
+        this.canalesSeleccionados=new ArrayList<>();
+        this.canales=titles;
     }
     
     public boolean addCanal(String value)
@@ -34,15 +41,15 @@ public class Filtro_Canal extends Filtro
         }
         if(flag)
         {
-            this.canales.add(value);
+            this.canalesSeleccionados.add(value);
             return true;
         }
         return false;
     }
     
-    public boolean setCanales(ArrayList<String> canales)
+    public boolean setCanalesSeleccionados(ArrayList<String> canalesSeleccionados)
     {
-        this.canales=canales;
+        this.canalesSeleccionados=canalesSeleccionados;
         return true;
     }
 
@@ -50,13 +57,13 @@ public class Filtro_Canal extends Filtro
     public String generarWhere(HashMap<String, String> data)
     {
         String query="";
-        if(!this.canales.isEmpty())
+        if(!this.canalesSeleccionados.isEmpty())
         {
             query=query+"(";
-            for (int i = 0; i < this.canales.size(); i++)
+            for (int i = 0; i < this.canalesSeleccionados.size(); i++)
             {
-                query=query+" "+data.get("Canal")+" = "+this.canales.get(i)+" ";
-                if(i<this.canales.size()-1)
+                query=query+" "+data.get("Canal")+" = "+this.canalesSeleccionados.get(i)+" ";
+                if(i<this.canalesSeleccionados.size()-1)
                 {
                     query=query+"OR";
                 }
@@ -69,8 +76,20 @@ public class Filtro_Canal extends Filtro
     @Override
     public boolean vaciarFiltro()
     {
-        this.canales=new ArrayList<>();
+        this.canalesSeleccionados=new ArrayList<>();
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

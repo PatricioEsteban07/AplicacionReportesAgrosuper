@@ -5,6 +5,9 @@
  */
 package Model;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 /**
  *
  * @author Patricio
@@ -41,5 +44,14 @@ public final class CommandNames
     public final static String CANAL_CALLCENTER="Call Center";
     public final static String CANAL_TRADICIONAL="Tradicional";
     public final static String CANAL_CLIENTEIMPORTANTE="Cliente Impotante";
+    
+    public static void generaMensaje(String titulo, AlertType tipo, String mensaje, String detail)
+    {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(mensaje);
+        alert.setContentText(detail);
+        alert.showAndWait();
+    }
     
 }

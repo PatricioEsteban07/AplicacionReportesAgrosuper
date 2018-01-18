@@ -14,14 +14,21 @@ import java.util.HashMap;
  */
 public class Filtro_CargoRRHH extends Filtro
 {
-    private ArrayList<String> tiposRRHH;
-    public ArrayList<String> tituloTiposRRHH;
+    private ArrayList<String> tiposRRHHSeleccionados;
+    public ArrayList<String> tiposRRHH;
+
+    public Filtro_CargoRRHH()
+    {
+        super("Filtro_CargoRRHH");
+        this.tiposRRHHSeleccionados=new ArrayList<>();
+        this.tiposRRHH=new ArrayList<>();
+    }
 
     public Filtro_CargoRRHH(ArrayList<String> titles)
     {
-        super("CargoRRHH");
-        this.tiposRRHH=new ArrayList<>();
-        this.tituloTiposRRHH=titles;
+        super("Filtro_CargoRRHH");
+        this.tiposRRHHSeleccionados=new ArrayList<>();
+        this.tiposRRHH=titles;
     }
     
     public boolean addCargoRRHH(String value)
@@ -34,15 +41,15 @@ public class Filtro_CargoRRHH extends Filtro
         }
         if(flag)
         {
-            this.tiposRRHH.add(value);
+            this.tiposRRHHSeleccionados.add(value);
             return true;
         }
         return false;
     }
     
-    public boolean setCargoRRHH(ArrayList<String> data)
+    public boolean setCargoRRHHSeleccionados(ArrayList<String> data)
     {
-        this.tiposRRHH=data;
+        this.tiposRRHHSeleccionados=data;
         return true;
     }
 
@@ -50,13 +57,13 @@ public class Filtro_CargoRRHH extends Filtro
     public String generarWhere(HashMap<String, String> data)
     {
         String query="";
-        if(!this.tiposRRHH.isEmpty())
+        if(!this.tiposRRHHSeleccionados.isEmpty())
         {
             query=query+"(";
-            for (int i = 0; i < this.tiposRRHH.size(); i++)
+            for (int i = 0; i < this.tiposRRHHSeleccionados.size(); i++)
             {
-                query=query+" "+data.get("CargoRRHH")+" = "+this.tiposRRHH.get(i)+" ";
-                if(i<this.tiposRRHH.size()-1)
+                query=query+" "+data.get("CargoRRHH")+" = "+this.tiposRRHHSeleccionados.get(i)+" ";
+                if(i<this.tiposRRHHSeleccionados.size()-1)
                 {
                     query=query+"OR";
                 }
@@ -69,8 +76,20 @@ public class Filtro_CargoRRHH extends Filtro
     @Override
     public boolean vaciarFiltro()
     {
-        this.tiposRRHH=new ArrayList<>();
+        this.tiposRRHHSeleccionados=new ArrayList<>();
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

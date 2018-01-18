@@ -5,6 +5,12 @@
  */
 package Model.Reportes;
 
+import Model.Filtros.Filtro_Canal;
+import Model.Filtros.Filtro_CargoRRHH;
+import Model.Filtros.Filtro_Cliente;
+import Model.Filtros.Filtro_Fecha;
+import Model.Filtros.Filtro_Sucursal;
+import Model.Filtros.Filtro_Zona;
 import Model.GeneradoresExcel.GeneradorExcel_ClienteEmpresas;
 import Model.GeneradoresExcel.GeneradorExcel_Clientes;
 import Model.GeneradoresExcel.GeneradorExcel_Empresas;
@@ -32,6 +38,7 @@ public class Reporte_ClienteEmpresas extends Reporte
         this.recursos.put("Clientes",new RecursoDB_Clientes());
         this.recursos.put("Empresas",new RecursoDB_Empresas());
         this.recursos.put("Cliente-Empresas",new RecursoDB_ClienteEmpresas());
+        this.generarFiltrosBaseCustom();
     }
 
     @Override
@@ -101,9 +108,10 @@ public class Reporte_ClienteEmpresas extends Reporte
     }
 
     @Override
-    public boolean generarFiltrosBase()
+    public boolean generarFiltrosBaseCustom()
     {
-        return false;
+        //crear todos los filtros vacios
+        return generarFiltrosBase();
     }
     
 }

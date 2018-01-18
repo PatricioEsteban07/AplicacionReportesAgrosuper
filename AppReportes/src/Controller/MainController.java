@@ -5,39 +5,52 @@
  */
 package Controller;
 
+import Controller.filtroPeriodo.FiltroPeriodo_AnioController;
 import Model.Cliente;
 import Model.CommandNames;
+import Model.Filtros.Filtro;
+import Model.Filtros.Filtro_Fecha;
 import Model.RecursosDB.RecursoDB;
+import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ClienteEmpresas;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javax.swing.JComponent;
 import org.controlsfx.control.CheckComboBox;
 
 /**
@@ -68,7 +81,12 @@ public class MainController implements Initializable
     @FXML
     private GridPane gridPane_Filtros;
     @FXML
+    private GridPane gridPane_Filtros2;
+    @FXML
     private GridPane gridPane_otrosFiltros;
+    @FXML
+    private ChoiceBox choiceBox_periodo;
+    
     private CheckComboBox checkComboBox_fechaSemana;
     private CheckComboBox checkComboBox_fechaMes;
     private CheckComboBox checkComboBox_fechaAnio;
@@ -79,6 +97,8 @@ public class MainController implements Initializable
     
     @FXML 
     private TableView<ArrayList<String>> ReportesTableView;
+    private Reporte reporteBase;
+    private HashMap<String, Reporte> reportesGenerados;
     
 
     /**
@@ -97,42 +117,61 @@ public class MainController implements Initializable
         });
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
         
-        inicializarFiltros();
+        //inicializarFiltros();
+        inicializarFiltros2();
     }
     
-    public void inicializarFiltros()
+    public boolean generarReporteBase(String opcion) throws InterruptedException
     {
-        inicializarFechas();
+        this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, "Generando elementos de configuración de reporte base para procesamiento...");
+        switch(opcion)
+        {
+            case "Reporte Prueba":
+                
+                this.actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Elementos de configuración de reporte generado y listo para ser trabajado.");
+                return true;
+        }
+        
+        this.actualizarEstadoProceso(CommandNames.ESTADO_ERROR, "Ups, hubo un problema para generar los elementos base para tu reporte. Intente nuevamente o reinicie el sistema.");
+        return false;
+    }
+    
+    public void inicializarPeriodo()
+    {
+        this.choiceBox_periodo.setItems(FXCollections.observableArrayList("Año", "Mes", "Semana", 
+                "Fecha Específica", "Rango Fecha"));
+        this.choiceBox_periodo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+            {
+                System.out.println("Seleccionado! "+newValue);
+                setFiltroPeriodo(newValue.intValue());
+            }
+        });
+    }
+    
+    public void inicializarFiltros2()
+    {
+        inicializarPeriodo();
         ObservableList<String> listadoAux = FXCollections.observableArrayList();
-        listadoAux.add("Norte");
-        listadoAux.add("Centro Norte");
-        listadoAux.add("Santiago");
-        listadoAux.add("Centro Sur");
-        listadoAux.add("Sur");
+        listadoAux.addAll("Norte","Centro Norte","Santiago","Centro Sur","Sur");
         this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_zonas.setPrefWidth(300);
-        this.checkComboBox_zonas.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_otrosFiltros.add(checkComboBox_zonas, 1, 0);
+        this.gridPane_Filtros2.add(checkComboBox_zonas, 3, 1);
         
         listadoAux = FXCollections.observableArrayList();
-        listadoAux.add("Supermercado");
-        listadoAux.add("Food Service");
-        listadoAux.add("Call Center");
-        listadoAux.add("Tradicional");
-        listadoAux.add("Cliente Importante");
+        listadoAux.addAll("Supermercado","Food Service","Call Center","Tradicional","Cliente Importante");
         this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_canales.setPrefWidth(300);
-        this.checkComboBox_canales.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_otrosFiltros.add(checkComboBox_canales, 1, 1);
+        this.gridPane_Filtros2.add(checkComboBox_canales, 3, 2);
+        
         
         listadoAux = FXCollections.observableArrayList();
-        listadoAux.add("Sucursal 1");
-        listadoAux.add("Sucursal 2");
-        listadoAux.add("Sucursal 3");
+        listadoAux.addAll("Sucursal 1","Sucursal 2","Sucursal 3");
         this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_sucursales.setPrefWidth(300);
-        this.checkComboBox_sucursales.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_otrosFiltros.add(checkComboBox_sucursales, 1, 2);
+        this.gridPane_Filtros2.add(checkComboBox_sucursales, 7, 0);
         
         listadoAux = FXCollections.observableArrayList();
         listadoAux.add("Cliente 1");
@@ -140,8 +179,7 @@ public class MainController implements Initializable
         listadoAux.add("Cliente 3");
         this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_clientes.setPrefWidth(300);
-        this.checkComboBox_clientes.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_otrosFiltros.add(checkComboBox_clientes, 1, 3);
+        this.gridPane_Filtros2.add(checkComboBox_clientes, 7, 1);
     }
     
     public void inicializarFechas()
@@ -174,16 +212,35 @@ public class MainController implements Initializable
         this.checkComboBox_fechaAnio.setStyle("-fx-padding: 0 10 0 0");
         this.gridPane_Filtros.add(checkComboBox_fechaAnio, 3, 1);
     }
+    
+    public void setFiltroPeriodo(int opcion)
+    {
+        switch(opcion)
+        {
+            case 0://año
+                this.cargarFiltroAnio();
+                break;
+            case 1://mes
+                //this.AbrirModal("/vistas/toolbar/Cursos.fxml", "Titulo");
+                break;
+            case 2://semana
+                //this.AbrirModal("/vistas/toolbar/Cursos.fxml", "Titulo");
+                break;
+            case 3://fecha
+                //this.AbrirModal("/vistas/toolbar/Cursos.fxml", "Titulo");
+                break;
+            case 4://rango fecha
+                //this.AbrirModal("/vistas/toolbar/Cursos.fxml", "Titulo");
+                break;
+        }
+        generarEtiqueta(this.reporteBase.filtros.get("Filtro_Fecha"),this.choiceBox_periodo);
+    }
 
     @FXML
     public void infoApp()
     {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Información de Aplicación");
-        alert.setHeaderText("Sistema de Generación de Reportes");
-        alert.setContentText("Aplicación en proceso de desarrollo :)");
-
-        alert.showAndWait();
+        CommandNames.generaMensaje("Información de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes", 
+                "Aplicación en proceso de desarrollo :)");
     }
 
     @FXML
@@ -228,12 +285,10 @@ public class MainController implements Initializable
         this.text_estadoSistema.setText(estado+": "+mensaje);
     }
     
-    @FXML
-    public void buttonReporteEjemplo() throws SQLException, ClassNotFoundException, IOException, InterruptedException
+    public boolean generarReporte(Reporte reporte) throws InterruptedException
     {
         actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
         System.out.println("obteniendo reporte...");
-        Reporte_ClienteEmpresas reporte=new Reporte_ClienteEmpresas();
         if(!reporte.generarRecursos())
         {
             System.out.println("ERROR: generar recursos :C");
@@ -252,6 +307,7 @@ public class MainController implements Initializable
         {
             System.out.println("ERROR: generar excel :C");
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
+            return false;
         }        
         //generar tabla con reporte
         this.ReportesTableView=new TableView<>();
@@ -299,7 +355,58 @@ public class MainController implements Initializable
         this.panelTabla.getChildren().clear();
         this.panelTabla.getChildren().add(ReportesTableView);
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
-    }   
+        return true;
+    }
+    
+    @FXML
+    public void buttonReporteEjemplo() throws InterruptedException
+    {
+        this.reporteBase=new Reporte_ClienteEmpresas();
+        generarReporte(this.reporteBase);
+    }  
+    
+    private void cargarFiltroAnio()
+    {
+        String recurso="/Views/filtroPeriodo/filtroPeriodo_Anio.fxml";
+        String titulo="Filtrado por año";
+        Parent root = cargarModal(recurso,titulo);
+        FXMLLoader loader = null;
+    
+        try {
+            loader = new FXMLLoader(getClass().getResource(recurso));
+            root = loader.load();
+        } catch (IOException ex) {
+            System.out.println("Error al abrir el modal "+titulo+" ("+recurso+")");
+            ex.printStackTrace();
+            System.exit(0);
+        }
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(titulo);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        FiltroPeriodo_AnioController controller = loader.getController();
+        controller.setFiltro(reporteBase.filtros.get("Filtro_Fecha"));
+        stage.setResizable(false);
+        //stage.initOwner();
+        //stage.getIcons().add(new Image("img/icon.png"));
+        stage.showAndWait();
+    }
+    
+    private Parent cargarModal(String recurso, String titulo){
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource(recurso));
+        } catch (IOException ex) {
+            System.out.println("Error al abrir el modal "+titulo+" ("+recurso+")");
+            ex.printStackTrace();
+            
+            CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes", 
+                "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
+                        + "\n La aplicación se cerrará...");
+            System.exit(0);
+        }      
+        return root;
+    }
     
     @FXML
     public void generarGraficoPrueba() throws SQLException, ClassNotFoundException, InterruptedException
@@ -343,5 +450,10 @@ public class MainController implements Initializable
         
         System.out.println("finalizado :)");
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_GRAPHICS);
+    }
+
+    private void generarEtiqueta(Filtro filtroAux, javafx.scene.Parent component)
+    {
+        this.choiceBox_periodo.setTooltip(new Tooltip(filtroAux.generarEtiquetaInfo()));
     }
 }

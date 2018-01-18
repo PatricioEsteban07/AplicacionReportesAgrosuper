@@ -14,35 +14,42 @@ import java.util.HashMap;
  */
 public class Filtro_Sucursal extends Filtro
 {
-    private ArrayList<String> sucursales;
-    public ArrayList<String> tituloSucursales;
+    private ArrayList<String> sucursalesSeleccionadas;
+    public ArrayList<String> sucursales;
+
+    public Filtro_Sucursal()
+    {
+        super("Filtro_Sucursal");
+        this.sucursalesSeleccionadas=new ArrayList<>();
+        this.sucursales=new ArrayList<>();
+    }
 
     public Filtro_Sucursal(ArrayList<String> titles)
     {
-        super("Sucursal");
-        this.sucursales=new ArrayList<>();
-        this.tituloSucursales=titles;
+        super("Filtro_Sucursal");
+        this.sucursalesSeleccionadas=new ArrayList<>();
+        this.sucursales=titles;
     }
     
     public boolean addSucursal(String value)
     {
         boolean flag=true;
-        for (String sucursal : this.sucursales)
+        for (String sucursal : this.sucursalesSeleccionadas)
         {
             if(sucursal.equals(value))
                 flag=false;
         }
         if(flag)
         {
-            this.sucursales.add(value);
+            this.sucursalesSeleccionadas.add(value);
             return true;
         }
         return false;
     }
     
-    public boolean setSucursales(ArrayList<String> data)
+    public boolean setSucursalesSeleccionadas(ArrayList<String> data)
     {
-        this.sucursales=data;
+        this.sucursalesSeleccionadas=data;
         return true;
     }
 
@@ -50,13 +57,13 @@ public class Filtro_Sucursal extends Filtro
     public String generarWhere(HashMap<String, String> data)
     {
         String query="";
-        if(!this.sucursales.isEmpty())
+        if(!this.sucursalesSeleccionadas.isEmpty())
         {
             query=query+"(";
-            for (int i = 0; i < this.sucursales.size(); i++)
+            for (int i = 0; i < this.sucursalesSeleccionadas.size(); i++)
             {
-                query=query+" "+data.get("Sucursal")+" = "+this.sucursales.get(i)+" ";
-                if(i<this.sucursales.size()-1)
+                query=query+" "+data.get("Sucursal")+" = "+this.sucursalesSeleccionadas.get(i)+" ";
+                if(i<this.sucursalesSeleccionadas.size()-1)
                 {
                     query=query+"OR";
                 }
@@ -69,8 +76,20 @@ public class Filtro_Sucursal extends Filtro
     @Override
     public boolean vaciarFiltro()
     {
-        this.sucursales=new ArrayList<>();
+        this.sucursalesSeleccionadas=new ArrayList<>();
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

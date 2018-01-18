@@ -14,14 +14,21 @@ import java.util.HashMap;
  */
 public class Filtro_Zona extends Filtro
 {
-    private ArrayList<String> zonas;
-    public ArrayList<String> tituloZonas;
+    private ArrayList<String> zonasSeleccionadas;
+    public ArrayList<String> zonas;
+
+    public Filtro_Zona()
+    {
+        super("Filtro_Zona");
+        this.zonasSeleccionadas=new ArrayList<>();
+        this.zonas=new ArrayList<>();
+    }
 
     public Filtro_Zona(ArrayList<String> titles)
     {
-        super("Zona");
-        this.zonas=new ArrayList<>();
-        this.tituloZonas=titles;
+        super("Filtro_Zona");
+        this.zonasSeleccionadas=new ArrayList<>();
+        this.zonas=titles;
     }
     
     public boolean addZona(String value)
@@ -34,15 +41,15 @@ public class Filtro_Zona extends Filtro
         }
         if(flag)
         {
-            this.zonas.add(value);
+            this.zonasSeleccionadas.add(value);
             return true;
         }
         return false;
     }
     
-    public boolean setZonas(ArrayList<String> data)
+    public boolean setZonasSeleccionadas(ArrayList<String> data)
     {
-        this.zonas=data;
+        this.zonasSeleccionadas=data;
         return true;
     }
 
@@ -50,13 +57,13 @@ public class Filtro_Zona extends Filtro
     public String generarWhere(HashMap<String, String> data)
     {
         String query="";
-        if(!this.zonas.isEmpty())
+        if(!this.zonasSeleccionadas.isEmpty())
         {
             query=query+"(";
-            for (int i = 0; i < this.zonas.size(); i++)
+            for (int i = 0; i < this.zonasSeleccionadas.size(); i++)
             {
-                query=query+" "+data.get("Zona")+" = "+this.zonas.get(i)+" ";
-                if(i<this.zonas.size()-1)
+                query=query+" "+data.get("Zona")+" = "+this.zonasSeleccionadas.get(i)+" ";
+                if(i<this.zonasSeleccionadas.size()-1)
                 {
                     query=query+"OR";
                 }
@@ -69,8 +76,20 @@ public class Filtro_Zona extends Filtro
     @Override
     public boolean vaciarFiltro()
     {
-        this.zonas=new ArrayList<>();
+        this.zonasSeleccionadas=new ArrayList<>();
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

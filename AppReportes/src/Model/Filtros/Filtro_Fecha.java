@@ -23,12 +23,12 @@ public class Filtro_Fecha extends Filtro
 
     public Filtro_Fecha()
     {
-        super("Fecha");
+        super("Filtro_Fecha");
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(1990, 1, 1);
-        this.fechaFin=new Date(1990, 1, 1);
+        this.fechaInicio=new Date(2000, 1, 1);
+        this.fechaFin=new Date(2000, 1, 1);
     }
 
     public void setFechaInicio(Date fechaInicio)
@@ -151,8 +151,8 @@ public class Filtro_Fecha extends Filtro
         contents[0]= !this.semanas.isEmpty();
         contents[1]= !this.meses.isEmpty();
         contents[2]= !this.anios.isEmpty();
-        contents[3]= !this.fechaInicio.equals(new Date(1990,1,1));
-        contents[4]= !this.fechaFin.equals(new Date(1990,1,1));
+        contents[3]= !this.fechaInicio.equals(new Date(2000,1,1));
+        contents[4]= !this.fechaFin.equals(new Date(2000,1,1));
         int countElements=countValues(contents);
         if(countElements>0)
         {
@@ -246,9 +246,60 @@ public class Filtro_Fecha extends Filtro
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(1990,1,1);
-        this.fechaFin=new Date(1990,1,1);
+        this.fechaInicio=new Date(2000,1,1);
+        this.fechaFin=new Date(2000,1,1);
         return true;
+    }
+
+    @Override
+    public boolean setOpcion(int value)
+    {
+        /*
+            Fecha año: 
+                1(1 año)
+                2 (rango año)
+            Fecha mes: 
+                3(1 año, 1 mes), 
+                4(1 año, rango meses)
+            Fecha semana:
+                5(1 año, 1 semana)
+                6(1 año, range semanas)
+            Fecha dia:
+                7(fecha concreta)
+                8(rango fecha)
+        */
+        if(value>0 && value<9)
+        {
+            this.opcion=value;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String generarEtiquetaInfo()
+    {
+        switch(this.getOpcion())
+        {
+            case 1://1 año
+                return "Reporte para el año "+this.anios.get(0);
+            case 2://rango años
+                return "Reporte para el período "+this.anios.get(0)+"-"
+                        +this.anios.get(this.anios.size()-1);
+            case 3:
+                
+            case 4:
+                
+            case 5:
+                
+            case 6:
+                
+            case 7:
+                
+            case 8:
+                
+        }
+        return null;
     }
     
 }

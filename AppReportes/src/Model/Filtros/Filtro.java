@@ -14,13 +14,24 @@ import java.util.HashMap;
 public abstract class Filtro
 {
     public String nombre;
+    protected int opcion;
 
     public Filtro(String nombre)
     {
         this.nombre = nombre;
+        this.opcion=0;
+    }
+
+    public int getOpcion()
+    {
+        return opcion;
     }
     
     public abstract String generarWhere(HashMap<String,String> data);
     
     public abstract boolean vaciarFiltro();
+    
+    public abstract boolean setOpcion(int value);
+    
+    public abstract String generarEtiquetaInfo();
 }
