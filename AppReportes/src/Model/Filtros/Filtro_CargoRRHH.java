@@ -34,7 +34,7 @@ public class Filtro_CargoRRHH extends Filtro
     public boolean addCargoRRHH(String value)
     {
         boolean flag=true;
-        for (String rrhh : this.tiposRRHH)
+        for (String rrhh : this.tiposRRHHSeleccionados)
         {
             if(rrhh.equals(value))
                 flag=false;

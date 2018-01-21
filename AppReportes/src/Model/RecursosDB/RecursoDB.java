@@ -62,7 +62,6 @@ public abstract class RecursoDB
         return true;
     }
 
-    //OJO!, IMPLEMENTAR POBLADO DE INFO E DB A JAVA
     public ResultSet executeQuery() throws SQLException
     {
         if (conn != null)

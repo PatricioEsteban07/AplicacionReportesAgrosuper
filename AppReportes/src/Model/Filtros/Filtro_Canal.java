@@ -34,7 +34,7 @@ public class Filtro_Canal extends Filtro
     public boolean addCanal(String value)
     {
         boolean flag=true;
-        for (String canal : this.canales)
+        for (String canal : this.canalesSeleccionados)
         {
             if(canal.equals(value))
                 flag=false;
@@ -89,7 +89,16 @@ public class Filtro_Canal extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String aux = "Reporte filtrado para canales: ";
+        for (int i = 0; i < this.canalesSeleccionados.size(); i++)
+        {
+            aux=aux+this.canalesSeleccionados.get(i);
+            if(i<this.canalesSeleccionados.size()-1)
+            {
+                aux=aux+", ";
+            }
+        }
+        return aux;
     }
     
 }

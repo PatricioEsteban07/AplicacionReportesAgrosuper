@@ -34,7 +34,7 @@ public class Filtro_Zona extends Filtro
     public boolean addZona(String value)
     {
         boolean flag=true;
-        for (String zona : this.zonas)
+        for (String zona : this.zonasSeleccionadas)
         {
             if(zona.equals(value))
                 flag=false;

@@ -6,14 +6,12 @@
 package Controller.filtroPeriodo;
 
 import Model.CommandNames;
-import Model.Filtros.Filtro;
-import Model.Filtros.Filtro_Fecha;
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -26,13 +24,8 @@ import javafx.stage.Stage;
  *
  * @author Patricio
  */
-public class FiltroPeriodo_AnioController implements Initializable
+public class FiltroPeriodo_AnioController extends FiltroPeriodoController
 {
-    private int opcion;
-    private final int MIN_YEAR = 2015;
-    private final int MAX_YEAR = 2031;
-    private Filtro_Fecha filtro;
-
     @FXML
     private Button button_Aceptar;
     @FXML
@@ -64,25 +57,27 @@ public class FiltroPeriodo_AnioController implements Initializable
         this.itemsInicio = FXCollections.observableArrayList();
         this.itemsFin = FXCollections.observableArrayList();
 
+        this.comboBox_fechaInicio.setItems(this.itemsInicio);
+        this.comboBox_fechaFin.setItems(this.itemsFin);
+        
         for (int i = MIN_YEAR; i < MAX_YEAR; i++)
         {
             this.itemsInicio.add(i);
-            this.itemsFin.add(i);
+            this.itemsFin.add(i+1);
         }
-        this.comboBox_fechaInicio.setItems(this.itemsInicio);
-        this.comboBox_fechaFin.setItems(this.itemsFin);
         this.comboBox_fechaInicio.getSelectionModel().select(0);
         this.comboBox_fechaFin.getSelectionModel().select(0);
     }
+    
 
     @FXML
     public void updateOptionCB2()
     {
         int aux = Integer.parseInt(this.comboBox_fechaInicio.getSelectionModel().getSelectedItem().toString());
         this.itemsFin.clear();
-        for (int i = aux + 1; i < MAX_YEAR; i++)
+        for (int i = aux ; i < MAX_YEAR; i++)
         {
-            this.itemsFin.add(i);
+            this.itemsFin.add(i+1);
         }
         this.comboBox_fechaFin.getSelectionModel().select(0);
     }
@@ -110,8 +105,17 @@ public class FiltroPeriodo_AnioController implements Initializable
             this.radioButtonA.setSelected(false);
             this.opcion = 2;
         }
-        else//casos raros, manejar!
+        else//cuando se deselecciona una opcion
         {
+            switch(this.opcion)
+            {
+                case 1:
+                    this.radioButtonA.setSelected(true);
+                    break;
+                case 2:
+                    this.radioButtonB.setSelected(true);
+                    break;
+            }
             System.out.println("caso raro");
         }
         this.comboBox_fechaInicio.getSelectionModel().select(0);
@@ -128,28 +132,16 @@ public class FiltroPeriodo_AnioController implements Initializable
         {
             case 1:
                 this.filtro.vaciarFiltro();
-                this.filtro.addAnio(inicio);
+                this.filtro.setFechaInicio(new Date(inicio, 1, 1));
                 this.filtro.setOpcion(1);
-                System.out.println("Num: "+inicio);
-                                    for (Integer anio : this.filtro.getAnios())
-                                    {
-                                        System.out.println("Año: "+anio);
-                                    }
                 this.buttonCancelar();
                 break;
             case 2:
                 if(inicio<fin)
                 {
                     this.filtro.vaciarFiltro();
-                    for (int i = inicio; i < fin+1; i++)
-                    {
-                        this.filtro.addAnio(i);
-                    }
-                    System.out.println("paso :D"+inicio+"/"+fin);              
-                                    for (Integer anio : this.filtro.getAnios())
-                                    {
-                                        System.out.println("Año: "+anio);
-                                    }
+                    this.filtro.setFechaInicio(new Date(inicio, 1, 1));
+                    this.filtro.setFechaFin(new Date(fin, 1, 1));
                     this.filtro.setOpcion(2);
                     this.buttonCancelar();
                 }
@@ -168,11 +160,6 @@ public class FiltroPeriodo_AnioController implements Initializable
     {
         Stage s = (Stage) this.button_Cancelar.getScene().getWindow();
         s.close();
-    }
-
-    public void setFiltro(Filtro filtro)
-    {
-        this.filtro=(Filtro_Fecha)filtro;
     }
 
 }

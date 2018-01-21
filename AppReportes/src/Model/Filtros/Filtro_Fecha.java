@@ -17,6 +17,8 @@ public class Filtro_Fecha extends Filtro
 {
     private Date fechaInicio;
     private Date fechaFin;
+    private int semanaInicio;
+    private int semanaFin;
     private ArrayList<Integer> semanas;
     private ArrayList<Integer> meses;
     private ArrayList<Integer> anios;
@@ -147,6 +149,12 @@ public class Filtro_Fecha extends Filtro
     @Override
     public String generarWhere(HashMap<String,String> data)
     {
+        //
+        //
+        //OJO REESTRUCTURAR ESTE METODO TAL QUE FUNCIONES CON OPCIONES !!!
+        //
+        //
+        
         boolean contents[]=new boolean[5];
         contents[0]= !this.semanas.isEmpty();
         contents[1]= !this.meses.isEmpty();
@@ -256,11 +264,11 @@ public class Filtro_Fecha extends Filtro
     {
         /*
             Fecha año: 
-                1(1 año)
-                2 (rango año)
+                1(1 año)-> 1 año
+                2 (rango año) -> muchos años
             Fecha mes: 
                 3(1 año, 1 mes), 
-                4(1 año, rango meses)
+                4(rango año, rango meses)
             Fecha semana:
                 5(1 año, 1 semana)
                 6(1 año, range semanas)
@@ -282,24 +290,37 @@ public class Filtro_Fecha extends Filtro
         switch(this.getOpcion())
         {
             case 1://1 año
-                return "Reporte para el año "+this.anios.get(0);
+                return "Reporte para el año "+this.fechaInicio.getYear();
             case 2://rango años
-                return "Reporte para el período "+this.anios.get(0)+"-"
-                        +this.anios.get(this.anios.size()-1);
-            case 3:
-                
-            case 4:
-                
-            case 5:
-                
-            case 6:
-                
-            case 7:
-                
-            case 8:
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"
+                        +this.fechaFin.getYear();
+            case 3://1 mes
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth();
+            case 4://rango mes
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaFin.getMonth()
+                        +" / "+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth();
+            case 5://1 semana
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio;
+            case 6://rango semanas
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio
+                        +" / "+this.fechaFin.getYear()+"-"+this.semanaFin;
+            case 7://fecha
+                return "Reporte para el dia "+this.fechaInicio.getDay()+"/"+this.fechaInicio.getMonth()+"/"
+                        +this.fechaInicio.getYear();
+            case 8://rango fecha
+                return "Reporte para el período "+this.fechaInicio.getDay()+"/"+this.fechaInicio.getMonth()+"/"
+                        +this.fechaInicio.getYear()+" - "+this.fechaFin.getDay()+"/"+this.fechaFin.getMonth()+"/"
+                        +this.fechaFin.getYear();
                 
         }
         return null;
+    }
+
+    //validar que sean correctas
+    public void setSemanas(int semanaInicio, int semanaFinal)
+    {
+        this.semanaInicio=semanaInicio;
+        this.semanaFin=semanaFinal;
     }
     
 }

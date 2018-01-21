@@ -34,7 +34,7 @@ public class Filtro_Cliente extends Filtro
     public boolean addCliente(String value)
     {
         boolean flag=true;
-        for (String cliente : this.clientes)
+        for (String cliente : this.clientesSeleccionados)
         {
             if(cliente.equals(value))
                 flag=false;

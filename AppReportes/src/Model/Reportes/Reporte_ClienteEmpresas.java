@@ -5,12 +5,6 @@
  */
 package Model.Reportes;
 
-import Model.Filtros.Filtro_Canal;
-import Model.Filtros.Filtro_CargoRRHH;
-import Model.Filtros.Filtro_Cliente;
-import Model.Filtros.Filtro_Fecha;
-import Model.Filtros.Filtro_Sucursal;
-import Model.Filtros.Filtro_Zona;
 import Model.GeneradoresExcel.GeneradorExcel_ClienteEmpresas;
 import Model.GeneradoresExcel.GeneradorExcel_Clientes;
 import Model.GeneradoresExcel.GeneradorExcel_Empresas;
@@ -33,8 +27,7 @@ public class Reporte_ClienteEmpresas extends Reporte
     
     public Reporte_ClienteEmpresas()
     {
-        super();
-        this.nombre="Reporte de Asignación Cliente-Empresas";
+        super("Reporte de Asignación Cliente-Empresas");
         this.recursos.put("Clientes",new RecursoDB_Clientes());
         this.recursos.put("Empresas",new RecursoDB_Empresas());
         this.recursos.put("Cliente-Empresas",new RecursoDB_ClienteEmpresas());
@@ -112,6 +105,23 @@ public class Reporte_ClienteEmpresas extends Reporte
     {
         //crear todos los filtros vacios
         return generarFiltrosBase();
+    }
+
+    @Override
+    public ArrayList<String> completarColumnasTabla()
+    {
+        ArrayList<String> columnas=new ArrayList<>();
+        columnas.add("cliente_id");
+        columnas.add("cliente_nombre");
+        columnas.add("cliente_apellido");
+        columnas.add("cliente_edad");
+        columnas.add("cliente_sexo");
+        columnas.add("cliente_descripcion");
+        columnas.add("empresa_id");
+        columnas.add("empresa_nombre");
+        columnas.add("empresa_direccion");
+        columnas.add("empresa_descripcion");
+        return columnas;
     }
     
 }
