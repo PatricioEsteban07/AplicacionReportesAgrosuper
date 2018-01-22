@@ -29,8 +29,8 @@ public class Filtro_Fecha extends Filtro
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(2000, 1, 1);
-        this.fechaFin=new Date(2000, 1, 1);
+        this.fechaInicio=new Date(2000, 0, 1);
+        this.fechaFin=new Date(2000, 0, 1);
     }
 
     public void setFechaInicio(Date fechaInicio)
@@ -149,104 +149,45 @@ public class Filtro_Fecha extends Filtro
     @Override
     public String generarWhere(HashMap<String,String> data)
     {
-        //
-        //
-        //OJO REESTRUCTURAR ESTE METODO TAL QUE FUNCIONES CON OPCIONES !!!
-        //
-        //
-        
-        boolean contents[]=new boolean[5];
-        contents[0]= !this.semanas.isEmpty();
-        contents[1]= !this.meses.isEmpty();
-        contents[2]= !this.anios.isEmpty();
-        contents[3]= !this.fechaInicio.equals(new Date(2000,1,1));
-        contents[4]= !this.fechaFin.equals(new Date(2000,1,1));
-        int countElements=countValues(contents);
-        if(countElements>0)
+        String query="";
+        switch(this.opcion)
         {
-            String query="";
-            int countAux=0;
-            if(contents[0])//semanas
-            {
-                countAux++;
-                query=query+"(";
-                for (int i = 0; i < this.semanas.size(); i++)
-                {
-                    query=query+" "+data.get("Semana")+" = "+this.semanas.get(i)+" ";
-                    if(i<this.semanas.size()-1)
-                    {
-                        query=query+"OR";
-                    }
-                }
-                query=query+")";
-                if(countAux<countElements)
-                {
-                    query=query+" AND ";
-                }
-            }
-            if(contents[1])//meses
-            {
-                countAux++;
-                query=query+"(";
-                for (int i = 0; i < this.meses.size(); i++)
-                {
-                    query=query+" "+data.get("Mes")+" = "+this.meses.get(i)+" ";
-                    if(i<this.meses.size()-1)
-                    {
-                        query=query+"OR";
-                    }
-                }
-                query=query+")";
-                if(countAux<countElements)
-                {
-                    query=query+" AND ";
-                }
-            }
-            if(contents[2])//años
-            {
-                countAux++;
-                query=query+"(";
-                for (int i = 0; i < this.anios.size(); i++)
-                {
-                    query=query+" "+data.get("Año")+" = "+this.anios.get(i)+" ";
-                    if(i<this.anios.size()-1)
-                    {
-                        query=query+"OR";
-                    }
-                }
-                query=query+")";
-                if(countAux<countElements)
-                {
-                    query=query+" AND ";
-                }
-            }
-            if(contents[3] && contents[4])//rangoFechas
-            {
-                query=query+"( "+data.get("Fecha")+" BETWEEN '"+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+"-"
-                        +this.fechaInicio.getDate()+"' AND '"+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth()+"-"
-                        +this.fechaFin.getDate()+"' )";
-            }
-            else if(contents[3])//fechaInicio
-            {
-                countAux++;
-                query=query+"( "+data.get("Dia")+" = "+this.fechaInicio.getDate()+" AND "+data.get("Mes")+" = "+this.fechaInicio.getMonth()
-                        +" AND "+data.get("Año")+" = "+this.fechaInicio.getYear()+" )";
-            }
-            return query;
+            case 1://(1 año)-> 1 año
+                query=query+" ("+data.get("Año")+" = "+this.fechaInicio.getYear()+") ";
+                break;
+            case 2://(rango año) -> muchos años
+                    //REVISAR CASOS BORDE !!!
+                query=query+" ("+data.get("AñoInicio")+" >= "+this.fechaInicio.getYear()+" AND "
+                        +data.get("AñoFin")+" <= "+this.fechaFin.getYear()+") ";
+                break;
+            case 3://(1 año, 1 mes)
+                query=query+" ("+data.get("Año")+" = "+this.fechaInicio.getYear()+" AND "
+                        +data.get("Mes")+" = "+this.fechaInicio.getMonth()+") ";
+                break;
+            case 4://(rango año, rango meses)
+                    //REVISAR CASOS BORDE !!!
+                query=query+" ("+data.get("Fecha")+" BETWEEN '"+this.fechaInicio.getYear()+"-"
+                    +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
+                    +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
+                break;
+            case 5://5(1 año, 1 semana)
+                query=" (WEEK('"+data.get("Semana")+"', 1) = "+this.semanaInicio+")";
+                break;
+            case 6://(1 año, range semanas)
+                break;
+            case 7://(fecha concreta)
+                query=query+" ("+data.get("Fecha")+" = "+this.fechaInicio.getYear()+"-"
+                        +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+") ";
+                break;
+            case 8://(rango fecha)
+                    //REVISAR CASOS BORDE !!!
+                query=query+" ("+data.get("Fecha")+" BETWEEN '"+this.fechaInicio.getYear()+"-"
+                    +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
+                    +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
+                break;
         }
-        return "";
+        return query;
     }
-    
-    public int countValues(boolean values[])
-    {
-        int ct=0;
-        for (int i = 0; i < values.length; i++)
-        {
-            if(values[i])
-                ct++;
-        }
-        return ct;
-    }  
 
     @Override
     public boolean vaciarFiltro()
@@ -254,8 +195,11 @@ public class Filtro_Fecha extends Filtro
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(2000,1,1);
-        this.fechaFin=new Date(2000,1,1);
+        this.fechaInicio=new Date(2000,0,1);
+        this.fechaFin=new Date(2000,0,1);
+        this.semanaInicio=0;
+        this.semanaFin=0;
+        this.opcion=0;
         return true;
     }
 
@@ -290,7 +234,7 @@ public class Filtro_Fecha extends Filtro
         switch(this.getOpcion())
         {
             case 1://1 año
-                return "Reporte para el año "+this.fechaInicio.getYear();
+                return "Reporte para el período "+this.fechaInicio.getYear();
             case 2://rango años
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"
                         +this.fechaFin.getYear();
@@ -311,7 +255,6 @@ public class Filtro_Fecha extends Filtro
                 return "Reporte para el período "+this.fechaInicio.getDay()+"/"+this.fechaInicio.getMonth()+"/"
                         +this.fechaInicio.getYear()+" - "+this.fechaFin.getDay()+"/"+this.fechaFin.getMonth()+"/"
                         +this.fechaFin.getYear();
-                
         }
         return null;
     }

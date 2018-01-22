@@ -129,7 +129,7 @@
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cliente:" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RRHH:" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                                                                         <ChoiceBox fx:id="choiceBox_periodo" prefWidth="211.0" GridPane.columnIndex="3" />
-                                                                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="188.0" text="Vaciar Filtro" GridPane.columnIndex="7" GridPane.rowIndex="3" />
+                                                                        <Button mnemonicParsing="false" onAction="#vaciarFiltro" prefHeight="25.0" prefWidth="188.0" text="Vaciar Filtro" GridPane.columnIndex="7" GridPane.rowIndex="3" />
                                                                      </children>
                                                                   </GridPane>
                                                                </children>

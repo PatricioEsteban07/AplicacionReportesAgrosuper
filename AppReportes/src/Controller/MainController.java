@@ -9,6 +9,9 @@ import Controller.filtroPeriodo.FiltroPeriodoController;
 import Model.CommandNames;
 import Model.Filtros.Filtro;
 import Model.Filtros.Filtro_Canal;
+import Model.Filtros.Filtro_Cliente;
+import Model.Filtros.Filtro_Sucursal;
+import Model.Filtros.Filtro_Zona;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ClienteEmpresas;
 import java.io.IOException;
@@ -133,6 +136,7 @@ public class MainController implements Initializable
         {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        inicializarPeriodo();
         inicializarFiltros();
         try
         {
@@ -183,11 +187,18 @@ public class MainController implements Initializable
         });
     }
     
+    @FXML
+    public void vaciarFiltro()
+    {
+        this.reporteBase.generarFiltrosBase();
+        this.choiceBox_periodo.getSelectionModel().clearSelection();
+        inicializarFiltros();
+    }
+    
     public void inicializarFiltros()
     {
-        inicializarPeriodo();
         ObservableList<String> listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll("Norte","Centro Norte","Santiago","Centro Sur","Sur");
+        listadoAux.addAll(((Filtro_Zona)(this.reporteBase.filtros.get("Filtro_Zona"))).zonas);
         this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_zonas.setPrefWidth(300);
         this.gridPane_Filtros2.add(checkComboBox_zonas, 3, 1);
@@ -199,7 +210,7 @@ public class MainController implements Initializable
         });
         
         listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll("Supermercado","Food Service","Call Center","Tradicional","Cliente Importante");
+        listadoAux.addAll(((Filtro_Canal)(this.reporteBase.filtros.get("Filtro_Canal"))).canales);
         this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_canales.setPrefWidth(300);
         this.gridPane_Filtros2.add(checkComboBox_canales, 3, 2);
@@ -216,7 +227,7 @@ public class MainController implements Initializable
         });
         
         listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll("Sucursal 1","Sucursal 2","Sucursal 3");
+        listadoAux.addAll(((Filtro_Sucursal)(this.reporteBase.filtros.get("Filtro_Sucursal"))).sucursales);
         this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_sucursales.setPrefWidth(300);
         this.gridPane_Filtros2.add(checkComboBox_sucursales, 7, 0);
@@ -228,9 +239,7 @@ public class MainController implements Initializable
         });
         
         listadoAux = FXCollections.observableArrayList();
-        listadoAux.add("Cliente 1");
-        listadoAux.add("Cliente 2");
-        listadoAux.add("Cliente 3");
+        listadoAux.addAll(((Filtro_Cliente)(this.reporteBase.filtros.get("Filtro_Cliente"))).clientes);
         this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_clientes.setPrefWidth(300);
         this.gridPane_Filtros2.add(checkComboBox_clientes, 7, 1);

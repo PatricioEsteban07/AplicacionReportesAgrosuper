@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class Filtro_Canal extends Filtro
 {
     private ArrayList<String> canalesSeleccionados;
-    private ArrayList<String> canales;
+    public ArrayList<String> canales;
 
     public Filtro_Canal()
     {

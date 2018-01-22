@@ -43,12 +43,13 @@ public abstract class Reporte
     public boolean generarFiltrosBase()
     {
         //crear todos los filtros vacios
+        this.filtros = new HashMap<>();
         this.filtros.put("Filtro_Fecha",new Filtro_Fecha());
         this.filtros.put("Filtro_Canal",new Filtro_Canal(generaCanales()));
         this.filtros.put("Filtro_Zona",new Filtro_Zona(generaZonas()));
-        this.filtros.put("Filtro_Sucursal",new Filtro_Sucursal());
-        this.filtros.put("Filtro_Cliente",new Filtro_Cliente());
-        this.filtros.put("Filtro_CargoRRHH",new Filtro_CargoRRHH());
+        this.filtros.put("Filtro_Sucursal",new Filtro_Sucursal(generaSucursales()));
+        this.filtros.put("Filtro_Cliente",new Filtro_Cliente(generaClientes()));
+        this.filtros.put("Filtro_CargoRRHH",new Filtro_CargoRRHH(generaCargosRRHH()));
         return false;
     }
     
@@ -77,5 +78,32 @@ public abstract class Reporte
     public abstract boolean generarExcel();
     public abstract boolean generarFiltrosBaseCustom();
     public abstract ArrayList<String> completarColumnasTabla();
+
+    private ArrayList<String> generaSucursales()
+    {
+        ArrayList<String> aux=new ArrayList<>();
+        aux.add("Sucursal 1");
+        aux.add("Sucursal 2");
+        aux.add("Sucursal 3");
+        return aux;
+    }
+
+    private ArrayList<String> generaClientes()
+    {
+        ArrayList<String> aux=new ArrayList<>();
+        aux.add("Cliente 1");
+        aux.add("Cliente 2");
+        aux.add("Cliente 3");
+        return aux;
+    }
+
+    private ArrayList<String> generaCargosRRHH()
+    {
+        ArrayList<String> aux=new ArrayList<>();
+        aux.add("Cargo 1");
+        aux.add("Cargo 2");
+        aux.add("Cargo 3");
+        return aux;
+    }
 
 }
