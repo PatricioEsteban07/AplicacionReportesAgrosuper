@@ -188,7 +188,7 @@ public class MainController implements Initializable
     }
     
     @FXML
-    public void vaciarFiltro()
+    public void buttonVaciarFiltro()
     {
         this.reporteBase.generarFiltrosBase();
         this.choiceBox_periodo.getSelectionModel().clearSelection();
@@ -361,6 +361,13 @@ public class MainController implements Initializable
     public boolean buttonGenerarReporte() throws InterruptedException
     {
         actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
+        
+        /*
+            compactar filtros
+            generar recursos en base a filtros
+            
+        
+        */
         
         ArrayList<String> columnasTabla=this.reporteBase.columnasExcel;
         if(columnasTabla==null)
