@@ -89,6 +89,10 @@ public class Filtro_Canal extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
+        if(this.canalesSeleccionados.isEmpty())
+        {
+            return null;
+        }
         String aux = "Reporte filtrado para canales: ";
         for (int i = 0; i < this.canalesSeleccionados.size(); i++)
         {

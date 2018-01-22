@@ -166,19 +166,12 @@
                                                                               <Font name="System Bold" size="12.0" />
                                                                            </font>
                                                                         </Text>
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Área Perteneciente:" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Información filtro:" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                                            <font>
                                                                               <Font name="System Bold" size="12.0" />
                                                                            </font>
                                                                         </Text>
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Información filtro:" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                                           <font>
-                                                                              <Font name="System Bold" size="12.0" />
-                                                                           </font>
-                                                                        </Text>
-                                                                        <Text fx:id="text_nombreReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="3" />
-                                                                        <Text fx:id="text_areaReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                                        <Text fx:id="text_filtroReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                                        <Text fx:id="text_filtroReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                                                         <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                                                                            <children>
                                                                               <Button mnemonicParsing="false" onAction="#buttonGenerarReporte" prefHeight="25.0" prefWidth="145.0" text="Generar Reporte" />
@@ -186,6 +179,13 @@
                                                                            <GridPane.margin>
                                                                               <Insets />
                                                                            </GridPane.margin>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3">
+                                                                           <children>
+                                                                              <Text fx:id="text_nombreReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                                                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" - " />
+                                                                              <Text fx:id="text_areaReporte" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                                                           </children>
                                                                         </HBox>
                                                                      </children>
                                                                   </GridPane>

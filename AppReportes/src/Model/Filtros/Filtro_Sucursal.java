@@ -89,7 +89,20 @@ public class Filtro_Sucursal extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.sucursalesSeleccionadas.isEmpty())
+        {
+            return null;
+        }
+        String aux = "Reporte filtrado para clientes: ";
+        for (int i = 0; i < this.sucursalesSeleccionadas.size(); i++)
+        {
+            aux=aux+this.sucursalesSeleccionadas.get(i);
+            if(i<this.sucursalesSeleccionadas.size()-1)
+            {
+                aux=aux+", ";
+            }
+        }
+        return aux;
     }
     
 }

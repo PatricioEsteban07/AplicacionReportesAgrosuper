@@ -89,7 +89,20 @@ public class Filtro_Cliente extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.clientesSeleccionados.isEmpty())
+        {
+            return null;
+        }
+        String aux = "Reporte filtrado para clientes: ";
+        for (int i = 0; i < this.clientesSeleccionados.size(); i++)
+        {
+            aux=aux+this.clientesSeleccionados.get(i);
+            if(i<this.clientesSeleccionados.size()-1)
+            {
+                aux=aux+", ";
+            }
+        }
+        return aux;
     }
     
 }

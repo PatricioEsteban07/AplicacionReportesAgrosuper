@@ -89,7 +89,20 @@ public class Filtro_CargoRRHH extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.tiposRRHHSeleccionados.isEmpty())
+        {
+            return null;
+        }
+        String aux = "Reporte filtrado para RRHH: ";
+        for (int i = 0; i < this.tiposRRHHSeleccionados.size(); i++)
+        {
+            aux=aux+this.tiposRRHHSeleccionados.get(i);
+            if(i<this.tiposRRHHSeleccionados.size()-1)
+            {
+                aux=aux+", ";
+            }
+        }
+        return aux;
     }
     
 }

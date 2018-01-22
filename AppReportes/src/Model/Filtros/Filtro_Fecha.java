@@ -166,7 +166,7 @@ public class Filtro_Fecha extends Filtro
                 break;
             case 4://(rango año, rango meses)
                     //REVISAR CASOS BORDE !!!
-                query=query+" ("+data.get("Fecha")+" BETWEEN '"+this.fechaInicio.getYear()+"-"
+                query=query+" ( DATE("+data.get("Fecha")+") BETWEEN '"+this.fechaInicio.getYear()+"-"
                     +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
                     +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
                 break;
@@ -181,7 +181,7 @@ public class Filtro_Fecha extends Filtro
                 break;
             case 8://(rango fecha)
                     //REVISAR CASOS BORDE !!!
-                query=query+" ("+data.get("Fecha")+" BETWEEN '"+this.fechaInicio.getYear()+"-"
+                query=query+" ( DATE("+data.get("Fecha")+") BETWEEN '"+this.fechaInicio.getYear()+"-"
                     +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
                     +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
                 break;

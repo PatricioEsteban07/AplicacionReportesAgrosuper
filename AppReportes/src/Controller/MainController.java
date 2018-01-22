@@ -19,6 +19,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -190,6 +192,13 @@ public class MainController implements Initializable
     @FXML
     public void buttonVaciarFiltro()
     {
+            Iterator it = this.reporteBase.filtros.entrySet().iterator();
+            while (it.hasNext()) 
+            {
+                Map.Entry pair = (Map.Entry)it.next();
+                System.out.println(pair.getKey() + " = " + ((Filtro)(pair.getValue())).generarEtiquetaInfo());
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         this.reporteBase.generarFiltrosBase();
         this.choiceBox_periodo.getSelectionModel().clearSelection();
         inicializarFiltros();
@@ -206,6 +215,14 @@ public class MainController implements Initializable
         this.checkComboBox_zonas.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 System.out.println(checkComboBox_zonas.getCheckModel().getCheckedItems());
+                
+                ArrayList<String> aux=new ArrayList<>();
+                for(int i =0 ; i < checkComboBox_zonas.getCheckModel().getCheckedItems().size(); i++)
+                {
+                    aux.add(checkComboBox_zonas.getCheckModel().getCheckedItems().get(i).toString());   
+                }
+                ((Filtro_Zona)(reporteBase.filtros.get("Filtro_Zona"))).setZonasSeleccionadas(aux);
+               // generarEtiqueta(reporteBase.filtros.get("Filtro_Zona"),checkComboBox_zonas);
             }
         });
         
@@ -218,10 +235,13 @@ public class MainController implements Initializable
         this.checkComboBox_canales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 System.out.println(checkComboBox_canales.getCheckModel().getCheckedItems());
-                for (Object canalAux : checkComboBox_canales.getCheckModel().getCheckedItems())
+                
+                ArrayList<String> aux=new ArrayList<>();
+                for(int i =0 ; i < checkComboBox_canales.getCheckModel().getCheckedItems().size(); i++)
                 {
-                    ((Filtro_Canal)(reporteBase.filtros.get("Filtro_Canal"))).addCanal(canalAux.toString());
+                    aux.add(checkComboBox_canales.getCheckModel().getCheckedItems().get(i).toString());   
                 }
+                ((Filtro_Canal)(reporteBase.filtros.get("Filtro_Canal"))).setCanalesSeleccionados(aux);
                 generarEtiqueta(reporteBase.filtros.get("Filtro_Canal"),checkComboBox_canales);
             }
         });
@@ -235,6 +255,14 @@ public class MainController implements Initializable
         this.checkComboBox_sucursales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 System.out.println(checkComboBox_sucursales.getCheckModel().getCheckedItems());
+                
+                ArrayList<String> aux=new ArrayList<>();
+                for(int i =0 ; i < checkComboBox_sucursales.getCheckModel().getCheckedItems().size(); i++)
+                {
+                    aux.add(checkComboBox_sucursales.getCheckModel().getCheckedItems().get(i).toString());   
+                }
+                ((Filtro_Sucursal)(reporteBase.filtros.get("Filtro_Sucursal"))).setSucursalesSeleccionadas(aux);
+                generarEtiqueta(reporteBase.filtros.get("Filtro_Sucursal"),checkComboBox_sucursales);
             }
         });
         
@@ -247,6 +275,14 @@ public class MainController implements Initializable
         this.checkComboBox_clientes.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 System.out.println(checkComboBox_clientes.getCheckModel().getCheckedItems());
+                
+                ArrayList<String> aux=new ArrayList<>();
+                for(int i =0 ; i < checkComboBox_clientes.getCheckModel().getCheckedItems().size(); i++)
+                {
+                    aux.add(checkComboBox_clientes.getCheckModel().getCheckedItems().get(i).toString());   
+                }
+                ((Filtro_Cliente)(reporteBase.filtros.get("Filtro_Cliente"))).setClientesSeleccionados(aux);
+                generarEtiqueta(reporteBase.filtros.get("Filtro_Cliente"),checkComboBox_clientes);
             }
         });
     }

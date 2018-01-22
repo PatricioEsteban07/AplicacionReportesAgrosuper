@@ -89,7 +89,20 @@ public class Filtro_Zona extends Filtro
     @Override
     public String generarEtiquetaInfo()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.zonasSeleccionadas.isEmpty())
+        {
+            return null;
+        }
+        String aux = "Reporte filtrado para clientes: ";
+        for (int i = 0; i < this.zonasSeleccionadas.size(); i++)
+        {
+            aux=aux+this.zonasSeleccionadas.get(i);
+            if(i<this.zonasSeleccionadas.size()-1)
+            {
+                aux=aux+", ";
+            }
+        }
+        return aux;
     }
     
 }
