@@ -58,16 +58,16 @@ public class GeneradorExcel_ClienteEmpresas extends GeneradorExcel
         HSSFWorkbook libro = new HSSFWorkbook();
         //Se inicializa el flujo de datos con el archivo xls
         FileOutputStream file = new FileOutputStream(archivoXLS);
-        
+        /*
         // Generate fonts
-        HSSFFont headerFont  = createFont(libro,HSSFColor.WHITE.index, (short)12, Font.BOLDWEIGHT_BOLD);
+        HSSFFont headerFont  = createFont(libro,HSSFColor.WHITE.index, (short)12, );
         HSSFFont contentFont = createFont(libro,HSSFColor.BLACK.index, (short)10, Font.BOLDWEIGHT_NORMAL);
 
         // Generate styles
         HSSFCellStyle headerStyle  = createStyle(libro,headerFont,  HSSFCellStyle.ALIGN_CENTER, HSSFColor.BLUE_GREY.index,       true, HSSFColor.WHITE.index);
         HSSFCellStyle oddRowStyle  = createStyle(libro,contentFont, HSSFCellStyle.ALIGN_LEFT,   HSSFColor.WHITE.index, true, HSSFColor.GREY_80_PERCENT.index);
         HSSFCellStyle evenRowStyle = createStyle(libro,contentFont, HSSFCellStyle.ALIGN_LEFT,   HSSFColor.GREY_25_PERCENT.index, true, HSSFColor.GREY_80_PERCENT.index);
-        
+        */
         //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
         HSSFSheet hoja = libro.createSheet(nombreTabla);
                 
@@ -77,7 +77,7 @@ public class GeneradorExcel_ClienteEmpresas extends GeneradorExcel
         for (int i = 0; i < this.columnas.size(); i++)
         {
             HSSFCell celda = fila.createCell(i);
-            celda.setCellStyle(headerStyle);
+//            celda.setCellStyle(headerStyle);
             celda.setCellValue(this.columnas.get(i));
             hoja.autoSizeColumn(i);
         }
@@ -96,34 +96,34 @@ public class GeneradorExcel_ClienteEmpresas extends GeneradorExcel
                 //Creamos la celda a partir de la fila actual
                 HSSFCell celda = filaAux.createCell(0);
                 celda.setCellValue(empresas.get(i).id);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+//                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(1);
                 celda.setCellValue(((Cliente)(((Empresa) empresa).clientes.get(i))).nombre);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+  //              celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(2);
                 celda.setCellValue(((Cliente)(((Empresa) empresa).clientes.get(i))).apellido);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+  //              celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(3);
                 celda.setCellValue(((Cliente)(((Empresa) empresa).clientes.get(i))).edad);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+ //               celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(4);
                 celda.setCellValue(((Cliente)(((Empresa) empresa).clientes.get(i))).sexo);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+  //              celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(5);
                 celda.setCellValue(((Cliente)(((Empresa) empresa).clientes.get(i))).descripcion);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+   //             celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(6);
                 celda.setCellValue(((Empresa) empresa).id);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+  //              celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(7);
                 celda.setCellValue(((Empresa) empresa).nombre);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+   //             celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(8);
                 celda.setCellValue(((Empresa) empresa).direccion);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+   //             celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 celda = filaAux.createCell(9);
                 celda.setCellValue(((Empresa) empresa).descripcion);
-                celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
+ //               celda.setCellStyle( contReg % 2 == 0 ? oddRowStyle : evenRowStyle );
                 contReg++;
             }
         }

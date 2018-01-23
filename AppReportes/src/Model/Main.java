@@ -5,6 +5,7 @@
  */
 package Model;
 
+import Model.PobladorDB.PobladorDB_ReporteNS;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 /**
  *
@@ -45,8 +47,11 @@ public class Main extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
-        launch(args);
+    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException {
+        //launch(args);
+        
+        new PobladorDB_ReporteNS().importar();
+        System.exit(0);
         
         /*
         Filtro_Fecha f=new Filtro_Fecha();

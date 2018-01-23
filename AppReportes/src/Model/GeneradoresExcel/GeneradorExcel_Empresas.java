@@ -51,7 +51,7 @@ public class GeneradorExcel_Empresas extends GeneradorExcel
         HSSFWorkbook libro = new HSSFWorkbook();
         //Se inicializa el flujo de datos con el archivo xls
         FileOutputStream file = new FileOutputStream(archivoXLS);
-        
+        /*
        // Generate fonts   
         HSSFFont headerFont  = createFont(libro,HSSFColor.WHITE.index, (short)12, Font.BOLDWEIGHT_BOLD);
         HSSFFont contentFont = createFont(libro,HSSFColor.BLACK.index, (short)10, Font.BOLDWEIGHT_NORMAL);
@@ -60,7 +60,7 @@ public class GeneradorExcel_Empresas extends GeneradorExcel
         HSSFCellStyle headerStyle  = createStyle(libro, headerFont,  HSSFCellStyle.ALIGN_CENTER, HSSFColor.BLUE_GREY.index,       true, HSSFColor.WHITE.index);
         HSSFCellStyle oddRowStyle  = createStyle(libro, contentFont, HSSFCellStyle.ALIGN_LEFT, HSSFColor.WHITE.index, true, HSSFColor.GREY_80_PERCENT.index);
         HSSFCellStyle evenRowStyle = createStyle(libro, contentFont, HSSFCellStyle.ALIGN_LEFT, HSSFColor.GREY_25_PERCENT.index, true, HSSFColor.GREY_80_PERCENT.index);
-        
+        */
         //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
         HSSFSheet hoja = libro.createSheet(nombreTabla);
                 
@@ -70,7 +70,7 @@ public class GeneradorExcel_Empresas extends GeneradorExcel
         for (int i = 0; i < this.columnas.size(); i++)
         {
             HSSFCell celda = fila.createCell(i);
-            celda.setCellStyle(headerStyle);
+  //          celda.setCellStyle(headerStyle);
             celda.setCellValue(this.columnas.get(i));
             hoja.autoSizeColumn(i);
         }
@@ -86,16 +86,16 @@ public class GeneradorExcel_Empresas extends GeneradorExcel
             //Creamos la celda a partir de la fila actual
             HSSFCell celda = filaAux.createCell(0);
             celda.setCellValue(empresas.get(i).id);
-            celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
+    //        celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
             celda = filaAux.createCell(1);
             celda.setCellValue(((Empresa)(empresas.get(i))).nombre);
-            celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
+   //         celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
             celda = filaAux.createCell(2);
             celda.setCellValue(((Empresa)(empresas.get(i))).direccion);
-            celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
+    //        celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
             celda = filaAux.createCell(3);
             celda.setCellValue(((Empresa)(empresas.get(i))).descripcion);
-            celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
+    //        celda.setCellStyle( i % 2 == 0 ? oddRowStyle : evenRowStyle );
         }
         libro.write(file);
         file.close();

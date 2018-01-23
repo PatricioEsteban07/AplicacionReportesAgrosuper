@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
@@ -28,18 +27,16 @@ public abstract class GeneradorExcel
         this.columnas = new ArrayList<>();
     }
     
-    public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException;
-    
     protected HSSFFont createFont(HSSFWorkbook workbook, short fontColor, short fontHeight, short fontBold) {
         HSSFFont font = workbook.createFont();
-        font.setBoldweight(fontBold);
+      //  font.setBoldweight(fontBold);
         font.setColor(fontColor);
         font.setFontName("Arial");
         font.setFontHeightInPoints(fontHeight);
 
         return font;
     }
-    
+    /*
     protected HSSFCellStyle createStyle(HSSFWorkbook workbook, HSSFFont font, short cellAlign, short cellColor, boolean cellBorder, short cellBorderColor) 
     {
         HSSFCellStyle style = workbook.createCellStyle();
@@ -60,4 +57,7 @@ public abstract class GeneradorExcel
         }
         return style;
     }
+    */
+    public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException;
+    
 }
