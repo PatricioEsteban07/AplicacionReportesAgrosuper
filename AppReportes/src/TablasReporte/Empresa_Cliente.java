@@ -8,7 +8,6 @@ package TablasReporte;
 import Model.Cliente;
 import Model.Empresa;
 import java.util.ArrayList;
-import javafx.beans.property.SimpleStringProperty;
 
 /**
  *

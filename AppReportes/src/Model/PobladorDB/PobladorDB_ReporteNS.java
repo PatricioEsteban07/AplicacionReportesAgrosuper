@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import javafx.scene.control.Alert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,7 +35,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
     
     public boolean importar() throws FileNotFoundException, IOException, InvalidFormatException
     {
-        File archivo=this.openFile(this.dirBase, "ejemploAux.xlsx");
+        File archivo=this.openFile(this.dirBase, "ejemplo2.xlsx");
         if(archivo==null)
         {
             CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, 
@@ -47,8 +50,70 @@ public class PobladorDB_ReporteNS extends PobladorDB
             //obtener la hoja que se va leer
             XSSFSheet sheet = worbook.getSheetAt(0);
             //obtener todas las filas de la hoja excel
-            Iterator<Row> rowIterator = sheet.iterator();
+          //  Iterator<Row> rowIterator = sheet.iterator();
 
+            //extraer datos Centro Distribucion
+            Set<String> centros = new HashSet<String>();
+            Set<String> oficinas = new HashSet<String>();
+            Set<String> materiales = new HashSet<String>();
+            
+            
+            this.connect();
+            int ctRow=1;
+            while(sheet.getRow(ctRow)!=null)
+            {
+                //RELLENO DE TABLA CENTRO
+                String idCentro=sheet.getRow(ctRow).getCell(0).toString().toUpperCase();
+                String nombreCentro=sheet.getRow(ctRow).getCell(1).toString().replace("Sucursal ", "");
+                System.out.println("Row: "+ctRow);
+                System.out.println("Centro: "+idCentro+"/"+nombreCentro);
+                if(!centros.contains(idCentro))
+                {
+                    this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
+                            "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
+                                    +nombreCentro+"')");
+                    centros.add(idCentro);
+                }
+                
+                //RELLENO DE TABLA OFICINA VENTAS
+                String idOficina=sheet.getRow(ctRow).getCell(2).toString().toUpperCase();
+                String nombreOficina=sheet.getRow(ctRow).getCell(3).toString();
+                System.out.println("Row: "+ctRow);
+                System.out.println("Of Ventas: "+idOficina+"/"+nombreOficina);
+                if(!oficinas.contains(idOficina))
+                {
+                    this.executeInsert("SELECT id FROM oficinaVentas WHERE id='"+idOficina+"'",
+                            "INSERT INTO oficinaVentas(id,nombre,centro_id) VALUES ('"+idOficina+"','"
+                                    +nombreOficina+"',"+idCentro+"')");
+                    oficinas.add(idOficina);
+                }
+                
+                //RELLENO TABLA MATERIAL
+                String idMaterial=sheet.getRow(ctRow).getCell(5).toString().toUpperCase();
+                String nombreMaterial=sheet.getRow(ctRow).getCell(6).toString();
+                System.out.println("Row: "+ctRow);
+                System.out.println("Centro: "+idMaterial+"/"+nombreMaterial);
+                if(!materiales.contains(idMaterial))
+                {
+                    this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
+                            "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
+                                    +nombreMaterial+"')");
+                    materiales.add(idMaterial);
+                }
+                
+              //  System.out.println("Pedido(Sector,Cj,Kg,$): "+sheet.getRow(ctRow).getCell(4)+"/"+sheet.getRow(ctRow).getCell(9)
+              //          +"/"+sheet.getRow(ctRow).getCell(10)+"/"+sheet.getRow(ctRow).getCell(11));
+                
+              //  System.out.println("Fecha/TipoCliente: "+sheet.getRow(ctRow).getCell(7)+"/"+sheet.getRow(ctRow).getCell(8));
+                System.out.println("-----------------------------");
+                ctRow++;
+            }
+            this.close();
+            
+            
+            
+            
+            /*
             Row row;
             // se recorre cada fila hasta el final
             while (rowIterator.hasNext()) {
@@ -63,7 +128,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     System.out.print(cell.toString()+" | ");
                 }
                 System.out.println();
-            }
+            }*/
         } catch (Exception e) {
             System.out.println("upsis :c"+e);
         }
