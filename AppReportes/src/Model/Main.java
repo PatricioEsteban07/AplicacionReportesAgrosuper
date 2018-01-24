@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -47,10 +48,13 @@ public class Main extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException, SQLException {
         //launch(args);
         
-        new PobladorDB_ReporteNS().importar();
+        PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS();
+        aux.importarMateriales();
+        System.out.println("FASE 2");
+        aux.importarPedidos();
         System.exit(0);
         
         /*

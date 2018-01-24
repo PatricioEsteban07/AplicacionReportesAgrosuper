@@ -10,15 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import javafx.scene.control.Alert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -35,7 +31,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
         super();
     }
     
-    public boolean importar() throws FileNotFoundException, IOException, InvalidFormatException
+    public boolean importarPedidos() throws FileNotFoundException, IOException, InvalidFormatException
     {
         File archivo=this.openFile(this.dirBase, "ejemplo2.xlsx");
         if(archivo==null)
@@ -59,8 +55,10 @@ public class PobladorDB_ReporteNS extends PobladorDB
             Set<String> oficinas = new HashSet<String>();
             Set<String> materiales = new HashSet<String>();
             
+            System.out.println("pase");
             
             this.connect();
+            System.out.println("pase");
             int ctRow=1;
             while(sheet.getRow(ctRow)!=null)
             {
