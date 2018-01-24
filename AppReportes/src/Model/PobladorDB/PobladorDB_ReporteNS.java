@@ -17,7 +17,9 @@ import java.util.Set;
 import javafx.scene.control.Alert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -62,10 +64,13 @@ public class PobladorDB_ReporteNS extends PobladorDB
             int ctRow=1;
             while(sheet.getRow(ctRow)!=null)
             {
+                System.out.println("Row: "+ctRow);
+
+                
+                
                 //RELLENO DE TABLA CENTRO
                 String idCentro=sheet.getRow(ctRow).getCell(0).toString().toUpperCase();
                 String nombreCentro=sheet.getRow(ctRow).getCell(1).toString().replace("Sucursal ", "");
-                System.out.println("Row: "+ctRow);
                 System.out.println("Centro: "+idCentro+"/"+nombreCentro);
                 if(!centros.contains(idCentro))
                 {
@@ -78,20 +83,20 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 //RELLENO DE TABLA OFICINA VENTAS
                 String idOficina=sheet.getRow(ctRow).getCell(2).toString().toUpperCase();
                 String nombreOficina=sheet.getRow(ctRow).getCell(3).toString();
-                System.out.println("Row: "+ctRow);
                 System.out.println("Of Ventas: "+idOficina+"/"+nombreOficina);
                 if(!oficinas.contains(idOficina))
                 {
                     this.executeInsert("SELECT id FROM oficinaVentas WHERE id='"+idOficina+"'",
                             "INSERT INTO oficinaVentas(id,nombre,centro_id) VALUES ('"+idOficina+"','"
-                                    +nombreOficina+"',"+idCentro+"')");
+                                    +nombreOficina+"','"+idCentro+"')");
                     oficinas.add(idOficina);
                 }
                 
                 //RELLENO TABLA MATERIAL
-                String idMaterial=sheet.getRow(ctRow).getCell(5).toString().toUpperCase();
+                XSSFCell aux=sheet.getRow(ctRow).getCell(5);
+                aux.setCellType(CellType.STRING);
+                String idMaterial=aux.toString();
                 String nombreMaterial=sheet.getRow(ctRow).getCell(6).toString();
-                System.out.println("Row: "+ctRow);
                 System.out.println("Centro: "+idMaterial+"/"+nombreMaterial);
                 if(!materiales.contains(idMaterial))
                 {
@@ -100,6 +105,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                                     +nombreMaterial+"')");
                     materiales.add(idMaterial);
                 }
+                
                 
               //  System.out.println("Pedido(Sector,Cj,Kg,$): "+sheet.getRow(ctRow).getCell(4)+"/"+sheet.getRow(ctRow).getCell(9)
               //          +"/"+sheet.getRow(ctRow).getCell(10)+"/"+sheet.getRow(ctRow).getCell(11));

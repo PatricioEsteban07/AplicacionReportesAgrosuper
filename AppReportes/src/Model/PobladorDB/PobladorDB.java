@@ -66,17 +66,12 @@ public abstract class PobladorDB
     {
         if (conn != null)
         {
-            System.out.println("paso1");
             Statement stmt = conn.createStatement();
-            System.out.println("paso2");
             if(!stmt.executeQuery(verify).next())
             {
-            System.out.println("paso3");
                 stmt.executeUpdate(query);
-            System.out.println("paso3");
                 return true;
             }
-            System.out.println("paso4");
         }
         return false;
     }
