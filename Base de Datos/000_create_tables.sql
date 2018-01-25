@@ -4,7 +4,9 @@
   id VARCHAR(2) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  
+  UNIQUE INDEX idx_sector_id USING BTREE (id) 
   );
   
   CREATE TABLE IF NOT EXISTS n2(
@@ -14,7 +16,9 @@
 
   PRIMARY KEY (id),
   
-  FOREIGN KEY (sector_id) REFERENCES sector(id)
+  FOREIGN KEY (sector_id) REFERENCES sector(id),
+  
+  UNIQUE INDEX idx_n2_id USING BTREE (id) 
   );
   
   CREATE TABLE IF NOT EXISTS n3(
@@ -26,7 +30,9 @@
   PRIMARY KEY (id),
   
   FOREIGN KEY (sector_id) REFERENCES sector(id),
-  FOREIGN KEY (n2_id) REFERENCES n2(id)
+  FOREIGN KEY (n2_id) REFERENCES n2(id),
+  
+  UNIQUE INDEX idx_n3_id USING BTREE (id) 
   );
   
   CREATE TABLE IF NOT EXISTS n4(
@@ -40,7 +46,9 @@
   
   FOREIGN KEY (sector_id) REFERENCES sector(id),
   FOREIGN KEY (n2_id) REFERENCES n2(id),
-  FOREIGN KEY (n3_id) REFERENCES n3(id)
+  FOREIGN KEY (n3_id) REFERENCES n3(id),
+  
+  UNIQUE INDEX idx_n4_id USING BTREE (id) 
   );
 
   CREATE TABLE IF NOT EXISTS centro(
@@ -54,14 +62,18 @@
   id VARCHAR(8) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  
+  UNIQUE INDEX idx_marca_id USING BTREE (id) 
   );
 
   CREATE TABLE IF NOT EXISTS agrupado(
   id VARCHAR(32) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  
+  UNIQUE INDEX idx_agrupado_id USING BTREE (id) 
   );
 
   CREATE TABLE IF NOT EXISTS tipoEnvasado(
@@ -82,13 +94,13 @@
   CREATE TABLE IF NOT EXISTS material(
   id VARCHAR(8) UNIQUE NOT NULL,
   nombre VARCHAR(64) NOT NULL,
-  fechaCreacion DATE NOT NULL,
+  fechaCreacion DATE,
   duracion INT DEFAULT 0,
   pesoCaja FLOAT DEFAULT 0,
-  activo INT NOT NULL DEFAULT 0,
+  activo INT DEFAULT 0,
   tipoEnvasado_id VARCHAR(8) DEFAULT NULL,
   estadoRefrigerado_id VARCHAR(8) DEFAULT NULL,
-  sector_id VARCHAR(2) NOT NULL,
+  sector_id VARCHAR(2) DEFAULT NULL,
   marca_id VARCHAR(8) DEFAULT NULL,
 
   PRIMARY KEY (id),
@@ -96,7 +108,9 @@
   FOREIGN KEY (tipoEnvasado_id) REFERENCES tipoEnvasado(id),
   FOREIGN KEY (estadoRefrigerado_id) REFERENCES estadoRefrigerado(id),
   FOREIGN KEY (sector_id) REFERENCES sector(id),
-  FOREIGN KEY (marca_id) REFERENCES marca(id)
+  FOREIGN KEY (marca_id) REFERENCES marca(id),
+  
+  UNIQUE INDEX idx_material_id USING BTREE (id) 
   );
   
   CREATE TABLE IF NOT EXISTS oficinaVentas(
@@ -106,5 +120,36 @@
 
   PRIMARY KEY (id),
   
+  FOREIGN KEY (centro_id) REFERENCES centro(id),
+  
+  UNIQUE INDEX idx_oficinaVentas_id USING BTREE (id) 
+  );
+  
+  CREATE TABLE IF NOT EXISTS pedido(
+  material_id VARCHAR(8) NOT NULL,
+  fecha DATE NOT NULL,
+  oficina_id VARCHAR(8) NOT NULL,
+  tipoCliente VARCHAR(32) DEFAULT NULL,
+  pedidoCj INT DEFAULT 0,
+  pedidoKg FLOAT DEFAULT 0,
+  pedidoNeto INT DEFAULT 0,
+
+  PRIMARY KEY (material_id,fecha,oficina_id),
+  
+  FOREIGN KEY (material_id) REFERENCES material(id),
+  FOREIGN KEY (oficina_id) REFERENCES oficinaVentas(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS stock(
+  material_id VARCHAR(8) NOT NULL,
+  fecha DATE NOT NULL,
+  centro_id VARCHAR(8) NOT NULL,
+  salidas INT DEFAULT 0,
+  stock INT DEFAULT 0,
+  disponible INT DEFAULT 0,
+
+  PRIMARY KEY (material_id,fecha,centro_id),
+  
+  FOREIGN KEY (material_id) REFERENCES material(id),
   FOREIGN KEY (centro_id) REFERENCES centro(id)
   );

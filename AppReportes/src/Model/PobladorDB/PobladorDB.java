@@ -6,6 +6,7 @@
 package Model.PobladorDB;
 
 import Model.CommandNames;
+import Model.LocalDB;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,19 +33,22 @@ public abstract class PobladorDB
     
     private Connection conn = null;
     public final String dirBase=System.getProperty("user.home")+"/Desktop/";
+    public LocalDB db;
 
-    public PobladorDB()
+    public PobladorDB(LocalDB db)
     {
-
+        this.db=db;
     }
     
     public boolean importarMateriales() throws FileNotFoundException, IOException, InvalidFormatException, SQLException
     {
+        int ctRow=1, ct_agrupados=0, ct_envasados=0, ct_refrigerados=0, ct_marcas=0, ct_sectores=0, ct_n2=0, 
+                ct_n3=0, ct_n4=0, ct_materiales=0;
         File archivo=this.openFile(this.dirBase, "Maestro Materiales Full.xlsx");
         if(archivo==null)
         {
-            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, 
-                    CommandNames.MSG_INFO_FILE_DOESNT_EXISTS);
+           // CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, 
+           //         CommandNames.MSG_INFO_FILE_DOESNT_EXISTS);
             return false;
         }
         //archivo existe, comienza procesado...
@@ -56,18 +60,8 @@ public abstract class PobladorDB
             XSSFSheet sheet = worbook.getSheet("HojaEstatica");
 
             //extraer datos materiales
-            Set<String> materiales = new HashSet<String>();
-            Set<String> marcas = new HashSet<String>();
-            Set<String> sectores = new HashSet<String>();
-            Set<String> agrupados = new HashSet<String>();
-            Set<String> tiposEnvasados = new HashSet<String>();
-            Set<String> estadosRefrigerados = new HashSet<String>();
-            Set<String> n2s = new HashSet<String>();
-            Set<String> n3s = new HashSet<String>();
-            Set<String> n4s = new HashSet<String>();
             
             this.connect();
-            int ctRow=1;
             while(sheet.getRow(ctRow)!=null)
             {
                 System.out.println("Row: "+ctRow);
@@ -83,14 +77,14 @@ public abstract class PobladorDB
                     idAgrupado="";
                     nombreAgrupado="";
                 }
-                else if(!agrupados.contains(idAgrupado))
+                else if(!this.db.agrupados.contains(idAgrupado))
                 {
                     nombreAgrupado=tratarCaracteresEspeciales(nombreAgrupado);
                     System.out.println(nombreAgrupado);
                     this.executeInsert("SELECT id FROM agrupado WHERE id='"+idAgrupado+"'",
                             "INSERT INTO agrupado(id,nombre) VALUES ('"+idAgrupado+"','"
                                 +nombreAgrupado+"')");
-                    agrupados.add(idAgrupado);
+                    this.db.agrupados.add(idAgrupado);
                 }
                 
                 //RELLENO TABLA TIPO ENVASADOS
@@ -106,12 +100,12 @@ public abstract class PobladorDB
                     idTipoEnvasado="";
                     nombreTipoEnvasado="";
                 }
-                else if(!tiposEnvasados.contains(idTipoEnvasado))
+                else if(!this.db.tiposEnvasados.contains(idTipoEnvasado))
                 {
                     this.executeInsert("SELECT id FROM tipoEnvasado WHERE id='"+idTipoEnvasado+"'",
                             "INSERT INTO tipoEnvasado(id,nombre) VALUES ('"+idTipoEnvasado+"','"
                                 +nombreTipoEnvasado+"')");
-                    tiposEnvasados.add(idTipoEnvasado);
+                    this.db.tiposEnvasados.add(idTipoEnvasado);
                 }
                 
                 //RELLENO TABLA ESTADO REFRIGERADO
@@ -125,12 +119,12 @@ public abstract class PobladorDB
                     idestadoRefrigerado="";
                     nombreEstadoRefrigerado="";
                 }
-                else if(!estadosRefrigerados.contains(idestadoRefrigerado))
+                else if(!this.db.estadosRefrigerados.contains(idestadoRefrigerado))
                 {
                     this.executeInsert("SELECT id FROM estadoRefrigerado WHERE id='"+idestadoRefrigerado+"'",
                             "INSERT INTO estadoRefrigerado(id,nombre) VALUES ('"+idestadoRefrigerado+"','"
                                 +nombreEstadoRefrigerado+"')");
-                    estadosRefrigerados.add(idestadoRefrigerado);
+                    this.db.estadosRefrigerados.add(idestadoRefrigerado);
                 }
                 
                 //RELLENO TABLA MARCAS
@@ -144,13 +138,13 @@ public abstract class PobladorDB
                     idMarca="";
                     nombreMarca="";
                 }
-                else if(!marcas.contains(idMarca))
+                else if(!this.db.marcas.contains(idMarca))
                 {
                     nombreMarca=tratarCaracteresEspeciales(nombreMarca);
                     this.executeInsert("SELECT id FROM marca WHERE id='"+idMarca+"'",
                             "INSERT INTO marca(id,nombre) VALUES ('"+idMarca+"','"
                                 +nombreMarca+"')");
-                    marcas.add(idMarca);
+                    this.db.marcas.add(idMarca);
                 }
                 
                 //RELLENO TABLA SECTORES
@@ -164,13 +158,13 @@ public abstract class PobladorDB
                     idSector="";
                     nombreSector="";
                 }
-                else if(!sectores.contains(idSector))
+                else if(!this.db.sectores.contains(idSector))
                 {
                     nombreSector=tratarCaracteresEspeciales(nombreSector);
                     this.executeInsert("SELECT id FROM sector WHERE id='"+idSector+"'",
                             "INSERT INTO sector(id,nombre) VALUES ('"+idSector+"','"
                                 +nombreSector+"')");
-                    sectores.add(idSector);
+                    this.db.sectores.add(idSector);
                 }
                 
                 //RELLENO TABLA N2
@@ -184,12 +178,12 @@ public abstract class PobladorDB
                     idN2="";
                     nombreN2="";
                 }
-                else if(!n2s.contains(idN2))
+                else if(!this.db.n2s.contains(idN2))
                 {
                     nombreN2=tratarCaracteresEspeciales(nombreN2);
                     this.executeInsert("SELECT id FROM n2 WHERE id='"+idN2+"'",
                             "INSERT INTO n2(id,nombre,sector_id) VALUES ('"+idN2+"','"+nombreN2+"','"+idSector+"')");
-                    n2s.add(idN2);
+                    this.db.n2s.add(idN2);
                 }
                 
                 //RELLENO TABLA N3
@@ -203,13 +197,13 @@ public abstract class PobladorDB
                     idN3="";
                     nombreN3="";
                 }
-                else if(!n3s.contains(idN3))
+                else if(!this.db.n3s.contains(idN3))
                 {
                     nombreN3=tratarCaracteresEspeciales(nombreN3);
                     this.executeInsert("SELECT id FROM n3 WHERE id='"+idN3+"'",
                             "INSERT INTO n3(id,nombre,sector_id,n2_id) VALUES ('"+idN3+"','"+nombreN3+"','"+idSector
                                 +"','"+idN2+"')");
-                    n3s.add(idN3);
+                    this.db.n3s.add(idN3);
                 }
                 
                 //RELLENO TABLA N4
@@ -223,13 +217,13 @@ public abstract class PobladorDB
                     idN4="";
                     nombreN4="";
                 }
-                else if(!n4s.contains(idN4))
+                else if(!this.db.n4s.contains(idN4))
                 {
                     nombreN4=tratarCaracteresEspeciales(nombreN4);
                     this.executeInsert("SELECT id FROM n4 WHERE id='"+idN4+"'",
                             "INSERT INTO n4(id,nombre,sector_id,n2_id,n3_id) VALUES ('"+idN4+"','"+nombreN4+"','"+idSector
                                 +"','"+idN2+"','"+idN3+"')");
-                    n4s.add(idN4);
+                    this.db.n4s.add(idN4);
                 }
                 
                 //RELLENO TABLA MATERIALES
@@ -262,7 +256,7 @@ public abstract class PobladorDB
                     nombreMaterial="";
                     System.out.println("NO AGREGADO!");
                 }
-                else if(!materiales.contains(idMaterial))
+                else if(!this.db.materiales.contains(idMaterial))
                 {
                     nombreMaterial=tratarCaracteresEspeciales(nombreMaterial);
                     this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
@@ -277,14 +271,8 @@ public abstract class PobladorDB
                                 +((validarContenido(idestadoRefrigerado))? "'"+idestadoRefrigerado+"'" : "null")+","
                                 +((validarContenido(idSector))? "'"+idSector+"'" : "null")+","
                                 +((validarContenido(idMarca))? "'"+idMarca+"'" : "null")+")");
-                    materiales.add(idMaterial);
+                    this.db.materiales.add(idMaterial);
                 }
-                
-                
-              //  System.out.println("Pedido(Sector,Cj,Kg,$): "+sheet.getRow(ctRow).getCell(4)+"/"+sheet.getRow(ctRow).getCell(9)
-              //          +"/"+sheet.getRow(ctRow).getCell(10)+"/"+sheet.getRow(ctRow).getCell(11));
-                
-              //  System.out.println("Fecha/TipoCliente: "+sheet.getRow(ctRow).getCell(7)+"/"+sheet.getRow(ctRow).getCell(8));
                 System.out.println("-----------------------------");
                 ctRow++;
             }
@@ -292,6 +280,18 @@ public abstract class PobladorDB
             System.out.println("Excepcion actualizando materiales: "+e);
         }
         this.close();
+        System.out.println("Contadores:");
+        System.out.println("Agrupados: "+ct_agrupados);
+        System.out.println("Envasados: "+ct_envasados);
+        System.out.println("Refrigerados: "+ct_refrigerados);
+        System.out.println("Marcas: "+ct_marcas);
+        System.out.println("Sectores: "+ct_sectores);
+        System.out.println("N2: "+ct_n2);
+        System.out.println("N3: "+ct_n3);
+        System.out.println("N4: "+ct_n4);
+        System.out.println("Materiales: "+ct_materiales);
+        System.out.println("Total rows: "+ctRow);
+        System.out.println("---------------");
         return false;
     }
 
@@ -352,7 +352,7 @@ public abstract class PobladorDB
         }
     }
 
-    private boolean validarContenido(String value)
+    public boolean validarContenido(String value)
     {
         switch(value)
         {
@@ -364,7 +364,7 @@ public abstract class PobladorDB
         return true;
     }
 
-    private String fomatearMes(String month)
+    protected String fomatearMes(String month)
     {
         switch(month)
         {

@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -51,10 +53,13 @@ public class Main extends Application {
     public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException, SQLException {
         //launch(args);
         
-        PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS();
+        PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS(new LocalDB());
+        System.out.println("FASE 0 - Tabla Maestra Materiales");
         aux.importarMateriales();
-        System.out.println("FASE 2");
+        System.out.println("FASE 1 - Tabla Pedidos");
         aux.importarPedidos();
+        System.out.println("FASE 2 - Tabla Stock");
+        aux.importarStock();
         System.exit(0);
         
         /*
