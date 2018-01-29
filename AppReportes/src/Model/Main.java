@@ -60,6 +60,8 @@ public class Main extends Application {
         aux.importarPedidos();
         System.out.println("FASE 2 - Tabla Stock");
         aux.importarStock();
+        System.out.println("FASE 2 - Tabla Despachos y Faltantes");
+        aux.importarDespachos();
         System.exit(0);
         
         /*

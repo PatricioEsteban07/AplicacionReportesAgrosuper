@@ -125,6 +125,14 @@
   UNIQUE INDEX idx_oficinaVentas_id USING BTREE (id) 
   );
   
+  CREATE TABLE IF NOT EXISTS cliente(
+  id VARCHAR(16) NOT NULL,
+  nombre VARCHAR(64) NOT NULL,
+  tipoCliente VARCHAR(32) DEFAULT NULL,
+
+  PRIMARY KEY (id)
+  );
+  
   CREATE TABLE IF NOT EXISTS pedido(
   material_id VARCHAR(8) NOT NULL,
   fecha DATE NOT NULL,
@@ -152,4 +160,21 @@
   
   FOREIGN KEY (material_id) REFERENCES material(id),
   FOREIGN KEY (centro_id) REFERENCES centro(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS despacho(
+  material_id VARCHAR(8) NOT NULL,
+  fecha DATE NOT NULL,
+  centro_id VARCHAR(8) NOT NULL,
+  cliente_id VARCHAR(16) NOT NULL,
+  despachoKg INT DEFAULT 0,
+  despachoCj INT DEFAULT 0,
+  faltanteKg INT DEFAULT 0,
+  faltanteCj INT DEFAULT 0,
+
+  PRIMARY KEY (material_id,fecha,centro_id,cliente_id),
+  
+  FOREIGN KEY (material_id) REFERENCES material(id),
+  FOREIGN KEY (centro_id) REFERENCES centro(id),
+  FOREIGN KEY (cliente_id) REFERENCES cliente(id)
   );

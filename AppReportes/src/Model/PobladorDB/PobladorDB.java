@@ -5,7 +5,6 @@
  */
 package Model.PobladorDB;
 
-import Model.CommandNames;
 import Model.LocalDB;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,9 +14,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
-import javafx.scene.control.Alert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -64,23 +60,24 @@ public abstract class PobladorDB
             this.connect();
             while(sheet.getRow(ctRow)!=null)
             {
-                System.out.println("Row: "+ctRow);
+            //    System.out.println("Row: "+ctRow);
 
                 //RELLENO TABLA AGRUPADOS
                 XSSFCell aux=sheet.getRow(ctRow).getCell(12);
                 aux.setCellType(CellType.STRING);
                 String idAgrupado=aux.toString();
                 String nombreAgrupado=sheet.getRow(ctRow).getCell(13).toString();
-                System.out.println("Agrupado: "+idAgrupado+"/"+nombreAgrupado);
+             //   System.out.println("Agrupado: "+idAgrupado+"/"+nombreAgrupado);
                 if(!validarContenido(idAgrupado) || !validarContenido(nombreAgrupado))
                 {
+                    System.out.println("Row: "+ctRow+" - Agrupado:"+idAgrupado+"/"+nombreAgrupado);
                     idAgrupado="";
                     nombreAgrupado="";
                 }
                 else if(!this.db.agrupados.contains(idAgrupado))
                 {
                     nombreAgrupado=tratarCaracteresEspeciales(nombreAgrupado);
-                    System.out.println(nombreAgrupado);
+                //    System.out.println(nombreAgrupado);
                     this.executeInsert("SELECT id FROM agrupado WHERE id='"+idAgrupado+"'",
                             "INSERT INTO agrupado(id,nombre) VALUES ('"+idAgrupado+"','"
                                 +nombreAgrupado+"')");
@@ -92,11 +89,12 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idTipoEnvasado=aux.toString();
                 String nombreTipoEnvasado=sheet.getRow(ctRow).getCell(21).toString();
-                System.out.println("Tipo Envasado: "+idTipoEnvasado+"/"+nombreTipoEnvasado);
+             //   System.out.println("Tipo Envasado: "+idTipoEnvasado+"/"+nombreTipoEnvasado);
                 
                 
                 if(!validarContenido(idTipoEnvasado) || !validarContenido(nombreTipoEnvasado))
                 {
+                    System.out.println("Row: "+ctRow+" - Envasado:"+idTipoEnvasado+"/"+nombreTipoEnvasado);
                     idTipoEnvasado="";
                     nombreTipoEnvasado="";
                 }
@@ -113,9 +111,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idestadoRefrigerado=aux.toString();
                 String nombreEstadoRefrigerado=sheet.getRow(ctRow).getCell(20).toString();
-                System.out.println("estadoRefrigerado: "+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
+                //System.out.println("estadoRefrigerado: "+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
                 if(!validarContenido(idestadoRefrigerado) || !validarContenido(nombreEstadoRefrigerado))
                 {
+                    System.out.println("Row: "+ctRow+" - Refrigerado:"+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
                     idestadoRefrigerado="";
                     nombreEstadoRefrigerado="";
                 }
@@ -132,9 +131,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idMarca=aux.toString();
                 String nombreMarca=sheet.getRow(ctRow).getCell(11).toString();
-                System.out.println("Marca: "+idMarca+"/"+nombreMarca);
+               // System.out.println("Marca: "+idMarca+"/"+nombreMarca);
                 if(!validarContenido(idMarca) || !validarContenido(nombreMarca))
                 {
+                    System.out.println("Row: "+ctRow+" - Marca:"+idMarca+"/"+nombreMarca);
                     idMarca="";
                     nombreMarca="";
                 }
@@ -152,9 +152,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idSector=aux.toString();
                 String nombreSector=sheet.getRow(ctRow).getCell(3).toString();
-                System.out.println("Sector: "+idSector+"/"+nombreSector);
+                //System.out.println("Sector: "+idSector+"/"+nombreSector);
                 if(!validarContenido(idSector) || !validarContenido(nombreSector))
                 {
+                    System.out.println("Row: "+ctRow+" - Sector:"+idSector+"/"+nombreSector);
                     idSector="";
                     nombreSector="";
                 }
@@ -172,9 +173,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idN2=aux.toString();
                 String nombreN2=sheet.getRow(ctRow).getCell(5).toString();
-                System.out.println("N2: "+idN2+"/"+nombreN2);
+               // System.out.println("N2: "+idN2+"/"+nombreN2);
                 if(!validarContenido(idN2) || !validarContenido(nombreN2))
                 {
+                    System.out.println("Row: "+ctRow+" - N2:"+idN2+"/"+nombreN2);
                     idN2="";
                     nombreN2="";
                 }
@@ -191,9 +193,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idN3=aux.toString();
                 String nombreN3=sheet.getRow(ctRow).getCell(7).toString();
-                System.out.println("N3: "+idN3+"/"+nombreN3);
+               // System.out.println("N3: "+idN3+"/"+nombreN3);
                 if(!validarContenido(idN3) || !validarContenido(nombreN3))
                 {
+                    System.out.println("Row: "+ctRow+" - N3:"+idN3+"/"+nombreN3);
                     idN3="";
                     nombreN3="";
                 }
@@ -211,9 +214,10 @@ public abstract class PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idN4=aux.toString();
                 String nombreN4=sheet.getRow(ctRow).getCell(9).toString();
-                System.out.println("N4: "+idN4+"/"+nombreN4);
+               // System.out.println("N4: "+idN4+"/"+nombreN4);
                 if(!validarContenido(idN4) || !validarContenido(nombreN4))
                 {
+                    System.out.println("Row: "+ctRow+" - N4:"+idN4+"/"+nombreN4);
                     idN4="";
                     nombreN4="";
                 }
@@ -244,14 +248,15 @@ public abstract class PobladorDB
                 String duracionMaterial=aux.toString();
                 String pesoCajaMaterial=sheet.getRow(ctRow).getCell(19).toString();
                 
-                System.out.println("caja:"+pesoCajaMaterial);
+             //   System.out.println("caja:"+pesoCajaMaterial);
                 
                 aux=sheet.getRow(ctRow).getCell(15);
                 aux.setCellType(CellType.STRING);
                 String activoMaterial=aux.toString();
-                System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
+                //System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
                 if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                 {
+                    System.out.println("Row: "+ctRow+" - Material:"+idMaterial+"/"+nombreMaterial);
                     idMaterial="";
                     nombreMaterial="";
                     System.out.println("NO AGREGADO!");
@@ -273,7 +278,11 @@ public abstract class PobladorDB
                                 +((validarContenido(idMarca))? "'"+idMarca+"'" : "null")+")");
                     this.db.materiales.add(idMaterial);
                 }
-                System.out.println("-----------------------------");
+                else
+                {
+                    System.out.println("Row:"+ctRow+" - Material existe!");
+                }
+              //  System.out.println("-----------------------------");
                 ctRow++;
             }
         } catch (Exception e) {

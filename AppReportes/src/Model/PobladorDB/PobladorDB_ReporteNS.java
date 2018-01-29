@@ -51,13 +51,19 @@ public class PobladorDB_ReporteNS extends PobladorDB
             this.connect();
             while(sheet.getRow(ctRow)!=null)
             {
-                System.out.println("Row: "+ctRow);
+             //   System.out.println("Row: "+ctRow);
                 
                 //RELLENO DE TABLA CENTRO
                 String idCentro=sheet.getRow(ctRow).getCell(0).toString().toUpperCase();
                 String nombreCentro=sheet.getRow(ctRow).getCell(1).toString().replace("Sucursal ", "");
-                System.out.println("Centro: "+idCentro+"/"+nombreCentro);
-                if(!this.db.centros.contains(idCentro))
+              //  System.out.println("Centro: "+idCentro+"/"+nombreCentro);
+                if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
+                {
+                    System.out.println("Row: "+ctRow+" - Centro:"+idCentro+"/"+nombreCentro);
+                    idCentro="";
+                    nombreCentro="";
+                }
+                else if(!this.db.centros.contains(idCentro))
                 {
                     this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
                             "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
@@ -69,8 +75,14 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 //RELLENO DE TABLA OFICINA VENTAS
                 String idOficina=sheet.getRow(ctRow).getCell(2).toString().toUpperCase();
                 String nombreOficina=sheet.getRow(ctRow).getCell(3).toString();
-                System.out.println("Of Ventas: "+idOficina+"/"+nombreOficina);
-                if(!this.db.oficinas.contains(idOficina))
+             //   System.out.println("Of Ventas: "+idOficina+"/"+nombreOficina);
+                if(!validarContenido(idOficina) || !validarContenido(nombreOficina))
+                {
+                    System.out.println("Row: "+ctRow+" - Oficina:"+idOficina+"/"+nombreOficina);
+                    idOficina="";
+                    nombreOficina="";
+                }
+                else if(!this.db.oficinas.contains(idOficina))
                 {
                     this.executeInsert("SELECT id FROM oficinaVentas WHERE id='"+idOficina+"'",
                             "INSERT INTO oficinaVentas(id,nombre,centro_id) VALUES ('"+idOficina+"','"
@@ -84,8 +96,14 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 aux.setCellType(CellType.STRING);
                 String idMaterial=aux.toString();
                 String nombreMaterial=sheet.getRow(ctRow).getCell(6).toString();
-                System.out.println("Centro: "+idMaterial+"/"+nombreMaterial);
-                if(!this.db.materiales.contains(idMaterial))
+             //   System.out.println("Centro: "+idMaterial+"/"+nombreMaterial);
+                if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
+                {
+                    System.out.println("Row: "+ctRow+" - Material:"+idMaterial+"/"+nombreMaterial);
+                    idCentro="";
+                    nombreCentro="";
+                }
+                else if(!this.db.materiales.contains(idMaterial))
                 {
                     this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
                             "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
@@ -113,8 +131,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 fecha=anio+"-"+mes+"-"+dia;
                 
                 String idPedido=idMaterial+fecha+idOficina;
-                System.out.println("Pedido: "+idPedido);
-                if(!this.db.pedidos.contains(idPedido))
+            //    System.out.println("Pedido: "+idPedido);
+                if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idOficina))
+                {
+                    System.out.println("Row: "+ctRow+" - Pedido:"+idCentro+"/"+nombreCentro+"/"+idOficina);
+                }
+                else if(!this.db.pedidos.contains(idPedido))
                 {
                     this.executeInsert("SELECT material_id FROM pedido WHERE material_id='"+idMaterial+"' AND oficina_id='"
                             +idOficina+"' AND fecha='"+fecha+"'",
@@ -125,7 +147,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     ct_pedidos++;
                 }
                 
-                System.out.println("-----------------------------");
+            //    System.out.println("-----------------------------");
                 ctRow++;
             }
             this.close();
@@ -165,7 +187,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
             this.connect();
             while(sheet.getRow(ctRow)!=null)
             {
-                System.out.println("Row: "+ctRow);
+               // System.out.println("Row: "+ctRow);
                 
                 //RELLENO DE TABLA CENTRO
                 String idCentro=sheet.getRow(ctRow).getCell(0).toString().toUpperCase();
@@ -173,9 +195,9 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 System.out.println("Centro: "+idCentro+"/"+nombreCentro);
                 if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
                 {
+                    System.out.println("Row: "+ctRow+" - Centro:"+idCentro+"/"+nombreCentro);
                     idCentro="";
                     nombreCentro="";
-                    System.out.println("NO AGREGADO!");
                 }
                 else if(!this.db.centros.contains(idCentro))
                 {
@@ -194,9 +216,9 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
                 if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                 {
+                    System.out.println("Row: "+ctRow+" - Material:"+idMaterial+"/"+nombreMaterial);
                     idMaterial="";
                     nombreMaterial="";
-                    System.out.println("NO AGREGADO!");
                 }
                 else if(!this.db.materiales.contains(idMaterial))
                 {
@@ -243,10 +265,10 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 System.out.println("Stock: "+idStock);
                 if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idCentro))
                 {
+                    System.out.println("Row: "+ctRow+" - Stock:"+idMaterial+"/"+fecha+"/"+idCentro);
                     idMaterial="";
                     fecha="";
                     idCentro="";
-                    System.out.println("NO AGREGADO!");
                 }
                 else if(!this.db.stocks.contains(idStock))
                 {
@@ -273,6 +295,177 @@ public class PobladorDB_ReporteNS extends PobladorDB
         System.out.println("Centros: "+ct_centros);
         System.out.println("Materiales: "+ct_materiales);
         System.out.println("Stocks: "+ct_stocks);
+        System.out.println("Total rows: "+ctRow);
+        System.out.println("---------------");
+        return false;
+    }
+    
+    public boolean importarDespachos() throws FileNotFoundException, IOException, InvalidFormatException
+    {
+        int ct_centros=0, ct_materiales=0, ct_clientes=0, ct_despachos=0, ctRow=1;
+        File archivo=this.openFile(this.dirBase, "despacho-faltantes.xlsx");
+        if(archivo==null)
+        {
+          //  CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, 
+            //        CommandNames.MSG_INFO_FILE_DOESNT_EXISTS);
+            return false;
+        }
+        //archivo existe, comienza procesado...
+        try (FileInputStream file = new FileInputStream(archivo)) {
+            // leer archivo excel
+            XSSFWorkbook worbook = new XSSFWorkbook(file);
+            //obtener la hoja que se va leer
+            XSSFSheet sheet = worbook.getSheetAt(0);
+            //obtener todas las filas de la hoja excel
+
+            //extraer datos Centro Distribucion
+            
+            this.connect();
+            while(sheet.getRow(ctRow)!=null)
+            {
+               // System.out.println("Row: "+ctRow);
+                
+                //RELLENO DE TABLA CENTRO
+                String idCentro=sheet.getRow(ctRow).getCell(4).toString().toUpperCase();
+                String nombreCentro=sheet.getRow(ctRow).getCell(5).toString().replace("Sucursal ", "");
+                System.out.println("Centro: "+idCentro+"/"+nombreCentro);
+                if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
+                {
+                    System.out.println("Row: "+ctRow+" - Centro:"+idCentro+"/"+nombreCentro);
+                    idCentro="";
+                    nombreCentro="";
+                }
+                else if(!this.db.centros.contains(idCentro))
+                {
+                    this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
+                            "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
+                                    +nombreCentro+"')");
+                    this.db.centros.add(idCentro);
+                    ct_centros++;
+                }
+                
+                //RELLENO TABLA MATERIAL
+                XSSFCell aux=sheet.getRow(ctRow).getCell(9);
+                aux.setCellType(CellType.STRING);
+                String idMaterial=aux.toString();
+                String nombreMaterial=sheet.getRow(ctRow).getCell(10).toString();
+                System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
+                if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
+                {
+                    System.out.println("Row: "+ctRow+" - Material:"+idMaterial+"/"+nombreMaterial);
+                    idMaterial="";
+                    nombreMaterial="";
+                }
+                else if(!this.db.materiales.contains(idMaterial))
+                {
+                    this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
+                            "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
+                                    +nombreMaterial+"')");
+                    this.db.materiales.add(idMaterial);
+                    ct_materiales++;
+                }
+                
+                //RELLENO TABLA CLIENTES
+                aux=sheet.getRow(ctRow).getCell(7);
+                aux.setCellType(CellType.STRING);
+                String idCliente=aux.toString();
+                String nombreCliente=sheet.getRow(ctRow).getCell(8).toString();
+                String tipoCliente=sheet.getRow(ctRow).getCell(3).toString();
+                System.out.println("Cliente: "+idCliente+"/"+nombreCliente);
+                if(!validarContenido(idCliente) || !validarContenido(nombreCliente))
+                {
+                    System.out.println("Row: "+ctRow+" - Cliente:"+idCliente+"/"+nombreCliente);
+                    idCliente="";
+                    nombreCliente="";
+                }
+                else if(!this.db.clientes.contains(idCliente))
+                {
+                    this.executeInsert("SELECT id FROM cliente WHERE id='"+idCliente+"'",
+                            "INSERT INTO cliente(id,nombre,tipoCliente) VALUES ('"+idCliente+"','"
+                                    +nombreCliente+"',"
+                                    +((validarContenido(tipoCliente))? "'"+tipoCliente+"'" : "null")+")");
+                    this.db.clientes.add(idCliente);
+                    ct_clientes++;
+                }
+                
+                
+                //RELLENO TABLA DESPACHOS                
+                
+                aux=sheet.getRow(ctRow).getCell(14);
+                String despachoKg="";
+                if(aux!=null)
+                {
+                    aux.setCellType(CellType.STRING);
+                    despachoKg=aux.toString();
+                }
+                aux=sheet.getRow(ctRow).getCell(15);
+                String faltanteKg="";
+                if(aux!=null)
+                {
+                    aux.setCellType(CellType.STRING);
+                    faltanteKg=aux.toString();
+                }
+                aux=sheet.getRow(ctRow).getCell(16);
+                String despachoCj="";
+                if(aux!=null)
+                {
+                    aux.setCellType(CellType.STRING);
+                    despachoCj=aux.toString();
+                }
+                aux=sheet.getRow(ctRow).getCell(17);
+                String faltanteCj="";
+                if(aux!=null)
+                {
+                    aux.setCellType(CellType.STRING);
+                    faltanteCj=aux.toString();
+                }
+                
+                //OJO, VERIFICAR QUE FECHAS ESTEN INGRESADAS CORRECTAMENTE
+                String fecha=sheet.getRow(ctRow).getCell(6).toString();
+                String dia=fecha.substring(0, 2);
+                String mes=fecha.substring(3, 5);
+                String anio=fecha.substring(6);
+                fecha=anio+"-"+mes+"-"+dia;
+                
+                String idDespacho=idMaterial+fecha+idCentro+idCliente;
+                System.out.println("Despacho: "+idDespacho);
+                if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idCentro)
+                        || !validarContenido(idCliente))
+                {
+                    System.out.println("Row: "+ctRow+" - Despacho:"+idMaterial+"/"+fecha+"/"+idCentro+"/"+idCliente);
+                    idMaterial="";
+                    fecha="";
+                    idCentro="";
+                    idCliente="";
+                }
+                else if(!this.db.despachos.contains(idDespacho))
+                {
+                    this.executeInsert("SELECT material_id FROM despacho WHERE material_id='"+idMaterial+"' AND centro_id='"
+                            +idCentro+"' AND fecha='"+fecha+"' AND cliente_id='"+idCliente+"'",
+                            "INSERT INTO despacho(material_id,fecha,centro_id,cliente_id,despachoKg,faltanteKg,despachoCj,"
+                                    + "faltanteCj) VALUES ("+((validarContenido(idMaterial))? "'"+idMaterial+"'" : "null")+","
+                                    +((validarContenido(fecha))? "'"+fecha+"'" : "null")+","
+                                    +((validarContenido(idCentro))? "'"+idCentro+"'" : "null")+","
+                                    +((validarContenido(idCliente))? "'"+idCliente+"'" : "null")+","
+                                    +((validarContenido(despachoKg))? "'"+despachoKg+"'" : "null")+","
+                                    +((validarContenido(faltanteKg))? "'"+faltanteKg+"'" : "null")+","
+                                    +((validarContenido(despachoCj))? "'"+despachoCj+"'" : "null")+","
+                                    +((validarContenido(faltanteCj))? "'"+faltanteCj+"'" : "null")+")");
+                    this.db.despachos.add(idDespacho);
+                    ct_despachos++;
+                }
+                System.out.println("-----------------------------");
+                ctRow++;
+            }
+            this.close();
+        } catch (Exception e) {
+            System.out.println("upsis :c"+e);
+        }
+        System.out.println("Contadores:");
+        System.out.println("Centros: "+ct_centros);
+        System.out.println("Materiales: "+ct_materiales);
+        System.out.println("Clientes: "+ct_clientes);
+        System.out.println("Despachos: "+ct_despachos);
         System.out.println("Total rows: "+ctRow);
         System.out.println("---------------");
         return false;

@@ -27,6 +27,8 @@ public class LocalDB
     public Set<String> oficinas;
     public Set<String> pedidos;
     public Set<String> stocks;
+    public Set<String> despachos;
+    public Set<String> clientes;
 
     public LocalDB()
     {
@@ -43,6 +45,8 @@ public class LocalDB
         this.oficinas = new HashSet<String>();
         this.pedidos = new HashSet<String>();
         this.stocks = new HashSet<String>();
+        this.despachos = new HashSet<String>();
+        this.clientes = new HashSet<String>();
     }
     
     
