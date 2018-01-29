@@ -12,8 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -55,12 +53,12 @@ public class Main extends Application {
         
         PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS(new LocalDB());
         System.out.println("FASE 0 - Tabla Maestra Materiales");
-        aux.importarMateriales();
+       // aux.importarMateriales();
         System.out.println("FASE 1 - Tabla Pedidos");
-        aux.importarPedidos();
+       // aux.importarPedidos();
         System.out.println("FASE 2 - Tabla Stock");
-        aux.importarStock();
-        System.out.println("FASE 2 - Tabla Despachos y Faltantes");
+       // aux.importarStock();
+        System.out.println("FASE 3 - Tabla Despachos y Faltantes");
         aux.importarDespachos();
         System.exit(0);
         

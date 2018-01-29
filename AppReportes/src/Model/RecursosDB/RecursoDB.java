@@ -5,6 +5,7 @@
  */
 package Model.RecursosDB;
 
+import Model.CommandNames;
 import Model.Recurso;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -46,7 +47,7 @@ public abstract class RecursoDB
             try
             {
                 Class.forName("com.mysql.jdbc.Driver");
-                this.conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_app_reportes", "root", "12345678");
+                this.conn = DriverManager.getConnection(CommandNames.URL_CONNECT_DB, "root", "12345678");
             }
             catch (SQLException ex)
             {
