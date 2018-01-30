@@ -49,7 +49,7 @@ public class RecursoDB_Clientes extends RecursoDB
                 int edadAux = result.getInt("edad");
                 String sexoAux = result.getString("sexo");
                 String descripcionAux = result.getString("descripcion");
-                if(add(new Cliente(idAux, nombreAux, apellidoAux, edadAux, sexoAux, descripcionAux))==-1)
+                if(add(new Cliente(idAux+"", nombreAux, apellidoAux, edadAux, sexoAux, descripcionAux))==-1)
                 {
                     return false;
                 }

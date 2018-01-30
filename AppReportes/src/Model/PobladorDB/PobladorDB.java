@@ -7,6 +7,7 @@ package Model.PobladorDB;
 
 import Model.CommandNames;
 import Model.LocalDB;
+import Model.PobladorDB.Threads.Buzon;
 import com.monitorjbl.xlsx.StreamingReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,15 +18,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -33,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public abstract class PobladorDB
 {
-    
+    public Buzon buzon;
     private Connection conn = null;
     public final String dirBase=System.getProperty("user.home")+"/Desktop/";
     public LocalDB db;
@@ -41,11 +38,12 @@ public abstract class PobladorDB
     public PobladorDB(LocalDB db)
     {
         this.db=db;
+        this.buzon = new Buzon();
     }
     
     public boolean importarMateriales() throws FileNotFoundException, IOException, InvalidFormatException, SQLException
     {
-        int ctRow=1, ct_agrupados=0, ct_envasados=0, ct_refrigerados=0, ct_marcas=0, ct_sectores=0, ct_n2=0, 
+        int ctRow=0, ct_agrupados=0, ct_envasados=0, ct_refrigerados=0, ct_marcas=0, ct_sectores=0, ct_n2=0, 
                 ct_n3=0, ct_n4=0, ct_materiales=0;
         File archivo=this.openFile(this.dirBase, "Maestro Materiales Full.xlsx");
         if(archivo==null)
@@ -56,27 +54,25 @@ public abstract class PobladorDB
         }
         //archivo existe, comienza procesado...
         try (InputStream is = new FileInputStream(archivo)) {
-            
             // leer archivo excel
             Workbook workbook = StreamingReader.builder()
                     .rowCacheSize(100)    // number of rows to keep in memory (defaults to 10)
                     .bufferSize(4096)     // buffer size to use when reading InputStream to file (defaults to 1024)
                     .open(is); 
             //obtener la hoja que se va leer
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(1);
             //obtener todas las filas de la hoja excel
             
             this.connect();
             for(Row row : sheet)
             {
-                System.out.println("Row: "+ctRow);
+               //System.out.println("Row: "+ctRow);
                 if(ctRow!=0)
                 {
-
                     //RELLENO TABLA AGRUPADOS
-                    String idAgrupado=row.getCell(12).getStringCellValue();
-                    String nombreAgrupado=row.getCell(13).getStringCellValue();
-                 //   System.out.println("Agrupado: "+idAgrupado+"/"+nombreAgrupado);
+                    String idAgrupado=(row.getCell(12)==null) ? "" : row.getCell(12).getStringCellValue();
+                    String nombreAgrupado=(row.getCell(13)==null) ? "" : row.getCell(13).getStringCellValue();
+                   // System.out.println("Agrupado: "+idAgrupado+"/"+nombreAgrupado);
                     if(!validarContenido(idAgrupado) || !validarContenido(nombreAgrupado))
                     {
                         System.out.println("Row: "+ctRow+" - Agrupado:"+idAgrupado+"/"+nombreAgrupado);
@@ -85,7 +81,7 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.agrupados.contains(idAgrupado))
                     {
-                        nombreAgrupado=tratarCaracteresEspeciales(nombreAgrupado);
+                        nombreAgrupado.replace("'", "");
                     //    System.out.println(nombreAgrupado);
                         this.executeInsert("SELECT id FROM agrupado WHERE id='"+idAgrupado+"'",
                                 "INSERT INTO agrupado(id,nombre) VALUES ('"+idAgrupado+"','"
@@ -94,10 +90,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA TIPO ENVASADOS
-                    String idTipoEnvasado=row.getCell(16).getStringCellValue();
-                    String nombreTipoEnvasado=row.getCell(21).getStringCellValue();
-                 //   System.out.println("Tipo Envasado: "+idTipoEnvasado+"/"+nombreTipoEnvasado);
-
+                    String idTipoEnvasado=(row.getCell(16)==null) ? "" : row.getCell(16).getStringCellValue();
+                    String nombreTipoEnvasado=(row.getCell(21)==null) ? "" : row.getCell(21).getStringCellValue();
+                   // System.out.println("Tipo Envasado: "+idTipoEnvasado+"/"+nombreTipoEnvasado);
 
                     if(!validarContenido(idTipoEnvasado) || !validarContenido(nombreTipoEnvasado))
                     {
@@ -114,9 +109,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA ESTADO REFRIGERADO
-                    String idestadoRefrigerado=row.getCell(17).getStringCellValue();
-                    String nombreEstadoRefrigerado=row.getCell(20).getStringCellValue();
-                    //System.out.println("estadoRefrigerado: "+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
+                    String idestadoRefrigerado=(row.getCell(17)==null) ? "" : row.getCell(17).getStringCellValue();
+                    String nombreEstadoRefrigerado=(row.getCell(20)==null) ? "" : row.getCell(20).getStringCellValue();
+                  //  System.out.println("estadoRefrigerado: "+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
                     if(!validarContenido(idestadoRefrigerado) || !validarContenido(nombreEstadoRefrigerado))
                     {
                         System.out.println("Row: "+ctRow+" - Refrigerado:"+idestadoRefrigerado+"/"+nombreEstadoRefrigerado);
@@ -132,9 +127,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA MARCAS
-                    String idMarca=row.getCell(10).getStringCellValue();
-                    String nombreMarca=row.getCell(11).getStringCellValue();
-                   // System.out.println("Marca: "+idMarca+"/"+nombreMarca);
+                    String idMarca=(row.getCell(10)==null) ? "" : row.getCell(10).getStringCellValue();
+                    String nombreMarca=(row.getCell(11)==null) ? "" : row.getCell(11).getStringCellValue();
+                //    System.out.println("Marca: "+idMarca+"/"+nombreMarca);
                     if(!validarContenido(idMarca) || !validarContenido(nombreMarca))
                     {
                         System.out.println("Row: "+ctRow+" - Marca:"+idMarca+"/"+nombreMarca);
@@ -143,7 +138,7 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.marcas.contains(idMarca))
                     {
-                        nombreMarca=tratarCaracteresEspeciales(nombreMarca);
+                        nombreMarca.replace("'", "");
                         this.executeInsert("SELECT id FROM marca WHERE id='"+idMarca+"'",
                                 "INSERT INTO marca(id,nombre) VALUES ('"+idMarca+"','"
                                     +nombreMarca+"')");
@@ -151,9 +146,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA SECTORES
-                    String idSector=row.getCell(2).getStringCellValue();
-                    String nombreSector=row.getCell(3).getStringCellValue();
-                    //System.out.println("Sector: "+idSector+"/"+nombreSector);
+                    String idSector=(row.getCell(2)==null) ? "" : row.getCell(2).getStringCellValue();
+                    String nombreSector=(row.getCell(3)==null) ? "" : row.getCell(3).getStringCellValue();
+                 //   System.out.println("Sector: "+idSector+"/"+nombreSector);
                     if(!validarContenido(idSector) || !validarContenido(nombreSector))
                     {
                         System.out.println("Row: "+ctRow+" - Sector:"+idSector+"/"+nombreSector);
@@ -162,7 +157,7 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.sectores.contains(idSector))
                     {
-                        nombreSector=tratarCaracteresEspeciales(nombreSector);
+                        nombreSector.replace("'", "");
                         this.executeInsert("SELECT id FROM sector WHERE id='"+idSector+"'",
                                 "INSERT INTO sector(id,nombre) VALUES ('"+idSector+"','"
                                     +nombreSector+"')");
@@ -170,9 +165,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA N2
-                    String idN2=row.getCell(4).getStringCellValue();
-                    String nombreN2=sheet.getRow(ctRow).getCell(5).getStringCellValue();
-                   // System.out.println("N2: "+idN2+"/"+nombreN2);
+                    String idN2=(row.getCell(4)==null) ? "" : row.getCell(4).getStringCellValue();
+                    String nombreN2=(row.getCell(5)==null) ? "" : row.getCell(5).getStringCellValue();
+                //    System.out.println("N2: "+idN2+"/"+nombreN2);
                     if(!validarContenido(idN2) || !validarContenido(nombreN2))
                     {
                         System.out.println("Row: "+ctRow+" - N2:"+idN2+"/"+nombreN2);
@@ -181,16 +176,16 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.n2s.contains(idN2))
                     {
-                        nombreN2=tratarCaracteresEspeciales(nombreN2);
+                        nombreN2.replace("'", "");
                         this.executeInsert("SELECT id FROM n2 WHERE id='"+idN2+"'",
                                 "INSERT INTO n2(id,nombre,sector_id) VALUES ('"+idN2+"','"+nombreN2+"','"+idSector+"')");
                         this.db.n2s.add(idN2);
                     }
 
                     //RELLENO TABLA N3
-                    String idN3=row.getCell(6).getStringCellValue();
-                    String nombreN3=row.getCell(7).getStringCellValue();
-                   // System.out.println("N3: "+idN3+"/"+nombreN3);
+                    String idN3=(row.getCell(6)==null) ? "" : row.getCell(6).getStringCellValue();
+                    String nombreN3=(row.getCell(7)==null) ? "" : row.getCell(7).getStringCellValue();
+               //     System.out.println("N3: "+idN3+"/"+nombreN3);
                     if(!validarContenido(idN3) || !validarContenido(nombreN3))
                     {
                         System.out.println("Row: "+ctRow+" - N3:"+idN3+"/"+nombreN3);
@@ -199,7 +194,7 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.n3s.contains(idN3))
                     {
-                        nombreN3=tratarCaracteresEspeciales(nombreN3);
+                        nombreN3.replace("'", "");
                         this.executeInsert("SELECT id FROM n3 WHERE id='"+idN3+"'",
                                 "INSERT INTO n3(id,nombre,sector_id,n2_id) VALUES ('"+idN3+"','"+nombreN3+"','"+idSector
                                     +"','"+idN2+"')");
@@ -207,9 +202,9 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA N4
-                    String idN4=row.getCell(8).getStringCellValue();
-                    String nombreN4=row.getCell(9).getStringCellValue();
-                   // System.out.println("N4: "+idN4+"/"+nombreN4);
+                    String idN4=(row.getCell(8)==null) ? "" : row.getCell(8).getStringCellValue();
+                    String nombreN4=(row.getCell(9)==null) ? "" : row.getCell(9).getStringCellValue();
+                //    System.out.println("N4: "+idN4+"/"+nombreN4);
                     if(!validarContenido(idN4) || !validarContenido(nombreN4))
                     {
                         System.out.println("Row: "+ctRow+" - N4:"+idN4+"/"+nombreN4);
@@ -218,7 +213,7 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.n4s.contains(idN4))
                     {
-                        nombreN4=tratarCaracteresEspeciales(nombreN4);
+                        nombreN4.replace("'", "");
                         this.executeInsert("SELECT id FROM n4 WHERE id='"+idN4+"'",
                                 "INSERT INTO n4(id,nombre,sector_id,n2_id,n3_id) VALUES ('"+idN4+"','"+nombreN4+"','"+idSector
                                     +"','"+idN2+"','"+idN3+"')");
@@ -226,22 +221,20 @@ public abstract class PobladorDB
                     }
 
                     //RELLENO TABLA MATERIALES
-                    String idMaterial=row.getCell(0).getStringCellValue();
-                    String nombreMaterial=row.getCell(1).getStringCellValue();
+                    String idMaterial=(row.getCell(0)==null) ? "" : row.getCell(0).getStringCellValue();
+                    String nombreMaterial=(row.getCell(1)==null) ? "" : row.getCell(1).getStringCellValue();
 
                     //OJO, VERIFICAR QUE FECHAS ESTEN INGRESADAS CORRECTAMENTE
-                    String fechaCreacionMaterial=row.getCell(14).getStringCellValue();
-                    String dia=fechaCreacionMaterial.substring(0, 2);
-                    String mes=fomatearMes(fechaCreacionMaterial.substring(3, 6));
-                    String anio=fechaCreacionMaterial.substring(7);
-                    fechaCreacionMaterial=anio+"-"+mes+"-"+dia;
+                    Date fechaCreacionMaterial=(row.getCell(14)==null) ? null : row.getCell(14).getDateCellValue();
+                    String fecha=(fechaCreacionMaterial.getYear()+1900)+"-"+(fechaCreacionMaterial.getMonth()+1)+"-"
+                            +fechaCreacionMaterial.getDate();
 
-                    String duracionMaterial=row.getCell(18).getStringCellValue();
-                    String pesoCajaMaterial=row.getCell(19).getStringCellValue();
+                    String duracionMaterial=(row.getCell(18)==null) ? "0" : row.getCell(18).getStringCellValue();
+                    String pesoCajaMaterial=(row.getCell(19)==null) ? "0" : row.getCell(19).getStringCellValue().replace(",", ".");
 
-                 //   System.out.println("caja:"+pesoCajaMaterial);
+                //    System.out.println("caja:"+pesoCajaMaterial);
 
-                    String activoMaterial=row.getCell(15).getStringCellValue();
+                    String activoMaterial=(row.getCell(15)==null) ? "" : row.getCell(15).getStringCellValue();
                     //System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
                     if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                     {
@@ -252,17 +245,18 @@ public abstract class PobladorDB
                     }
                     else if(!this.db.materiales.contains(idMaterial))
                     {
-                        nombreMaterial=tratarCaracteresEspeciales(nombreMaterial);
+                        nombreMaterial.replace("'", "");
                         this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
                                 "INSERT INTO material(id,nombre,fechaCreacion,duracion,pesoCaja,activo,tipoEnvasado_id,"
-                                    + "estadoRefrigerado_id,sector_id,marca_id) VALUES ('"
+                                    + "estadoRefrigerado_id,agrupado_id,sector_id,marca_id) VALUES ('"
                                     +idMaterial+"','"+nombreMaterial+"',"
-                                    +((validarContenido(fechaCreacionMaterial))? "'"+fechaCreacionMaterial+"'" : "null")+","
+                                    +((validarContenido(fecha))? "'"+fecha+"'" : "null")+","
                                     +((validarContenido(duracionMaterial))? "'"+duracionMaterial+"'" : "null")+","
-                                    +((validarContenido(pesoCajaMaterial))? "'"+pesoCajaMaterial+"'" : "null")+","
+                                    +((validarContenido(pesoCajaMaterial+""))? "'"+pesoCajaMaterial+"'" : "null")+","
                                     +((validarContenido(activoMaterial))? "'"+activoMaterial+"'" : "null")+","
                                     +((validarContenido(idTipoEnvasado))? "'"+idTipoEnvasado+"'" : "null")+","
                                     +((validarContenido(idestadoRefrigerado))? "'"+idestadoRefrigerado+"'" : "null")+","
+                                    +((validarContenido(idAgrupado))? "'"+idAgrupado+"'" : "null")+","
                                     +((validarContenido(idSector))? "'"+idSector+"'" : "null")+","
                                     +((validarContenido(idMarca))? "'"+idMarca+"'" : "null")+")");
                         this.db.materiales.add(idMaterial);
@@ -272,8 +266,8 @@ public abstract class PobladorDB
                         System.out.println("Row:"+ctRow+" - Material existe!");
                     }
                   //  System.out.println("-----------------------------");
-                    ctRow++;
                 }
+                ctRow++;
             }
         } catch (Exception e) {
             System.out.println("Excepcion actualizando materiales: "+e);
@@ -393,11 +387,6 @@ public abstract class PobladorDB
                 return "12";
         }
         return null;
-    }
-
-    private String tratarCaracteresEspeciales(String value)
-    {
-        return value.replace("'", "");
     }
 
 }

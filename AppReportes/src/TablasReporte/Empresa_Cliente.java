@@ -51,14 +51,14 @@ public class Empresa_Cliente
     {
         for (Cliente clienteAux : clientes)
         {
-            if(clienteAux.id==this.idCliente)
+            if(clienteAux.equals(this.idCliente))
             {
                 this.cliente=clienteAux;
             }
         }
         for (Empresa empresaAux : empresas)
         {
-            if(empresaAux.id==this.idEmpresa)
+            if(empresaAux.id.equals(this.idEmpresa))
             {
                 this.empresa=empresaAux;
             }

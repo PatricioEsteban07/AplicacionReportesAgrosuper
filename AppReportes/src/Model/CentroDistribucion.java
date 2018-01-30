@@ -13,7 +13,7 @@ public class CentroDistribucion extends Recurso
 {
     public String nombre;
 
-    public CentroDistribucion(int id, String nombre)
+    public CentroDistribucion(String id, String nombre)
     {
         super(id);
         this.nombre=nombre;

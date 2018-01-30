@@ -50,8 +50,8 @@ public class RecursoDB_ClienteEmpresas extends RecursoDB
                 int empresaId = result.getInt("empresa_id");
                 //asignacion empresa-cliente
                 
-                Empresa empresaAux=(Empresa) empresas.getById(empresaId);
-                Cliente clienteAux=(Cliente) clientes.getById(clienteId);
+                Empresa empresaAux=(Empresa) empresas.getById(empresaId+"");
+                Cliente clienteAux=(Cliente) clientes.getById(clienteId+"");
                 if(empresaAux!=null && clienteAux!=null)
                 {
                     empresaAux.clientes.add(clienteAux);

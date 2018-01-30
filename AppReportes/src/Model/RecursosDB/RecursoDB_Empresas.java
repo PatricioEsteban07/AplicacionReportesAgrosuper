@@ -46,7 +46,7 @@ public class RecursoDB_Empresas extends RecursoDB
                 String nombreAux = result.getString("nombre");
                 String direccionAux = result.getString("direccion");
                 String descripcionAux = result.getString("descripcion");
-                if(add(new Empresa(idAux, nombreAux, direccionAux, descripcionAux))==-1)
+                if(add(new Empresa(idAux+"", nombreAux, direccionAux, descripcionAux))==-1)
                 {
                     return false;
                 }

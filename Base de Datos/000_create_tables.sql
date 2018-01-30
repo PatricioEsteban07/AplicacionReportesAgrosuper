@@ -90,7 +90,6 @@
   PRIMARY KEY (id)
   );
   
-  
   CREATE TABLE IF NOT EXISTS material(
   id VARCHAR(8) UNIQUE NOT NULL,
   nombre VARCHAR(64) NOT NULL,
@@ -100,6 +99,7 @@
   activo INT DEFAULT 0,
   tipoEnvasado_id VARCHAR(8) DEFAULT NULL,
   estadoRefrigerado_id VARCHAR(8) DEFAULT NULL,
+  agrupado_id VARCHAR(32) DEFAULT NULL,
   sector_id VARCHAR(2) DEFAULT NULL,
   marca_id VARCHAR(8) DEFAULT NULL,
 
@@ -107,6 +107,7 @@
   
   FOREIGN KEY (tipoEnvasado_id) REFERENCES tipoEnvasado(id),
   FOREIGN KEY (estadoRefrigerado_id) REFERENCES estadoRefrigerado(id),
+  FOREIGN KEY (agrupado_id) REFERENCES agrupado(id),
   FOREIGN KEY (sector_id) REFERENCES sector(id),
   FOREIGN KEY (marca_id) REFERENCES marca(id),
   
@@ -152,9 +153,9 @@
   material_id VARCHAR(8) NOT NULL,
   fecha DATE NOT NULL,
   centro_id VARCHAR(8) NOT NULL,
-  salidas INT DEFAULT 0,
-  stock INT DEFAULT 0,
-  disponible INT DEFAULT 0,
+  salidas FLOAT DEFAULT 0,
+  stock FLOAT DEFAULT 0,
+  disponible FLOAT DEFAULT 0,
 
   PRIMARY KEY (material_id,fecha,centro_id),
   

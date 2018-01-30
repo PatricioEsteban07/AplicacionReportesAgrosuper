@@ -48,18 +48,19 @@ public class Main extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException, SQLException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException, SQLException, ClassNotFoundException {
         //launch(args);
         
         PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS(new LocalDB());
         System.out.println("FASE 0 - Tabla Maestra Materiales");
-       // aux.importarMateriales();
+      //  aux.importarMateriales();
         System.out.println("FASE 1 - Tabla Pedidos");
-       // aux.importarPedidos();
+      //  aux.importarPedidos();
+        aux.importarPedidosThreads();
         System.out.println("FASE 2 - Tabla Stock");
-       // aux.importarStock();
+     //   aux.importarStock();
         System.out.println("FASE 3 - Tabla Despachos y Faltantes");
-        aux.importarDespachos();
+    //    aux.importarDespachos();
         System.exit(0);
         
         /*
@@ -88,30 +89,5 @@ public class Main extends Application {
     public String getTitle(){
         return primaryStage.getTitle();
     }
- 
-    public static void lecturaArchivoPrueba() throws FileNotFoundException, IOException
-    {
-        String fileName="ejemplo";
-         BufferedReader br =new BufferedReader(new FileReader(System.getProperty("user.home") + "/Desktop/" + fileName + ".xls"));
-         String line = br.readLine();
-         while (null!=line) {
-            String [] fields = line.split(";");
-            System.out.println(Arrays.toString(fields));
-            
-            fields = removeTrailingQuotes(fields);
-            System.out.println(Arrays.toString(fields));
-            
-         }
-    }
-    
-    private static String[] removeTrailingQuotes(String[] fields) {
-
-      String result[] = new String[fields.length];
-
-      for (int i=0;i<result.length;i++){
-         result[i] = fields[i].replaceAll("^"+"\"", "").replaceAll("\""+"$", "");
-      }
-      return result;
-   }
     
 }

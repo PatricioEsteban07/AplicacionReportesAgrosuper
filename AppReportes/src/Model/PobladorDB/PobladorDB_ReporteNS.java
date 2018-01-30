@@ -6,21 +6,22 @@
 package Model.PobladorDB;
 
 import Model.LocalDB;
+import Model.PobladorDB.Threads.Buzon;
+import Model.PobladorDB.Threads.PaqueteBuzon;
+import Model.PobladorDB.Threads.ThreadProcess;
+import Model.PobladorDB.Threads.ThreadProcess_Pedidos;
 import com.monitorjbl.xlsx.StreamingReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -28,10 +29,70 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class PobladorDB_ReporteNS extends PobladorDB
 {
-
+    
     public PobladorDB_ReporteNS(LocalDB db)
     {
         super(db);
+    }
+    
+    public boolean importarPedidosThreads() throws FileNotFoundException, IOException, SQLException, ClassNotFoundException
+    {
+        this.buzon = new Buzon();
+        
+        ArrayList<ThreadProcess> threads=new ArrayList<>();
+        for (int i = 1; i < 10; i++)
+        {
+            ThreadProcess_Pedidos aux = new ThreadProcess_Pedidos(i, this.db, this.buzon);
+            threads.add(aux);
+            aux.run();
+        }
+        File archivo=this.openFile(this.dirBase, "pedidos.xlsx");
+        if(archivo==null)
+        {
+          //  CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, 
+           //         CommandNames.MSG_INFO_FILE_DOESNT_EXISTS);
+            return false;
+        }
+        //archivo existe, comienza procesado...
+        try (InputStream is = new FileInputStream(archivo)) {
+            
+            // leer archivo excel
+            Workbook workbook = StreamingReader.builder()
+                    .rowCacheSize(100)    // number of rows to keep in memory (defaults to 10)
+                    .bufferSize(4096)     // buffer size to use when reading InputStream to file (defaults to 1024)
+                    .open(is); 
+            //obtener la hoja que se va leer
+            Sheet sheet = workbook.getSheetAt(0);
+            //obtener todas las filas de la hoja excel
+            
+            int ctRow=0;
+            for(Row row : sheet)
+            {
+                if(ctRow!=0)
+                    this.buzon.enviarTarea(ctRow, row);
+                ctRow++;
+            }
+        }
+        for (ThreadProcess thread : threads)
+        {
+            thread.flagExterno=false;
+        }
+        while (!this.buzon.contenedorIsEmpty() || !this.buzon.buzonIsEmpty() || !threadsReady(threads))
+        {
+            PaqueteBuzon aux=this.buzon.obtenerPaquete();
+            //procesar paquete :D
+        }
+        return true;
+    }
+    
+    private boolean threadsReady(ArrayList<ThreadProcess> threads)
+    {
+        for (ThreadProcess thread : threads)
+        {
+            if(thread.flagPropio)
+                return false;
+        }
+        return true;
     }
     
     public boolean importarPedidos() throws FileNotFoundException, IOException, InvalidFormatException
@@ -59,12 +120,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
             this.connect();
             for(Row row : sheet)
             {
-                System.out.println("Row: "+ctRow);
+                //System.out.println("Row: "+ctRow);
                 if(ctRow!=0)
                 {
                     //RELLENO DE TABLA CENTRO
-                    String idCentro=row.getCell(0).getStringCellValue().toUpperCase();
-                    String nombreCentro=row.getCell(1).getStringCellValue().replace("Sucursal ", "");
+                    String idCentro=(row.getCell(0)==null) ? "" : row.getCell(0).getStringCellValue().toUpperCase();
+                    String nombreCentro=(row.getCell(1)==null) ? "" : row.getCell(1).getStringCellValue().replace("Sucursal ", "");
                   //  System.out.println("Centro: "+idCentro+"/"+nombreCentro);
                     if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
                     {
@@ -82,8 +143,8 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     }
 
                     //RELLENO DE TABLA OFICINA VENTAS
-                    String idOficina=row.getCell(2).getStringCellValue().toUpperCase();
-                    String nombreOficina=row.getCell(3).getStringCellValue();
+                    String idOficina=(row.getCell(2)==null) ? "" : row.getCell(2).getStringCellValue().toUpperCase();
+                    String nombreOficina=(row.getCell(3)==null) ? "" : row.getCell(3).getStringCellValue();
                  //   System.out.println("Of Ventas: "+idOficina+"/"+nombreOficina);
                     if(!validarContenido(idOficina) || !validarContenido(nombreOficina))
                     {
@@ -101,8 +162,8 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     }
 
                     //RELLENO TABLA MATERIAL
-                    String idMaterial=row.getCell(5).getStringCellValue();
-                    String nombreMaterial=row.getCell(6).getStringCellValue();
+                    String idMaterial=(row.getCell(5)==null) ? "" : row.getCell(5).getStringCellValue();
+                    String nombreMaterial=(row.getCell(6)==null) ? "" : row.getCell(6).getStringCellValue();
                  //   System.out.println("Centro: "+idMaterial+"/"+nombreMaterial);
                     if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                     {
@@ -120,16 +181,21 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     }
 
                     //RELLENO TABLA PEDIDO     
-                    String pedidoCj=row.getCell(9).getStringCellValue();
-                    String pedidoKg=row.getCell(10).getStringCellValue();
-                    String pedidoCLP=row.getCell(11).getStringCellValue();
+                    String pedidoCj=(row.getCell(9)==null) ? "" : row.getCell(9).getStringCellValue().replace(".", "");
+                    String pedidoKg=(row.getCell(10)==null) ? "" : row.getCell(10).getStringCellValue().replace(".", "").replace(",", ".");
+                    String pedidoCLP=(row.getCell(11)==null) ? "" : row.getCell(11).getStringCellValue().replace(".", "");
+                    
+                //    System.out.println("P: "+pedidoKg);
 
-                    String tipoCliente=row.getCell(8).getStringCellValue();
-                    String fecha=row.getCell(7).getStringCellValue();
-                    String dia=fecha.substring(0, 2);
-                    String mes=fecha.substring(3, 5);
-                    String anio=fecha.substring(6);
-                    fecha=anio+"-"+mes+"-"+dia;
+                    String tipoCliente=(row.getCell(8)==null) ? "" : row.getCell(8).getStringCellValue();
+                    String fecha=(row.getCell(7)==null) ? "" : row.getCell(7).getStringCellValue();
+                    if(validarContenido(fecha))
+                    {
+                        String dia=fecha.substring(0, 2);
+                        String mes=fecha.substring(3, 5);
+                        String anio=fecha.substring(6);
+                        fecha=anio+"-"+mes+"-"+dia;    
+                    }
 
                     String idPedido=idMaterial+fecha+idOficina;
                 //    System.out.println("Pedido: "+idPedido);
@@ -148,8 +214,8 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         ct_pedidos++;
                     }
                 //    System.out.println("-----------------------------");
-                    ctRow++;
                 }
+                ctRow++;
             }
             this.close();
         } catch (Exception e) {
@@ -190,12 +256,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
             this.connect();
             for(Row row : sheet)
             {
-                System.out.println("Row: "+ctRow);
+               // System.out.println("Row: "+ctRow);
                 if(ctRow!=0)
                 {
                     //RELLENO DE TABLA CENTRO
-                    String idCentro=row.getCell(0).getStringCellValue().toUpperCase();
-                    String nombreCentro=row.getCell(1).getStringCellValue().replace("Sucursal ", "");
+                    String idCentro = (row.getCell(0)==null) ? "" : row.getCell(0).getStringCellValue().toUpperCase();
+                    String nombreCentro= (row.getCell(1)==null) ? "" : row.getCell(1).getStringCellValue().replace("Sucursal ", "");
                     System.out.println("Centro: "+idCentro+"/"+nombreCentro);
                     if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
                     {
@@ -213,8 +279,8 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     }
 
                     //RELLENO TABLA MATERIAL
-                    String idMaterial=row.getCell(3).getStringCellValue();
-                    String nombreMaterial=row.getCell(4).getStringCellValue();
+                    String idMaterial=(row.getCell(3)==null) ? "" : row.getCell(3).getStringCellValue();
+                    String nombreMaterial=(row.getCell(4)==null) ? "" : row.getCell(4).getStringCellValue();
                     System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
                     if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                     {
@@ -231,19 +297,23 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         ct_materiales++;
                     }
 
-
-                    //RELLENO TABLA STOCK                
-
-                    String salidasStock=row.getCell(7).getStringCellValue();
-                    String stock=row.getCell(8).getStringCellValue();
-                    String disponibleStock=row.getCell(9).getStringCellValue();
-
+                    //RELLENO TABLA STOCK        
+                    String salidasStock = (row.getCell(7)==null) 
+                            ? "" : row.getCell(7).getStringCellValue().replace(".", "").replace(",", ".");
+                    String stock = (row.getCell(8)==null) 
+                            ? "" : row.getCell(8).getStringCellValue().replace(".", "").replace(",", ".");
+                    String disponibleStock = (row.getCell(9)==null) 
+                            ? "" : row.getCell(9).getStringCellValue().replace(".", "").replace(",", ".");
+                    
                     //OJO, VERIFICAR QUE FECHAS ESTEN INGRESADAS CORRECTAMENTE
-                    String fecha=row.getCell(5).getStringCellValue();
-                    String dia=fecha.substring(0, 2);
-                    String mes=fecha.substring(3, 5);
-                    String anio=fecha.substring(6);
-                    fecha=anio+"-"+mes+"-"+dia;
+                    String fecha=(row.getCell(5)==null) ? "" : row.getCell(5).getStringCellValue();
+                    if(validarContenido(fecha))
+                    {                        
+                        String dia=fecha.substring(0, 2);
+                        String mes=fecha.substring(3, 5);
+                        String anio=fecha.substring(6);
+                        fecha=anio+"-"+mes+"-"+dia;
+                    }
 
                     String idStock=idMaterial+fecha+idCentro;
                     System.out.println("Stock: "+idStock);
@@ -268,9 +338,9 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         this.db.stocks.add(idStock);
                         ct_stocks++;
                     }
-                    System.out.println("-----------------------------");
-                    ctRow++;
+                    //System.out.println("-----------------------------");
                 }
+                ctRow++;
             }
             this.close();
         } catch (Exception e) {
@@ -312,13 +382,13 @@ public class PobladorDB_ReporteNS extends PobladorDB
             this.connect();
             for(Row row : sheet)
             {
-                System.out.println("Row: "+ctRow);
+              //  System.out.println("Row: "+ctRow);
                 if(ctRow!=0)
                 {
                     //RELLENO DE TABLA CENTRO
-                    String idCentro=row.getCell(4).getStringCellValue().toUpperCase();
-                    String nombreCentro=row.getCell(5).getStringCellValue().replace("Sucursal ", "");
-                    System.out.println("Centro: "+idCentro+"/"+nombreCentro);
+                    String idCentro=(row.getCell(4)==null) ? "" : row.getCell(4).getStringCellValue().toUpperCase();
+                    String nombreCentro=(row.getCell(5)==null) ? "" : row.getCell(5).getStringCellValue().replace("Sucursal ", "");
+                //    System.out.println("Centro: "+idCentro+"/"+nombreCentro);
                     if(!validarContenido(idCentro) || !validarContenido(nombreCentro))
                     {
                         System.out.println("Row: "+ctRow+" - Centro:"+idCentro+"/"+nombreCentro);
@@ -335,9 +405,9 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     }
                     
                     //RELLENO TABLA MATERIAL
-                    String idMaterial=row.getCell(12).getStringCellValue();
-                    String nombreMaterial=row.getCell(13).getStringCellValue();
-                    System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
+                    String idMaterial=(row.getCell(12)==null) ? "" : row.getCell(12).getStringCellValue();
+                    String nombreMaterial=(row.getCell(13)==null) ? "" : row.getCell(13).getStringCellValue();
+                //    System.out.println("Material: "+idMaterial+"/"+nombreMaterial);
                     if(!validarContenido(idMaterial) || !validarContenido(nombreMaterial))
                     {
                         System.out.println("Row: "+ctRow+" - Material:"+idMaterial+"/"+nombreMaterial);
@@ -352,12 +422,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         this.db.materiales.add(idMaterial);
                         ct_materiales++;
                     }
-                    System.out.println("pase");
+                    
                     //RELLENO TABLA CLIENTES
-                    String idCliente=row.getCell(7).getStringCellValue();
-                    String nombreCliente=row.getCell(8).getStringCellValue().replace("'", "");
-                    String tipoCliente=row.getCell(3).getStringCellValue();
-                    System.out.println("Cliente: "+idCliente+"/"+nombreCliente);
+                    String idCliente=(row.getCell(7)==null) ? "" : row.getCell(7).getStringCellValue();
+                    String nombreCliente=(row.getCell(8)==null) ? "" : row.getCell(8).getStringCellValue().replace("'", "");
+                    String tipoCliente=(row.getCell(3)==null) ? "" : row.getCell(3).getStringCellValue();
+                //    System.out.println("Cliente: "+idCliente+"/"+nombreCliente);
                     if(!validarContenido(idCliente) || !validarContenido(nombreCliente))
                     {
                         System.out.println("Row: "+ctRow+" - Cliente:"+idCliente+"/"+nombreCliente);
@@ -377,24 +447,23 @@ public class PobladorDB_ReporteNS extends PobladorDB
 
                     //RELLENO TABLA DESPACHOS                
 
-                    String despachoKg="";
-                        despachoKg=row.getCell(14).getStringCellValue();
-                    String faltanteKg="";
-                        faltanteKg=row.getCell(15).getStringCellValue();
-                    String despachoCj="";
-                        despachoCj=row.getCell(16).getStringCellValue();
-                    String faltanteCj="";
-                        faltanteCj=row.getCell(17).getStringCellValue();
+                    String despachoKg=(row.getCell(14)==null) ? "0" : row.getCell(14).getStringCellValue();
+                    String faltanteKg=(row.getCell(15)==null) ? "0" : row.getCell(15).getStringCellValue();
+                    String despachoCj=(row.getCell(16)==null) ? "0" : row.getCell(16).getStringCellValue();
+                    String faltanteCj=(row.getCell(17)==null) ? "0" : row.getCell(17).getStringCellValue();
 
                     //OJO, VERIFICAR QUE FECHAS ESTEN INGRESADAS CORRECTAMENTE
-                    String fecha=row.getCell(6).getStringCellValue();
-                    String dia=fecha.substring(0, 2);
-                    String mes=fecha.substring(3, 5);
-                    String anio=fecha.substring(6);
-                    fecha=anio+"-"+mes+"-"+dia;
+                    String fecha=(row.getCell(6)==null) ? "" : row.getCell(6).getStringCellValue();
+                    if(validarContenido(fecha))
+                    {
+                        String dia=fecha.substring(0, 2);
+                        String mes=fecha.substring(3, 5);
+                        String anio=fecha.substring(6);
+                        fecha=anio+"-"+mes+"-"+dia;    
+                    }
 
                     String idDespacho=idMaterial+fecha+idCentro+idCliente;
-                    System.out.println("Despacho: "+idDespacho);
+                //    System.out.println("Despacho: "+idDespacho);
                     if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idCentro)
                             || !validarContenido(idCliente))
                     {
@@ -420,8 +489,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         this.db.despachos.add(idDespacho);
                         ct_despachos++;
                     }
-
-                    System.out.println("-----------------------------");
+                   // System.out.println("-----------------------------");
                 }
                 ctRow++;
             }
@@ -438,4 +506,5 @@ public class PobladorDB_ReporteNS extends PobladorDB
         System.out.println("---------------");
         return false;
     }
+
 }

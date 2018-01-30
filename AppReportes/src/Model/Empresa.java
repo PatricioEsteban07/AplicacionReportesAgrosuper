@@ -18,7 +18,7 @@ public class Empresa extends Recurso
     public String descripcion;
     public ArrayList<Cliente> clientes;
 
-    public Empresa(int id, String nombre, String direccion, String descripcion)
+    public Empresa(String id, String nombre, String direccion, String descripcion)
     {
         super(id);
         this.nombre = nombre;

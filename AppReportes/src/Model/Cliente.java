@@ -17,7 +17,7 @@ public class Cliente extends Recurso
     public String sexo;
     public String descripcion;
 
-    public Cliente(int id, String nombre, String apellido, int edad, String sexo, String descripcion)
+    public Cliente(String id, String nombre, String apellido, int edad, String sexo, String descripcion)
     {
         super(id);
         this.nombre = nombre;

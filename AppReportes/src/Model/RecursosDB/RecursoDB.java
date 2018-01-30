@@ -86,7 +86,7 @@ public abstract class RecursoDB
     }
 
     //IMPLEMENTAR DE ACUERDO A BUSQUEDA BINARIA
-    public Recurso getById(int id)
+    public Recurso getById(String id)
     {
         if (this.datos == null || this.datos.isEmpty())
         {
@@ -94,7 +94,7 @@ public abstract class RecursoDB
         }
         for (int i = 0; i < this.datos.size(); i++)
         {
-            if(this.datos.get(i).id==id)
+            if(this.datos.get(i).id.equals(id))
             {
                 return this.datos.get(i);
             }
@@ -104,59 +104,8 @@ public abstract class RecursoDB
 
     public int add(Recurso element)
     {
-        if (this.datos == null)
-        {
-            this.datos = new ArrayList<>();
-        }
-        if (this.datos.isEmpty())
-        {
-            this.datos.add(element);
-            return 0;
-        }
-        int inicio = 0, fin = this.datos.size() - 1, actual = this.datos.size() / 2;
-        boolean flag = true;
-        while (flag)
-        {
-            if (fin - inicio > 1)
-            {
-                if (this.datos.get(actual).id < element.id)
-                {
-                    inicio = actual;
-                }
-                else if (this.datos.get(actual).id > element.id)
-                {
-                    fin = actual;
-                }
-                else
-                {
-                    //ojo! id duplicado, no se permite inserción
-                    return -1;
-                }
-                actual = ((inicio + fin) / 2) + 1;
-            }
-            else//casos cuando fin==inicio y diferencia es igual a 1
-            {
-                if(this.datos.get(actual).id==element.id)
-                {
-                    //ojo! id duplicado, no se permite inserción
-                    return -1;
-                }
-                if (this.datos.get(actual).id < element.id)
-                {
-                    actual++;
-                }
-                flag=false;
-            }
-        }
-        if(actual==this.datos.size())
-        {
-            this.datos.add(element);
-        }
-        else
-        {
-            this.datos.add(actual, element);
-        }
-        return actual;
+        this.datos.add(element);
+        return this.datos.size();
     }
     
     public abstract boolean obtenerDatos(HashMap<String,RecursoDB> resources);

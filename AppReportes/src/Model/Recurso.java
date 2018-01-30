@@ -11,9 +11,9 @@ package Model;
  */
 public class Recurso
 {
-    public int id;
+    public String id;
 
-    public Recurso(int id)
+    public Recurso(String id)
     {
         this.id = id;
     }
