@@ -5,22 +5,27 @@
  */
 package Model.PobladorDB.Threads;
 
+import java.util.HashMap;
+
 /**
  *
  * @author Patricio
  */
 public class PaqueteBuzon
 {
-    public String tipo;
-    public String id;
-    public String query;
+    public HashMap<String,String> id;
+    public HashMap<String,String> query;
 
-    public PaqueteBuzon(String tipo, String id, String query)
+    public PaqueteBuzon()
     {
-        this.tipo = tipo;
-        this.id = id;
-        this.query = query;
+        this.id=new HashMap<>();
+        this.query=new HashMap<>();
     }
     
+    public void addContenido(String tipo, String id, String query)
+    {
+        this.id.put(tipo,id);
+        this.query.put(tipo,query);
+    }
     
 }

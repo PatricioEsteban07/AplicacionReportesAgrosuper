@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * @author Patricio
  */
-public abstract class ThreadProcess implements Runnable
+public abstract class ThreadProcess extends Thread
 {
     public int id;
     public LocalDB db;

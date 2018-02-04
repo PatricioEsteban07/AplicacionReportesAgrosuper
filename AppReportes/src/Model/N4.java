@@ -9,14 +9,21 @@ package Model;
  *
  * @author Patricio
  */
-public class CentroDistribucion extends Recurso
+public class N4 extends Recurso
 {
     public String nombre;
+    public N3 n3;
+    
+    public N4(String id)
+    {
+        super(id);
+    }
 
-    public CentroDistribucion(String id, String nombre)
+    public N4(String id, String nombre, N3 n3)
     {
         super(id);
         this.nombre=nombre;
+        this.n3=n3;
     }
     
     

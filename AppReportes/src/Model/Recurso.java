@@ -9,7 +9,7 @@ package Model;
  *
  * @author Patricio
  */
-public class Recurso
+public abstract class Recurso
 {
     public String id;
 
@@ -17,4 +17,6 @@ public class Recurso
     {
         this.id = id;
     }
+    
+  //  public abstract boolean recuperarDatos();
 }

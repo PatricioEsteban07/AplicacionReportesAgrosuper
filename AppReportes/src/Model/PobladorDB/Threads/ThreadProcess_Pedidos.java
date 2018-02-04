@@ -24,10 +24,15 @@ public class ThreadProcess_Pedidos extends ThreadProcess
     {
         while(this.flagExterno || this.flagPropio)
         {
-            Row row=null;
+            Row row=this.buzon.obtenerJob();
+            if(row==null && !this.flagExterno)
+            {
+                this.flagPropio=false;
+            }
             //obtengo una row
             if(row!=null)
             {
+                PaqueteBuzon paqueteAux=new PaqueteBuzon();
                 //RELLENO DE TABLA CENTRO
                 String idCentro=(row.getCell(0)==null) ? "" : row.getCell(0).getStringCellValue().toUpperCase();
                 String nombreCentro=(row.getCell(1)==null) ? "" : row.getCell(1).getStringCellValue().replace("Sucursal ", "");
@@ -39,8 +44,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                 }
                 else if(!this.db.centros.contains(idCentro))
                 {
-                    this.buzon.enviarPaquete("Centro"+row.getRowNum(), new PaqueteBuzon("Centro",idCentro,
-                            "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"+nombreCentro+"')"));
+                    this.db.centros.add(idCentro);
+                    paqueteAux.addContenido("Centro",idCentro,"INSERT INTO centro(id,nombre) VALUES ('"
+                            +idCentro+"','"+nombreCentro+"')");
                 }
 
                 //RELLENO DE TABLA OFICINA VENTAS
@@ -54,9 +60,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                 }
                 else if(!this.db.oficinas.contains(idOficina))
                 {
-                    this.buzon.enviarPaquete("Oficina"+row.getRowNum(), new PaqueteBuzon("Oficina",idOficina,
-                            "INSERT INTO oficinaVentas(id,nombre,centro_id) VALUES ('"+idOficina+"','"
-                                    +nombreOficina+"','"+idCentro+"')"));
+                    this.db.oficinas.add(idOficina);
+                    paqueteAux.addContenido("Oficina",idOficina, "INSERT INTO oficinaVentas(id,nombre,centro_id) "
+                            + "VALUES ('"+idOficina+"','"+nombreOficina+"','"+idCentro+"')");
                 }
 
                 //RELLENO TABLA MATERIAL
@@ -70,16 +76,15 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                 }
                 else if(!this.db.materiales.contains(idMaterial))
                 {
-                    this.buzon.enviarPaquete("Material"+row.getRowNum(), new PaqueteBuzon("Material",idMaterial,
-                            "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"+nombreMaterial+"')"));
+                    this.db.materiales.add(idMaterial);
+                    paqueteAux.addContenido("Material",idMaterial,"INSERT INTO material(id,nombre) VALUES ('"
+                            +idMaterial+"','"+nombreMaterial+"')");
                 }
 
                 //RELLENO TABLA PEDIDO     
                 String pedidoCj=(row.getCell(9)==null) ? "" : row.getCell(9).getStringCellValue().replace(".", "");
                 String pedidoKg=(row.getCell(10)==null) ? "" : row.getCell(10).getStringCellValue().replace(".", "").replace(",", ".");
                 String pedidoCLP=(row.getCell(11)==null) ? "" : row.getCell(11).getStringCellValue().replace(".", "");
-
-            //    System.out.println("P: "+pedidoKg);
 
                 String tipoCliente=(row.getCell(8)==null) ? "" : row.getCell(8).getStringCellValue();
                 String fecha=(row.getCell(7)==null) ? "" : row.getCell(7).getStringCellValue();
@@ -98,11 +103,13 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                 }
                 else if(!this.db.pedidos.contains(idPedido))
                 {
-                    this.buzon.enviarPaquete("Pedido"+row.getRowNum(), new PaqueteBuzon("Pedido",idPedido,
-                        "INSERT INTO pedido(material_id,fecha,oficina_id,"
-                        + "tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "+ "VALUES ('"+idMaterial+"','"+fecha
-                        +"','"+idOficina+"','"+tipoCliente+"','"+pedidoCj+"','"+pedidoKg+"','"+pedidoCLP+"')"));
+                    this.db.pedidos.add(idPedido);
+                    paqueteAux.addContenido("Pedido",idPedido,"INSERT INTO pedido(id,material_id,fecha,oficina_id,"
+                            + "tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "+ "VALUES ('"+idPedido+"','"+idMaterial
+                            +"','"+fecha+"','"+idOficina+"','"+tipoCliente+"','"+pedidoCj+"','"+pedidoKg+"','"
+                            +pedidoCLP+"')");
                 }
+                this.buzon.enviarPaquete("Centro:"+row.getRowNum(),paqueteAux);
             }
         }
     }

@@ -14,37 +14,35 @@ import java.util.Date;
 public class Material extends Recurso
 {
     public String nombre;
-    public Date fecha;
-    public int duracion;
+    public Date fechaCreacion;
     public int pesoCaja;
-    public int activo;
-    public TipoEnvasado tipoEnvasado;
-    public EstadoRefrigerado tipoRefrigerado;
-    public TipoAgrupado tipoAgrupado;
     public Sector sector;
+    public int duracion;
+    public EstadoRefrigerado tipoRefrigerado;
+    public Agrupado tipoAgrupado;
+    public TipoEnvasado tipoEnvasado;
     public Marca marca;
 
-    public Material(String id, String nombre)
+    public Material(String id)
     {
-        super(id);
-        this.nombre=nombre;        
+        super(id);     
     }
 
-    public Material(String id, String nombre, Date fecha, int duracion, int pesoCaja, int activo, 
-            TipoEnvasado tipoEnvasado, EstadoRefrigerado tipoRefrigerado, TipoAgrupado tipoAgrupado, 
-            Sector sector, Marca marca)
+    public Material(String id, String nombre, Date fechaCreacion, int pesoCaja, Sector sector, int duracion, 
+            EstadoRefrigerado tipoRefrigerado, Agrupado tipoAgrupado, TipoEnvasado tipoEnvasado, Marca marca)
     {
         super(id);
         this.nombre = nombre;
-        this.fecha = fecha;
-        this.duracion = duracion;
+        this.fechaCreacion = fechaCreacion;
         this.pesoCaja = pesoCaja;
-        this.activo = activo;
-        this.tipoEnvasado = tipoEnvasado;
+        this.sector = sector;
+        this.duracion = duracion;
         this.tipoRefrigerado = tipoRefrigerado;
         this.tipoAgrupado = tipoAgrupado;
-        this.sector = sector;
+        this.tipoEnvasado = tipoEnvasado;
         this.marca = marca;
     }
+    
+    
     
 }

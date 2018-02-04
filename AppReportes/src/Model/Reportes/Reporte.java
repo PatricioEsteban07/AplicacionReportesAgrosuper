@@ -5,7 +5,6 @@
  */
 package Model.Reportes;
 
-import Model.CommandNames;
 import Model.Filtros.Filtro;
 import Model.Filtros.Filtro_Canal;
 import Model.Filtros.Filtro_CargoRRHH;
@@ -15,15 +14,9 @@ import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.GeneradoresExcel.GeneradorExcel;
 import Model.RecursosDB.RecursoDB;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.HashMap;
-import java.util.Map;
-import javafx.scene.control.Alert;
 
 /**
  *
@@ -31,7 +24,6 @@ import javafx.scene.control.Alert;
  */
 public abstract class Reporte
 {
-
     public String nombre;
     public HashMap<String, GeneradorExcel> generadorExcel;
     public HashMap<String, RecursoDB> recursos;

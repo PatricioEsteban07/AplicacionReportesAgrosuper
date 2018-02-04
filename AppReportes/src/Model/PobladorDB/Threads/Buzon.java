@@ -5,7 +5,8 @@
  */
 package Model.PobladorDB.Threads;
 
-import java.util.HashMap;
+import Model.PobladorDB.Threads.SyncronizedObjects.ArrayBuzon;
+import Model.PobladorDB.Threads.SyncronizedObjects.ArrayContenedor;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
@@ -14,54 +15,43 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class Buzon
 {
-    private HashMap<Integer,Row> contenedor;
-    private HashMap<String,PaqueteBuzon> buzon;
+    public ArrayContenedor contenedor;
+    public ArrayBuzon buzon;
 
     public Buzon()
     {
-        this.contenedor=new HashMap<>();
-        this.buzon=new HashMap<>();
-    }
-
-    public synchronized Row obtenerJob()
-    {
-        if(this.contenedor.isEmpty())
-            return null;
-        //implementar para obtener tarea del contenedor
-        return null;
+        this.contenedor=new ArrayContenedor();
+        this.buzon=new ArrayBuzon();
     }
     
-    public synchronized boolean enviarTarea(Integer key, Row row)
+    public boolean enviarPaquete(String key, PaqueteBuzon paqueteBuzon)
     {
-        if(this.contenedor==null)
-            return false;
-        this.contenedor.put(key, row);
-        return true;
+        return this.buzon.enviarPaquete(key, paqueteBuzon);
     }
     
-    public synchronized boolean enviarPaquete(String key, PaqueteBuzon paqueteBuzon)
+    public PaqueteBuzon obtenerPaquete()
     {
-        if(this.buzon.containsKey(key))
-            return false;
-        this.buzon.put(key, paqueteBuzon);
-        return true;
+        return this.buzon.obtenerPaquete();
     }
     
-    public synchronized PaqueteBuzon obtenerPaquete()
+    public boolean buzonIsEmpty()
     {
-        if(this.buzon.isEmpty())
-            return null;
-        //implementar para obtener paquete del contenedor
-        return null;
+        return this.buzon.buzonIsEmpty();
     }
     
-    public synchronized boolean buzonIsEmpty()
+    public Row obtenerJob()
     {
-        return this.buzon.isEmpty();
+        return this.contenedor.obtenerJob();
     }
     
-    public synchronized boolean contenedorIsEmpty()
+    public boolean enviarTarea(Integer key, Row row)
     {
-        return this.contenedor.isEmpty();
+        return this.contenedor.enviarTarea(key, row);
+    }
+    
+    
+    public boolean contenedorIsEmpty()
+    {
+        return this.contenedor.contenedorIsEmpty();
     }
 }

@@ -9,15 +9,23 @@ package Model;
  *
  * @author Patricio
  */
-public class TipoAgrupado extends Recurso
+public class N3 extends Recurso
 {
     public String nombre;
-
-    public TipoAgrupado(String id, String nombre)
+    public N2 n2;
+    
+    public N3(String id)
     {
         super(id);
-        this.nombre = nombre;
     }
+
+    public N3(String id, String nombre, N2 n2)
+    {
+        super(id);
+        this.nombre=nombre;
+        this.n2=n2;
+    }
+    
     
     
 }

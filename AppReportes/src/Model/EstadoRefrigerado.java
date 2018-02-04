@@ -12,6 +12,11 @@ package Model;
 public class EstadoRefrigerado extends Recurso
 {
     public String nombre;
+    
+    public EstadoRefrigerado(String id)
+    {
+        super(id);
+    }
 
     public EstadoRefrigerado(String id, String nombre)
     {

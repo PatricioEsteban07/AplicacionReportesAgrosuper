@@ -9,14 +9,19 @@ package Model;
  *
  * @author Patricio
  */
-public class Zona
+public class ZonaVentas extends Recurso
 {
     public String id;
     public String nombre;
-
-    public Zona(String id, String nombre)
+    
+    public ZonaVentas(String id)
     {
-        this.id = id;
+        super(id);
+    }
+
+    public ZonaVentas(String id, String nombre)
+    {
+        super(id);
         this.nombre = nombre;
     }
 }

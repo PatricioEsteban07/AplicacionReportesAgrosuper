@@ -5,20 +5,9 @@
  */
 package Model.RecursosDB.ReporteDisponibilidad;
 
-import Model.EstadoRefrigerado;
-import Model.Marca;
-import Model.Material;
+import Model.LocalDB;
 import Model.RecursosDB.RecursoDB;
-import Model.RecursosDB.RecursoDB_Empresas;
-import Model.Sector;
-import Model.TipoAgrupado;
-import Model.TipoEnvasado;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,9 +16,9 @@ import java.util.logging.Logger;
 public class RecursoDB_TablaPedidos extends RecursoDB
 {
 
-    public RecursoDB_TablaPedidos()
+    public RecursoDB_TablaPedidos(LocalDB db)
     {
-        super("Pedidos","SELECT * FROM pedido");
+        super("Pedidos","SELECT * FROM pedido",db);
     }
 
     @Override

@@ -14,6 +14,7 @@ import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ClienteEmpresas;
+import Model.Reportes.Reporte_Disponibilidad;
 import com.sun.javafx.property.adapter.PropertyDescriptor;
 import java.io.IOException;
 import java.net.URL;
@@ -162,6 +163,12 @@ public class MainController implements Initializable
                     this.reporteBase=new Reporte_ClienteEmpresas();
                     this.opcion=opcion;
                     this.text_areaReporte.setText("Área Estratégica");
+                    break;
+                case 1://reporte disponibilidad
+                    this.reporteBase=new Reporte_Disponibilidad();
+                    this.opcion=opcion;
+                    this.text_areaReporte.setText("Área Servicios");
+                    break;
             }
             this.text_nombreReporte.setText(this.reporteBase.nombre);
             this.text_filtroReporte.setText("pendiente...");
@@ -421,6 +428,12 @@ public class MainController implements Initializable
         this.generarReporteBase(this.opcion);
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
         return true;
+    }
+    
+    @FXML
+    public void buttonReporteDisponibilidad() throws InterruptedException
+    {
+        generarReporteBase(1);
     }
     
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException

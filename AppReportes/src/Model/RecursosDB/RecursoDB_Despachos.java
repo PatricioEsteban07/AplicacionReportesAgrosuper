@@ -3,15 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model.RecursosDB.ReporteDisponibilidad;
+package Model.RecursosDB;
 
+import Model.Agrupado;
+import Model.Centro;
+import Model.ClienteLocal;
+import Model.Despacho;
 import Model.EstadoRefrigerado;
+import Model.LocalDB;
 import Model.Marca;
 import Model.Material;
-import Model.RecursosDB.RecursoDB;
-import Model.RecursosDB.RecursoDB_Empresas;
 import Model.Sector;
-import Model.TipoAgrupado;
+import Model.TipoCliente;
 import Model.TipoEnvasado;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,12 +27,12 @@ import java.util.logging.Logger;
  *
  * @author Patricio
  */
-public class RecursoDB_Materiales extends RecursoDB
+public class RecursoDB_Despachos extends RecursoDB
 {
 
-    public RecursoDB_Materiales()
+    public RecursoDB_Despachos(LocalDB db)
     {
-        super("Materiales","SELECT * FROM material");
+        super("Despachos","SELECT * FROM despacho",db);
     }
 
     @Override
@@ -51,22 +54,27 @@ public class RecursoDB_Materiales extends RecursoDB
             while (result != null && result.next())
             {
                 String idAux = result.getString("id");
-                String nombreAux = result.getString("nombre");
                 Date fechaAux = result.getDate("fecha");
-                int duracionAux = result.getInt("duracion");
-                int pesoCajaAux = result.getInt("pesoCaja");
-                int activoAux = result.getInt("activo");
-                String tipoEnvasadoAux = result.getString("tipoEnvasado");//id
-                String estadoRefrigeradoAux = result.getString("estadoRefrigerado_id");//id
-                String agrupadoAux = result.getString("agrupado_id");//id
-                String sectorAux = result.getString("sector_id");//id
-                String marcaAux = result.getString("marca_id");//id
-                if(add(new Material(idAux, nombreAux, fechaAux, duracionAux, pesoCajaAux, activoAux,
-                    new TipoEnvasado(tipoEnvasadoAux, null), new EstadoRefrigerado(estadoRefrigeradoAux, null),
-                    new TipoAgrupado(agrupadoAux, null), new Sector(sectorAux, null), new Marca(marcaAux, null)))
-                    ==-1)
+                
+                String idCentro = result.getString("centro_id");//id
+                Centro centroAux = (this.db.centros.containsKey(idCentro)) ? 
+                        this.db.centros.get(idCentro)
+                        : this.db.centros.put(idCentro, new Centro(idCentro));
+                
+                String idClienteLocal = result.getString("clienteLocal_id");//id
+                ClienteLocal clienteLocalAux = (this.db.clientesLocales.containsKey(idClienteLocal)) ? 
+                        this.db.clientesLocales.get(idClienteLocal)
+                        : this.db.clientesLocales.put(idClienteLocal, new ClienteLocal(idClienteLocal));
+                
+                if(!this.db.despachos.containsKey(idAux))
                 {
-                    return false;
+                    Despacho aux = new Despacho(idAux,centroAux,fechaAux,clienteLocalAux);
+                    this.add(aux);
+                    this.db.despachos.put(idAux, aux);
+                }
+                else
+                {
+                    this.add(this.db.despachos.get(idAux));
                 }
             }
             this.close();

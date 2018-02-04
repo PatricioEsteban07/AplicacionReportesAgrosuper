@@ -40,12 +40,18 @@ public class PobladorDB_ReporteNS extends PobladorDB
         this.buzon = new Buzon();
         
         ArrayList<ThreadProcess> threads=new ArrayList<>();
-        for (int i = 1; i < 10; i++)
+        ArrayList<ThreadProcess> procesadoresDB=new ArrayList<>();
+        System.out.println("Creando threads...");
+        for (int i = 0; i < 10; i++)
         {
             ThreadProcess_Pedidos aux = new ThreadProcess_Pedidos(i, this.db, this.buzon);
             threads.add(aux);
-            aux.run();
+            aux.start();            
+        //    ThreadProcess_DB aux2 = new ThreadProcess_DB(i, db, buzon,threads);
+        //    procesadoresDB.add(aux2);
+       //     aux2.start();
         }
+       // new ThreadProcess_DB(0, db, buzon,threads).start();
         File archivo=this.openFile(this.dirBase, "pedidos.xlsx");
         if(archivo==null)
         {
@@ -66,6 +72,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
             //obtener todas las filas de la hoja excel
             
             int ctRow=0;
+            System.out.println("Iniciando creacion de jobs con rows...");
             for(Row row : sheet)
             {
                 if(ctRow!=0)
@@ -73,15 +80,36 @@ public class PobladorDB_ReporteNS extends PobladorDB
                 ctRow++;
             }
         }
-        for (ThreadProcess thread : threads)
+        System.out.println("Finalizado creacion de jobs con rows...");
+        for (int i = 0; i < 10; i++)
         {
-            thread.flagExterno=false;
+            threads.get(i).flagExterno=false;
+      //      procesadoresDB.get(i).flagExterno=false;
         }
+        System.out.println("Empezando a procesar paquetes del buzon...");
+        
+        this.connect();
         while (!this.buzon.contenedorIsEmpty() || !this.buzon.buzonIsEmpty() || !threadsReady(threads))
         {
             PaqueteBuzon aux=this.buzon.obtenerPaquete();
-            //procesar paquete :D
+            if(aux!=null)
+            {
+                if(aux.id.containsKey("Centro") && this.executeInsert("SELECT id FROM centro WHERE id='"
+                        +aux.id.get("Centro")+"'", aux.query.get("Centro")))
+                    this.db.centros.add(aux.id.get("Centro"));
+                if(aux.id.containsKey("Oficina") && this.executeInsert("SELECT id FROM oficinaventas WHERE id='"
+                        +aux.id.get("Oficina")+"'", aux.query.get("Oficina")))
+                    this.db.oficinas.add(aux.id.get("Oficina"));
+                if(aux.id.containsKey("Material") && this.executeInsert("SELECT id FROM material WHERE id='"
+                        +aux.id.get("Material")+"'", aux.query.get("Material")))
+                    this.db.materiales.add(aux.id.get("Material"));
+                if(aux.id.containsKey("Pedido") && this.executeInsert("SELECT id FROM pedido WHERE id='"
+                        +aux.id.get("Pedido")+"'", aux.query.get("Pedido")))
+                    this.db.pedidos.add(aux.id.get("Pedido"));
+            }
         }
+        this.close();
+
         return true;
     }
     
@@ -197,18 +225,18 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         fecha=anio+"-"+mes+"-"+dia;    
                     }
 
-                    String idPedido=idMaterial+fecha+idOficina;
+                    String idPedido=idMaterial+fecha+idOficina+tipoCliente;
                 //    System.out.println("Pedido: "+idPedido);
-                    if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idOficina))
+                    if(!validarContenido(idMaterial) || !validarContenido(fecha) || !validarContenido(idOficina)
+                            || !validarContenido(tipoCliente))
                     {
                         System.out.println("Row: "+ctRow+" - Pedido:"+idCentro+"/"+nombreCentro+"/"+idOficina);
                     }
                     else if(!this.db.pedidos.contains(idPedido))
                     {
-                        this.executeInsert("SELECT material_id FROM pedido WHERE material_id='"+idMaterial+"' AND oficina_id='"
-                                +idOficina+"' AND fecha='"+fecha+"'",
-                                "INSERT INTO pedido(material_id,fecha,oficina_id,tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "
-                                    + "VALUES ('"+idMaterial+"','"+fecha+"','"+idOficina+"','"+tipoCliente+"','"
+                        this.executeInsert("SELECT id FROM pedido WHERE id='"+idPedido+"'",
+                                "INSERT INTO pedido(id,material_id,fecha,oficina_id,tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "
+                                    + "VALUES ('"+idPedido+"','"+idMaterial+"','"+fecha+"','"+idOficina+"','"+tipoCliente+"','"
                                         +pedidoCj+"','"+pedidoKg+"','"+pedidoCLP+"')");
                         this.db.pedidos.add(idPedido);
                         ct_pedidos++;

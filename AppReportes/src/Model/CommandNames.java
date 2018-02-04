@@ -14,7 +14,7 @@ import javafx.scene.control.Alert.AlertType;
  */
 public final class CommandNames
 {        
-    public final static String URL_CONNECT_DB="jdbc:mysql://localhost:3306/db_app_agrosuper";
+    public final static String URL_CONNECT_DB="jdbc:mysql://localhost:3306/db_app_agrosuper2";
     
     public final static String ESTADO_SUCCESS="Éxito";
     public final static String ESTADO_INFO="Información";
@@ -31,7 +31,6 @@ public final class CommandNames
     
     public final static String MSG_INFO_FILE_ALREADY_EXISTS="El archivo que desea crear ya existe. Reintente utilizando otro nombre y vuelva a intentarlo.";
     public final static String MSG_INFO_FILE_DOESNT_EXISTS="El archivo definido no existe. Reintente seleccionado otro archivo e inténtelo nuevamente.";
-
     
     public final static int MES_ENERO=1;
     public final static int MES_FEBRERO=2;

@@ -12,6 +12,11 @@ package Model;
 public class TipoEnvasado extends Recurso
 {
     public String nombre;
+    
+    public TipoEnvasado(String id)
+    {
+        super(id);
+    }
 
     public TipoEnvasado(String id, String nombre)
     {

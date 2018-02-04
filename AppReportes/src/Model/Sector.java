@@ -12,6 +12,11 @@ package Model;
 public class Sector extends Recurso
 {
     public String nombre;
+    
+    public Sector(String id)
+    {
+        super(id);
+    }
 
     public Sector(String id, String nombre)
     {

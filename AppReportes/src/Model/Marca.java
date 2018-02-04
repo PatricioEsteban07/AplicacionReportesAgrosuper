@@ -12,6 +12,11 @@ package Model;
 public class Marca extends Recurso
 {
     public String nombre;
+    
+    public Marca(String id)
+    {
+        super(id);
+    }
 
     public Marca(String id, String nombre)
     {

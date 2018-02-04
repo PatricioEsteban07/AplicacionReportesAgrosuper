@@ -6,6 +6,7 @@
 package Model.RecursosDB;
 
 import Model.Empresa;
+import Model.LocalDB;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -19,9 +20,9 @@ import java.util.logging.Logger;
 public class RecursoDB_Empresas extends RecursoDB
 {
 
-    public RecursoDB_Empresas()
+    public RecursoDB_Empresas(LocalDB db)
     {
-        super("Empresas","SELECT * FROM empresa");
+        super("Empresas","SELECT * FROM empresa",db);
     }
 
     @Override

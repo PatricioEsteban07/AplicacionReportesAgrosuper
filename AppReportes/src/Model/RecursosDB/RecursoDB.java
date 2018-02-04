@@ -6,6 +6,7 @@
 package Model.RecursosDB;
 
 import Model.CommandNames;
+import Model.LocalDB;
 import Model.Recurso;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,19 +26,22 @@ public abstract class RecursoDB
     private String query;
     public String nombre;
     protected ArrayList<Recurso> datos;
+    public LocalDB db;
 
-    public RecursoDB(String nombre, String query)
+    public RecursoDB(String nombre, String query, LocalDB db)
     {
         this.nombre=nombre;
         this.query=query;
         this.datos = new ArrayList<>();
+        this.db=db;
     }
     
-    public RecursoDB(String nombre, String query, ArrayList<Recurso> datos)
+    public RecursoDB(String nombre, String query, ArrayList<Recurso> datos, LocalDB db)
     {
         this.nombre=nombre;
         this.query=query;
         this.datos = datos;
+        this.db=db;
     }
     
     public boolean connect() throws SQLException, ClassNotFoundException

@@ -9,14 +9,19 @@ package Model;
  *
  * @author Patricio
  */
-public class Canal
+public class Canal extends Recurso
 {
-    public int id;
+    public String id;
     public String nombre;
-
-    public Canal(int id, String nombre)
+    
+    public Canal(String id)
     {
-        this.id = id;
+        super(id);
+    }
+
+    public Canal(String id, String nombre)
+    {
+        super(id);
         this.nombre = nombre;
     }
 }

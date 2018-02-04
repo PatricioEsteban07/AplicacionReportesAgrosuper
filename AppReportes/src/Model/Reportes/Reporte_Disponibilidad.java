@@ -5,7 +5,6 @@
  */
 package Model.Reportes;
 
-import Model.RecursosDB.ReporteDisponibilidad.RecursoDB_Materiales;
 import Model.RecursosDB.ReporteDisponibilidad.RecursoDB_TablaPedidos;
 import java.util.ArrayList;
 
@@ -31,6 +30,13 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarRecursos()
     {
+        //obtener recursos de db
+        //Material: sector, refrig, agrupado, tipoEnvasado, marca
+        //pedido
+        //pedido-material
+        //despacho
+        //despacho-material
+        //stock
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -42,8 +48,12 @@ public class Reporte_Disponibilidad extends Reporte
 
     @Override
     public boolean generarFiltrosBaseCustom()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    {    
+        //crear todos los filtros vacios
+        //filtro no utilizado, Filtro_Cliente
+        generarFiltrosBase();
+        this.filtros.remove("Filtro_Cliente");
+        return true;
     }
 
     @Override

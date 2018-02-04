@@ -3,9 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/PobladorDB/PobladorDB.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/PobladorDB/PobladorDB_ReporteNS.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Main.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/ClienteLocal.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_DespachosMaterial.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_Materiales.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/PedidoMaterial.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_Pedidos.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Pedido.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_Clientes.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/LocalDB.java</file>
         </group>
     </open-files>
 </project-private>
