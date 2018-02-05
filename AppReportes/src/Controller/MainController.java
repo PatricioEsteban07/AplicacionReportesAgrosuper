@@ -12,6 +12,7 @@ import Model.Filtros.Filtro_Canal;
 import Model.Filtros.Filtro_Cliente;
 import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
+import Model.LocalDB;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ClienteEmpresas;
 import Model.Reportes.Reporte_Disponibilidad;
@@ -112,6 +113,7 @@ public class MainController implements Initializable
     
     private int opcion;
     private Reporte reporteBase;
+    private LocalDB db;
     
     private HashMap<String, Reporte> reportesGenerados;
     
@@ -121,6 +123,7 @@ public class MainController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        this.db = new LocalDB();
         this.menu_close.setOnAction(new EventHandler()
         {
             @Override
@@ -165,7 +168,7 @@ public class MainController implements Initializable
                     this.text_areaReporte.setText("Área Estratégica");
                     break;
                 case 1://reporte disponibilidad
-                    this.reporteBase=new Reporte_Disponibilidad();
+                    this.reporteBase=new Reporte_Disponibilidad(this.db);
                     this.opcion=opcion;
                     this.text_areaReporte.setText("Área Servicios");
                     break;

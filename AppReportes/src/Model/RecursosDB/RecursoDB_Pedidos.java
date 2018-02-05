@@ -5,17 +5,11 @@
  */
 package Model.RecursosDB;
 
-import Model.Agrupado;
 import Model.Centro;
-import Model.EstadoRefrigerado;
 import Model.LocalDB;
-import Model.Marca;
-import Model.Material;
 import Model.OficinaVentas;
 import Model.Pedido;
-import Model.Sector;
 import Model.TipoCliente;
-import Model.TipoEnvasado;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -36,7 +30,7 @@ public class RecursoDB_Pedidos extends RecursoDB
     }
 
     @Override
-    public boolean obtenerDatos(HashMap<String, RecursoDB> resources)
+    public boolean obtenerDatos()
     {
         try
         {

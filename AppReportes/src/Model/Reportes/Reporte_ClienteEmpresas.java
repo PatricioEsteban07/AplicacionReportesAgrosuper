@@ -8,6 +8,7 @@ package Model.Reportes;
 import Model.GeneradoresExcel.GeneradorExcel_ClienteEmpresas;
 import Model.GeneradoresExcel.GeneradorExcel_Clientes;
 import Model.GeneradoresExcel.GeneradorExcel_Empresas;
+import Model.LocalDB;
 import Model.RecursosDB.RecursoDB;
 import Model.RecursosDB.RecursoDB_ClienteEmpresas;
 import Model.RecursosDB.RecursoDB_Clientes;
@@ -25,12 +26,12 @@ import java.util.logging.Logger;
 public class Reporte_ClienteEmpresas extends Reporte
 {
     
-    public Reporte_ClienteEmpresas()
+    public Reporte_ClienteEmpresas(LocalDB db)
     {
-        super("Reporte de Asignación Cliente-Empresas");
-        this.recursos.put("Clientes",new RecursoDB_Clientes());
-        this.recursos.put("Empresas",new RecursoDB_Empresas());
-        this.recursos.put("Cliente-Empresas",new RecursoDB_ClienteEmpresas());
+        super("Reporte de Asignación Cliente-Empresas",db);
+        this.recursos.put("Clientes",new RecursoDB_Clientes(this.db));
+        this.recursos.put("Empresas",new RecursoDB_Empresas(this.db));
+        this.recursos.put("Cliente-Empresas",new RecursoDB_ClienteEmpresas(this.db));
         this.generarFiltrosBaseCustom();
     }
 
@@ -50,16 +51,6 @@ public class Reporte_ClienteEmpresas extends Reporte
         if( !generarRecurso(this.recursos.get("Clientes"),null) || !generarRecurso(this.recursos.get("Empresas"),null)
                 || !generarRecurso(this.recursos.get("Cliente-Empresas"),recursosClienteEmpresa) )
         {
-            return false;
-        }
-        return true;
-    }
-    
-    public boolean generarRecurso(RecursoDB consulta, HashMap<String,RecursoDB> resources)
-    {
-        if(!consulta.obtenerDatos(resources))
-        {
-            System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
             return false;
         }
         return true;

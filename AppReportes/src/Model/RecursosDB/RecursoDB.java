@@ -112,5 +112,5 @@ public abstract class RecursoDB
         return this.datos.size();
     }
     
-    public abstract boolean obtenerDatos(HashMap<String,RecursoDB> resources);
+    public abstract boolean obtenerDatos();
 }

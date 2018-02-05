@@ -42,7 +42,7 @@ public class LocalDB
     
     private Connection conn = null;
 
-    public LocalDB() throws SQLException
+    public LocalDB()
     {
         this.materiales = new HashMap<>();
         this.marcas = new HashMap<>();

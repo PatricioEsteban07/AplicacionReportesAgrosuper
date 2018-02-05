@@ -26,7 +26,7 @@ public class RecursoDB_TipoClientes extends RecursoDB
     }
 
     @Override
-    public boolean obtenerDatos(HashMap<String,RecursoDB> resources)
+    public boolean obtenerDatos()
     {
         try
         {

@@ -13,6 +13,7 @@ import Model.Filtros.Filtro_Fecha;
 import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.GeneradoresExcel.GeneradorExcel;
+import Model.LocalDB;
 import Model.RecursosDB.RecursoDB;
 import java.util.ArrayList;
 
@@ -24,14 +25,16 @@ import java.util.HashMap;
  */
 public abstract class Reporte
 {
+    public LocalDB db;
     public String nombre;
     public HashMap<String, GeneradorExcel> generadorExcel;
     public HashMap<String, RecursoDB> recursos;
     public HashMap<String, Filtro> filtros;
     public ArrayList<String> columnasExcel;
 
-    public Reporte(String nombre)
+    public Reporte(String nombre, LocalDB db)
     {
+        this.db = db;
         this.nombre = nombre;
         this.generadorExcel = new HashMap<>();
         this.recursos = new HashMap<>();
@@ -73,6 +76,16 @@ public abstract class Reporte
         canales.add("Tradicional");
         canales.add("Cliente Importante");
         return canales;
+    }
+    
+    public boolean generarRecurso(RecursoDB consulta)
+    {
+        if(!consulta.obtenerDatos(resources))
+        {
+            System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
+            return false;
+        }
+        return true;
     }
 
     public abstract boolean generarRecursos();

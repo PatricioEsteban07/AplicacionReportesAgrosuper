@@ -1,3 +1,8 @@
+SELECT pedido.id, pedido.fechaEntrega, pedido_material.material_id, pedido_material.cantidadCj, pedido_material.pesoKg, pedido_material.precioNeto
+FROM pedido, pedido_material
+WHERE pedido.fechaEntrega = '2018-01-20' AND pedido.id = pedido_material.pedido_id;
+----------------------------------------------------------
+
 CREATE TEMPORARY TABLE IF NOT EXISTS tablePedido AS
 (
 SELECT Temp.centro_id AS centro_id, centro.nombre AS centro_nombre, 

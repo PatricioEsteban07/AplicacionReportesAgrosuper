@@ -32,7 +32,7 @@ public class RecursoDB_Materiales extends RecursoDB
     }
 
     @Override
-    public boolean obtenerDatos(HashMap<String, RecursoDB> resources)
+    public boolean obtenerDatos()
     {
         try
         {

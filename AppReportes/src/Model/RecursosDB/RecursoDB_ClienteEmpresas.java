@@ -27,7 +27,7 @@ public class RecursoDB_ClienteEmpresas extends RecursoDB
     }
 
     @Override
-    public boolean obtenerDatos(HashMap<String,RecursoDB> resources)
+    public boolean obtenerDatos()
     {
         System.out.println("obtenerDatos de clienteEmpresas...");
         try

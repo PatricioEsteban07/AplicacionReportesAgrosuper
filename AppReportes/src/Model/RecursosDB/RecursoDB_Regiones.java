@@ -6,9 +6,10 @@
 package Model.RecursosDB;
 
 import Model.LocalDB;
-import Model.TipoEnvasado;
+import Model.Region;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,12 +17,12 @@ import java.util.logging.Logger;
  *
  * @author Patricio
  */
-public class RecursoDB_TipoEnvasados extends RecursoDB
+public class RecursoDB_Regiones extends RecursoDB
 {
 
-    public RecursoDB_TipoEnvasados(LocalDB db)
+    public RecursoDB_Regiones(LocalDB db)
     {
-        super("TipoEnvasados","SELECT * FROM tipoEnvasado",db);
+        super("Regiones","SELECT * FROM region",db);
     }
 
     @Override
@@ -33,9 +34,8 @@ public class RecursoDB_TipoEnvasados extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_TipoEnvasados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         try
         {
             ResultSet result = super.executeQuery();
@@ -45,15 +45,17 @@ public class RecursoDB_TipoEnvasados extends RecursoDB
             {
                 String idAux = result.getString("id");
                 String nombreAux = result.getString("nombre");
-                if(!this.db.tiposEnvasados.containsKey(idAux))
+                String paisAux = result.getString("pais");
+                
+                if(!this.db.regiones.containsKey(idAux))
                 {
-                    TipoEnvasado aux = new TipoEnvasado(idAux, nombreAux);
+                    Region aux = new Region(idAux,nombreAux,paisAux);
                     this.add(aux);
-                    this.db.tiposEnvasados.put(idAux, aux);
+                    this.db.regiones.put(idAux, aux);
                 }
                 else
                 {
-                    this.add(this.db.tiposEnvasados.get(idAux));
+                    this.add(this.db.regiones.get(idAux));
                 }
             }
             this.close();
@@ -61,8 +63,9 @@ public class RecursoDB_TipoEnvasados extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_TipoEnvasados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
+    
 }
