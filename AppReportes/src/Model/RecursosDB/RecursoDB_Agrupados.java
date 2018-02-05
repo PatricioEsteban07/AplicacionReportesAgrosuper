@@ -7,7 +7,6 @@ package Model.RecursosDB;
 
 import Model.Agrupado;
 import Model.LocalDB;
-import Model.Sector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class RecursoDB_Agrupados extends RecursoDB
 {
-
+    
     public RecursoDB_Agrupados(LocalDB db)
     {
         super("Agrupados","SELECT * FROM agrupado",db);
@@ -52,6 +51,7 @@ public class RecursoDB_Agrupados extends RecursoDB
                     Agrupado aux = new Agrupado(idAux, nombreAux);
                     this.add(aux);
                     this.db.agrupados.put(idAux, aux);
+                    System.out.println("Agrupado: "+idAux);
                 }
                 else
                 {

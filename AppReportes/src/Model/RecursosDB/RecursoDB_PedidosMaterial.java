@@ -11,7 +11,6 @@ import Model.Pedido;
 import Model.PedidoMaterial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +35,7 @@ public class RecursoDB_PedidosMaterial extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_PedidosMaterial.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -45,7 +44,6 @@ public class RecursoDB_PedidosMaterial extends RecursoDB
             //recorrer result para crear objetos
             while (result != null && result.next())
             {
-                String idAux = result.getString("id");
                 int cantCjAux = result.getInt("cantidadCj");
                 float pesoAux = result.getFloat("pesoKg");
                 int precioAux = result.getInt("precioNeto");
@@ -60,6 +58,7 @@ public class RecursoDB_PedidosMaterial extends RecursoDB
                         this.db.materiales.get(idMaterial)
                         : this.db.materiales.put(idMaterial, new Material(idMaterial));
                 
+                String idAux = idPedido+idMaterial+"";
                 if(this.db.pedidos.containsKey(idPedido))
                 {
                     if(!this.db.pedidos.get(idPedido).materiales.containsKey(idAux))
@@ -84,7 +83,7 @@ public class RecursoDB_PedidosMaterial extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_PedidosMaterial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

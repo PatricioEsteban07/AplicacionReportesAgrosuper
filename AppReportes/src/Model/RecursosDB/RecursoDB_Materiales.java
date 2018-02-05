@@ -15,7 +15,6 @@ import Model.TipoEnvasado;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +39,7 @@ public class RecursoDB_Materiales extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Materiales.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -86,6 +85,7 @@ public class RecursoDB_Materiales extends RecursoDB
                             refrigeradoAux, agrupadoAux, envasadoAux, marcaAux);
                     this.add(aux);
                     this.db.materiales.put(idAux, aux);
+                    System.out.println("Material: "+idAux);
                 }
                 else
                 {
@@ -97,7 +97,7 @@ public class RecursoDB_Materiales extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Materiales.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

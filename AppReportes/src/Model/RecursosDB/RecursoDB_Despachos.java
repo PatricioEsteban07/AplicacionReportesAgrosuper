@@ -5,21 +5,13 @@
  */
 package Model.RecursosDB;
 
-import Model.Agrupado;
 import Model.Centro;
 import Model.ClienteLocal;
 import Model.Despacho;
-import Model.EstadoRefrigerado;
 import Model.LocalDB;
-import Model.Marca;
-import Model.Material;
-import Model.Sector;
-import Model.TipoCliente;
-import Model.TipoEnvasado;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +36,7 @@ public class RecursoDB_Despachos extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Despachos.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -82,7 +74,7 @@ public class RecursoDB_Despachos extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Despachos.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

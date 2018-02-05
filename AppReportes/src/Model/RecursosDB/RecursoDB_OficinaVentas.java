@@ -57,6 +57,7 @@ public class RecursoDB_OficinaVentas extends RecursoDB
                     OficinaVentas aux = new OficinaVentas(idAux, nombreAux, zonaAux);
                     this.add(aux);
                     this.db.oficinas.put(idAux, aux);
+                    System.out.println("Oficina: "+idAux);
                 }
                 else
                 {

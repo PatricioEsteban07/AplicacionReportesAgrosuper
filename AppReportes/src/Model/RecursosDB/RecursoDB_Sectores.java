@@ -51,6 +51,7 @@ public class RecursoDB_Sectores extends RecursoDB
                     Sector aux = new Sector(idAux, nombreAux);
                     this.add(aux);
                     this.db.sectores.put(idAux, aux);
+                    System.out.println("Sector: "+idAux);
                 }
                 else
                 {
@@ -66,4 +67,5 @@ public class RecursoDB_Sectores extends RecursoDB
         }
         return false;
     }
+    
 }

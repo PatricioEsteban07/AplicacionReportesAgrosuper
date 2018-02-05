@@ -50,6 +50,7 @@ public class RecursoDB_TipoEnvasados extends RecursoDB
                     TipoEnvasado aux = new TipoEnvasado(idAux, nombreAux);
                     this.add(aux);
                     this.db.tiposEnvasados.put(idAux, aux);
+                    System.out.println("Envasado: "+idAux);
                 }
                 else
                 {

@@ -52,6 +52,7 @@ public class RecursoDB_EstadoRefrigerados extends RecursoDB
                     EstadoRefrigerado aux = new EstadoRefrigerado(idAux, nombreAux);
                     this.add(aux);
                     this.db.estadosRefrigerados.put(idAux, aux);
+                    System.out.println("Refrigerado: "+idAux);
                 }
                 else
                 {

@@ -7,11 +7,9 @@ package Model.RecursosDB;
 
 import Model.Centro;
 import Model.LocalDB;
-import Model.Marca;
 import Model.Region;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,6 +56,7 @@ public class RecursoDB_Centros extends RecursoDB
                     Centro aux = new Centro(idAux, nombreAux, regionAux);
                     this.add(aux);
                     this.db.centros.put(idAux, aux);
+                    System.out.println("Centro: "+idAux);
                 }
                 else
                 {

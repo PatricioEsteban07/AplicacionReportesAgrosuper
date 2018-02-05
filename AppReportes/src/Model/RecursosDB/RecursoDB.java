@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 public abstract class RecursoDB
 {
     private Connection conn = null;
+    private String queryBase;
     private String query;
     public String nombre;
     protected ArrayList<Recurso> datos;
@@ -30,6 +32,7 @@ public abstract class RecursoDB
     public RecursoDB(String nombre, String query, LocalDB db)
     {
         this.nombre=nombre;
+        this.queryBase=query;
         this.query=query;
         this.datos = new ArrayList<>();
         this.db=db;
@@ -103,6 +106,21 @@ public abstract class RecursoDB
             }
         }
         return null;
+    }
+
+    public String getQueryBase()
+    {
+        return queryBase;
+    }
+
+    public String getQuery()
+    {
+        return query;
+    }
+
+    public void setQuery(String query)
+    {
+        this.query = query;
     }
 
     public int add(Recurso element)

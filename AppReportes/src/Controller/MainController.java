@@ -13,10 +13,22 @@ import Model.Filtros.Filtro_Cliente;
 import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.LocalDB;
+import Model.RecursosDB.RecursoDB_Agrupados;
+import Model.RecursosDB.RecursoDB_Centros;
+import Model.RecursosDB.RecursoDB_EstadoRefrigerados;
+import Model.RecursosDB.RecursoDB_Marcas;
+import Model.RecursosDB.RecursoDB_Materiales;
+import Model.RecursosDB.RecursoDB_N2;
+import Model.RecursosDB.RecursoDB_N3;
+import Model.RecursosDB.RecursoDB_N4;
+import Model.RecursosDB.RecursoDB_OficinaVentas;
+import Model.RecursosDB.RecursoDB_Regiones;
+import Model.RecursosDB.RecursoDB_Sectores;
+import Model.RecursosDB.RecursoDB_TipoClientes;
+import Model.RecursosDB.RecursoDB_TipoEnvasados;
+import Model.RecursosDB.RecursoDB_ZonaVentas;
 import Model.Reportes.Reporte;
-import Model.Reportes.Reporte_ClienteEmpresas;
 import Model.Reportes.Reporte_Disponibilidad;
-import com.sun.javafx.property.adapter.PropertyDescriptor;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -124,6 +136,20 @@ public class MainController implements Initializable
     public void initialize(URL url, ResourceBundle rb)
     {
         this.db = new LocalDB();
+        new RecursoDB_Regiones(db).obtenerDatos();
+        new RecursoDB_Centros(db).obtenerDatos();
+        new RecursoDB_ZonaVentas(db).obtenerDatos();
+        new RecursoDB_Sectores(db).obtenerDatos();
+        new RecursoDB_N2(db).obtenerDatos();
+        new RecursoDB_N3(db).obtenerDatos();
+        new RecursoDB_N4(db).obtenerDatos();
+        new RecursoDB_TipoClientes(db).obtenerDatos();
+        new RecursoDB_Marcas(db).obtenerDatos();
+        new RecursoDB_Agrupados(db).obtenerDatos();
+        new RecursoDB_TipoEnvasados(db).obtenerDatos();
+        new RecursoDB_EstadoRefrigerados(db).obtenerDatos();
+        new RecursoDB_Materiales(db).obtenerDatos();
+        new RecursoDB_OficinaVentas(db).obtenerDatos();
         this.menu_close.setOnAction(new EventHandler()
         {
             @Override
@@ -147,7 +173,7 @@ public class MainController implements Initializable
         inicializarFiltros();
         try
         {
-            this.buttonReporteEjemplo();
+            this.buttonReporteDisponibilidad();
         }
         catch (InterruptedException ex)
         {
@@ -162,17 +188,12 @@ public class MainController implements Initializable
         {
             switch(opcion)
             {
-                case 0:
-                    this.reporteBase=new Reporte_ClienteEmpresas();
-                    this.opcion=opcion;
-                    this.text_areaReporte.setText("Área Estratégica");
-                    break;
-                case 1://reporte disponibilidad
+                case 0://reporte disponibilidad
                     this.reporteBase=new Reporte_Disponibilidad(this.db);
-                    this.opcion=opcion;
                     this.text_areaReporte.setText("Área Servicios");
                     break;
             }
+            this.opcion=opcion;
             this.text_nombreReporte.setText(this.reporteBase.nombre);
             this.text_filtroReporte.setText("pendiente...");
             this.actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Elementos de configuración de reporte generado y listo para ser trabajado.");
@@ -180,6 +201,7 @@ public class MainController implements Initializable
         }
         catch (InterruptedException e)
         {
+            System.out.println("ERROR: no se geenra reporte base como corresponde :c");
         }
         this.actualizarEstadoProceso(CommandNames.ESTADO_ERROR, "Ups, hubo un problema para generar los elementos base para tu reporte. Intente nuevamente o reinicie el sistema.");
         return false;
@@ -218,84 +240,96 @@ public class MainController implements Initializable
     public void inicializarFiltros()
     {
         ObservableList<String> listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll(((Filtro_Zona)(this.reporteBase.filtros.get("Filtro_Zona"))).zonas);
-        this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
-        this.checkComboBox_zonas.setPrefWidth(300);
-        this.gridPane_Filtros2.add(checkComboBox_zonas, 3, 1);
-        
-        this.checkComboBox_zonas.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-            public void onChanged(ListChangeListener.Change<? extends String> c) {
-                System.out.println(checkComboBox_zonas.getCheckModel().getCheckedItems());
-                
-                ArrayList<String> aux=new ArrayList<>();
-                for(int i =0 ; i < checkComboBox_zonas.getCheckModel().getCheckedItems().size(); i++)
-                {
-                    aux.add(checkComboBox_zonas.getCheckModel().getCheckedItems().get(i).toString());   
+        if(this.reporteBase.filtros.containsKey("Filtro_Zona"))
+        {
+            listadoAux.addAll(((Filtro_Zona)(this.reporteBase.filtros.get("Filtro_Zona"))).zonas);
+            this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
+            this.checkComboBox_zonas.setPrefWidth(300);
+            this.gridPane_Filtros2.add(checkComboBox_zonas, 3, 1);
+
+            this.checkComboBox_zonas.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+                public void onChanged(ListChangeListener.Change<? extends String> c) {
+                    System.out.println(checkComboBox_zonas.getCheckModel().getCheckedItems());
+
+                    ArrayList<String> aux=new ArrayList<>();
+                    for(int i =0 ; i < checkComboBox_zonas.getCheckModel().getCheckedItems().size(); i++)
+                    {
+                        aux.add(checkComboBox_zonas.getCheckModel().getCheckedItems().get(i).toString());   
+                    }
+                    ((Filtro_Zona)(reporteBase.filtros.get("Filtro_Zona"))).setZonasSeleccionadas(aux);
+                   // generarEtiqueta(reporteBase.filtros.get("Filtro_Zona"),checkComboBox_zonas);
                 }
-                ((Filtro_Zona)(reporteBase.filtros.get("Filtro_Zona"))).setZonasSeleccionadas(aux);
-               // generarEtiqueta(reporteBase.filtros.get("Filtro_Zona"),checkComboBox_zonas);
-            }
-        });
-        
-        listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll(((Filtro_Canal)(this.reporteBase.filtros.get("Filtro_Canal"))).canales);
-        this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
-        this.checkComboBox_canales.setPrefWidth(300);
-        this.gridPane_Filtros2.add(checkComboBox_canales, 3, 2);
-        
-        this.checkComboBox_canales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-            public void onChanged(ListChangeListener.Change<? extends String> c) {
-                System.out.println(checkComboBox_canales.getCheckModel().getCheckedItems());
-                
-                ArrayList<String> aux=new ArrayList<>();
-                for(int i =0 ; i < checkComboBox_canales.getCheckModel().getCheckedItems().size(); i++)
-                {
-                    aux.add(checkComboBox_canales.getCheckModel().getCheckedItems().get(i).toString());   
+            });
+        }
+
+        if(this.reporteBase.filtros.containsKey("Filtro_Canal"))
+        {
+            listadoAux = FXCollections.observableArrayList();
+            listadoAux.addAll(((Filtro_Canal)(this.reporteBase.filtros.get("Filtro_Canal"))).canales);
+            this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
+            this.checkComboBox_canales.setPrefWidth(300);
+            this.gridPane_Filtros2.add(checkComboBox_canales, 3, 2);
+            
+            this.checkComboBox_canales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+                public void onChanged(ListChangeListener.Change<? extends String> c) {
+                    System.out.println(checkComboBox_canales.getCheckModel().getCheckedItems());
+
+                    ArrayList<String> aux=new ArrayList<>();
+                    for(int i =0 ; i < checkComboBox_canales.getCheckModel().getCheckedItems().size(); i++)
+                    {
+                        aux.add(checkComboBox_canales.getCheckModel().getCheckedItems().get(i).toString());   
+                    }
+                    ((Filtro_Canal)(reporteBase.filtros.get("Filtro_Canal"))).setCanalesSeleccionados(aux);
+                    generarEtiqueta(reporteBase.filtros.get("Filtro_Canal"),checkComboBox_canales);
                 }
-                ((Filtro_Canal)(reporteBase.filtros.get("Filtro_Canal"))).setCanalesSeleccionados(aux);
-                generarEtiqueta(reporteBase.filtros.get("Filtro_Canal"),checkComboBox_canales);
-            }
-        });
+            });
+        }
         
-        listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll(((Filtro_Sucursal)(this.reporteBase.filtros.get("Filtro_Sucursal"))).sucursales);
-        this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
-        this.checkComboBox_sucursales.setPrefWidth(300);
-        this.gridPane_Filtros2.add(checkComboBox_sucursales, 7, 0);
-        
-        this.checkComboBox_sucursales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-            public void onChanged(ListChangeListener.Change<? extends String> c) {
-                System.out.println(checkComboBox_sucursales.getCheckModel().getCheckedItems());
-                
-                ArrayList<String> aux=new ArrayList<>();
-                for(int i =0 ; i < checkComboBox_sucursales.getCheckModel().getCheckedItems().size(); i++)
-                {
-                    aux.add(checkComboBox_sucursales.getCheckModel().getCheckedItems().get(i).toString());   
+        if(this.reporteBase.filtros.containsKey("Filtro_Sucursal"))
+        {
+            listadoAux = FXCollections.observableArrayList();
+            listadoAux.addAll(((Filtro_Sucursal)(this.reporteBase.filtros.get("Filtro_Sucursal"))).sucursales);
+            this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
+            this.checkComboBox_sucursales.setPrefWidth(300);
+            this.gridPane_Filtros2.add(checkComboBox_sucursales, 7, 0);
+
+            this.checkComboBox_sucursales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+                public void onChanged(ListChangeListener.Change<? extends String> c) {
+                    System.out.println(checkComboBox_sucursales.getCheckModel().getCheckedItems());
+
+                    ArrayList<String> aux=new ArrayList<>();
+                    for(int i =0 ; i < checkComboBox_sucursales.getCheckModel().getCheckedItems().size(); i++)
+                    {
+                        aux.add(checkComboBox_sucursales.getCheckModel().getCheckedItems().get(i).toString());   
+                    }
+                    ((Filtro_Sucursal)(reporteBase.filtros.get("Filtro_Sucursal"))).setSucursalesSeleccionadas(aux);
+                    generarEtiqueta(reporteBase.filtros.get("Filtro_Sucursal"),checkComboBox_sucursales);
                 }
-                ((Filtro_Sucursal)(reporteBase.filtros.get("Filtro_Sucursal"))).setSucursalesSeleccionadas(aux);
-                generarEtiqueta(reporteBase.filtros.get("Filtro_Sucursal"),checkComboBox_sucursales);
-            }
-        });
+            });
+        }
         
-        listadoAux = FXCollections.observableArrayList();
-        listadoAux.addAll(((Filtro_Cliente)(this.reporteBase.filtros.get("Filtro_Cliente"))).clientes);
-        this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
-        this.checkComboBox_clientes.setPrefWidth(300);
-        this.gridPane_Filtros2.add(checkComboBox_clientes, 7, 1);
-        
-        this.checkComboBox_clientes.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-            public void onChanged(ListChangeListener.Change<? extends String> c) {
-                System.out.println(checkComboBox_clientes.getCheckModel().getCheckedItems());
-                
-                ArrayList<String> aux=new ArrayList<>();
-                for(int i =0 ; i < checkComboBox_clientes.getCheckModel().getCheckedItems().size(); i++)
-                {
-                    aux.add(checkComboBox_clientes.getCheckModel().getCheckedItems().get(i).toString());   
+        if(this.reporteBase.filtros.containsKey("Filtro_Cliente"))
+        {
+            listadoAux = FXCollections.observableArrayList();
+            listadoAux.addAll(((Filtro_Cliente)(this.reporteBase.filtros.get("Filtro_Cliente"))).clientes);
+            this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
+            this.checkComboBox_clientes.setPrefWidth(300);
+            this.gridPane_Filtros2.add(checkComboBox_clientes, 7, 1);
+
+            this.checkComboBox_clientes.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+                public void onChanged(ListChangeListener.Change<? extends String> c) {
+                    System.out.println(checkComboBox_clientes.getCheckModel().getCheckedItems());
+
+                    ArrayList<String> aux=new ArrayList<>();
+                    for(int i =0 ; i < checkComboBox_clientes.getCheckModel().getCheckedItems().size(); i++)
+                    {
+                        aux.add(checkComboBox_clientes.getCheckModel().getCheckedItems().get(i).toString());   
+                    }
+                    ((Filtro_Cliente)(reporteBase.filtros.get("Filtro_Cliente"))).setClientesSeleccionados(aux);
+                    generarEtiqueta(reporteBase.filtros.get("Filtro_Cliente"),checkComboBox_clientes);
                 }
-                ((Filtro_Cliente)(reporteBase.filtros.get("Filtro_Cliente"))).setClientesSeleccionados(aux);
-                generarEtiqueta(reporteBase.filtros.get("Filtro_Cliente"),checkComboBox_clientes);
-            }
-        });
+            });
+        }
     }
     
     public void inicializarFechas()
@@ -412,8 +446,6 @@ public class MainController implements Initializable
         /*
             compactar filtros
             generar recursos en base a filtros
-            
-        
         */
         
         ArrayList<String> columnasTabla=this.reporteBase.columnasExcel;
@@ -436,7 +468,7 @@ public class MainController implements Initializable
     @FXML
     public void buttonReporteDisponibilidad() throws InterruptedException
     {
-        generarReporteBase(1);
+        generarReporteBase(0);
     }
     
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
@@ -486,12 +518,6 @@ public class MainController implements Initializable
         this.panelTabla.getChildren().add(ReportesTableView);
         return true;
     }
-    
-    @FXML
-    public void buttonReporteEjemplo() throws InterruptedException
-    {
-        generarReporteBase(0);
-    }  
     
     private void cargarModalFiltroFecha(String resource, String title)
     {

@@ -96,16 +96,17 @@ public class PobladorDB_ReporteNS extends PobladorDB
             {
                 if(aux.id.containsKey("Centro") && this.executeInsert("SELECT id FROM centro WHERE id='"
                         +aux.id.get("Centro")+"'", aux.query.get("Centro")))
-                    this.db.centros.add(aux.id.get("Centro"));
+                   // this.db.centros.add(aux.id.get("Centro"));
                 if(aux.id.containsKey("Oficina") && this.executeInsert("SELECT id FROM oficinaventas WHERE id='"
                         +aux.id.get("Oficina")+"'", aux.query.get("Oficina")))
-                    this.db.oficinas.add(aux.id.get("Oficina"));
+                    //this.db.oficinas.add(aux.id.get("Oficina"));
                 if(aux.id.containsKey("Material") && this.executeInsert("SELECT id FROM material WHERE id='"
                         +aux.id.get("Material")+"'", aux.query.get("Material")))
-                    this.db.materiales.add(aux.id.get("Material"));
+                    //this.db.materiales.add(aux.id.get("Material"));
                 if(aux.id.containsKey("Pedido") && this.executeInsert("SELECT id FROM pedido WHERE id='"
                         +aux.id.get("Pedido")+"'", aux.query.get("Pedido")))
-                    this.db.pedidos.add(aux.id.get("Pedido"));
+                    //this.db.pedidos.add(aux.id.get("Pedido"));
+                    aux.id=aux.id;
             }
         }
         this.close();
@@ -161,12 +162,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCentro="";
                         nombreCentro="";
                     }
-                    else if(!this.db.centros.contains(idCentro))
+                    else if(!this.db.centros.containsKey(idCentro))
                     {
                         this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
                                 "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
                                         +nombreCentro+"')");
-                        this.db.centros.add(idCentro);
+                        //this.db.centros.add(idCentro);
                         ct_centros++;
                     }
 
@@ -180,12 +181,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idOficina="";
                         nombreOficina="";
                     }
-                    else if(!this.db.oficinas.contains(idOficina))
+                    else if(!this.db.oficinas.containsKey(idOficina))
                     {
                         this.executeInsert("SELECT id FROM oficinaVentas WHERE id='"+idOficina+"'",
                                 "INSERT INTO oficinaVentas(id,nombre,centro_id) VALUES ('"+idOficina+"','"
                                         +nombreOficina+"','"+idCentro+"')");
-                        this.db.oficinas.add(idOficina);
+                        //this.db.oficinas.add(idOficina);
                         ct_oficinas++;
                     }
 
@@ -199,12 +200,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCentro="";
                         nombreCentro="";
                     }
-                    else if(!this.db.materiales.contains(idMaterial))
+                    else if(!this.db.materiales.containsKey(idMaterial))
                     {
                         this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
                                 "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
                                         +nombreMaterial+"')");
-                        this.db.materiales.add(idMaterial);
+                        //this.db.materiales.add(idMaterial);
                         ct_materiales++;
                     }
 
@@ -232,13 +233,13 @@ public class PobladorDB_ReporteNS extends PobladorDB
                     {
                         System.out.println("Row: "+ctRow+" - Pedido:"+idCentro+"/"+nombreCentro+"/"+idOficina);
                     }
-                    else if(!this.db.pedidos.contains(idPedido))
+                    else if(!this.db.pedidos.containsKey(idPedido))
                     {
                         this.executeInsert("SELECT id FROM pedido WHERE id='"+idPedido+"'",
                                 "INSERT INTO pedido(id,material_id,fecha,oficina_id,tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "
                                     + "VALUES ('"+idPedido+"','"+idMaterial+"','"+fecha+"','"+idOficina+"','"+tipoCliente+"','"
                                         +pedidoCj+"','"+pedidoKg+"','"+pedidoCLP+"')");
-                        this.db.pedidos.add(idPedido);
+                        //this.db.pedidos.add(idPedido);
                         ct_pedidos++;
                     }
                 //    System.out.println("-----------------------------");
@@ -297,12 +298,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCentro="";
                         nombreCentro="";
                     }
-                    else if(!this.db.centros.contains(idCentro))
+                    else if(!this.db.centros.containsKey(idCentro))
                     {
                         this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
                                 "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
                                         +nombreCentro+"')");
-                        this.db.centros.add(idCentro);
+                        //this.db.centros.add(idCentro);
                         ct_centros++;
                     }
 
@@ -316,12 +317,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idMaterial="";
                         nombreMaterial="";
                     }
-                    else if(!this.db.materiales.contains(idMaterial))
+                    else if(!this.db.materiales.containsKey(idMaterial))
                     {
                         this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
                                 "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
                                         +nombreMaterial+"')");
-                        this.db.materiales.add(idMaterial);
+                        //this.db.materiales.add(idMaterial);
                         ct_materiales++;
                     }
 
@@ -352,7 +353,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         fecha="";
                         idCentro="";
                     }
-                    else if(!this.db.stocks.contains(idStock))
+                    else if(!this.db.stocks.containsKey(idStock))
                     {
                         this.executeInsert("SELECT material_id FROM stock WHERE material_id='"+idMaterial+"' AND centro_id='"
                                 +idCentro+"' AND fecha='"+fecha+"'",
@@ -363,7 +364,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                                         +((validarContenido(salidasStock))? "'"+salidasStock+"'" : "null")+","
                                         +((validarContenido(stock))? "'"+stock+"'" : "null")+","
                                         +((validarContenido(disponibleStock))? "'"+disponibleStock+"'" : "null")+")");
-                        this.db.stocks.add(idStock);
+                        //this.db.stocks.add(idStock);
                         ct_stocks++;
                     }
                     //System.out.println("-----------------------------");
@@ -423,12 +424,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCentro="";
                         nombreCentro="";
                     }
-                    else if(!this.db.centros.contains(idCentro))
+                    else if(!this.db.centros.containsKey(idCentro))
                     {
                         this.executeInsert("SELECT id FROM centro WHERE id='"+idCentro+"'",
                                 "INSERT INTO centro(id,nombre) VALUES ('"+idCentro+"','"
                                         +nombreCentro+"')");
-                        this.db.centros.add(idCentro);
+                        //this.db.centros.add(idCentro);
                         ct_centros++;
                     }
                     
@@ -442,12 +443,12 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idMaterial="";
                         nombreMaterial="";
                     }
-                    else if(!this.db.materiales.contains(idMaterial))
+                    else if(!this.db.materiales.containsKey(idMaterial))
                     {
                         this.executeInsert("SELECT id FROM material WHERE id='"+idMaterial+"'",
                                 "INSERT INTO material(id,nombre) VALUES ('"+idMaterial+"','"
                                         +nombreMaterial+"')");
-                        this.db.materiales.add(idMaterial);
+                        //this.db.materiales.add(idMaterial);
                         ct_materiales++;
                     }
                     
@@ -462,13 +463,13 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCliente="";
                         nombreCliente="";
                     }
-                    else if(!this.db.clientes.contains(idCliente))
+                    else if(!this.db.clientes.containsKey(idCliente))
                     {
                         this.executeInsert("SELECT id FROM cliente WHERE id='"+idCliente+"'",
                                 "INSERT INTO cliente(id,nombre,tipoCliente) VALUES ('"+idCliente+"','"
                                         +nombreCliente+"',"
                                         +((validarContenido(tipoCliente))? "'"+tipoCliente+"'" : "null")+")");
-                        this.db.clientes.add(idCliente);
+                        //this.db.clientes.add(idCliente);
                         ct_clientes++;
                     }
 
@@ -501,7 +502,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                         idCentro="";
                         idCliente="";
                     }
-                    else if(!this.db.despachos.contains(idDespacho))
+                    else if(!this.db.despachos.containsKey(idDespacho))
                     {
                         this.executeInsert("SELECT material_id FROM despacho WHERE material_id='"+idMaterial+"' AND centro_id='"
                                 +idCentro+"' AND fecha='"+fecha+"' AND cliente_id='"+idCliente+"'",
@@ -514,7 +515,7 @@ public class PobladorDB_ReporteNS extends PobladorDB
                                         +((validarContenido(faltanteKg))? "'"+faltanteKg+"'" : "null")+","
                                         +((validarContenido(despachoCj))? "'"+despachoCj+"'" : "null")+","
                                         +((validarContenido(faltanteCj))? "'"+faltanteCj+"'" : "null")+")");
-                        this.db.despachos.add(idDespacho);
+                       // this.db.despachos.add(idDespacho);
                         ct_despachos++;
                     }
                    // System.out.println("-----------------------------");

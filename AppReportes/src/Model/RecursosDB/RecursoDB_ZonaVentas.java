@@ -5,11 +5,11 @@
  */
 package Model.RecursosDB;
 
-import Model.Empresa;
 import Model.LocalDB;
+import Model.TipoEnvasado;
+import Model.ZonaVentas;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,16 +17,16 @@ import java.util.logging.Logger;
  *
  * @author Patricio
  */
-public class RecursoDB_Empresas extends RecursoDB
+public class RecursoDB_ZonaVentas extends RecursoDB
 {
 
-    public RecursoDB_Empresas(LocalDB db)
+    public RecursoDB_ZonaVentas(LocalDB db)
     {
-        super("Empresas","SELECT * FROM empresa",db);
+        super("Zona Ventas","SELECT * FROM zonaVentas",db);
     }
 
     @Override
-    public boolean obtenerDatos(HashMap<String,RecursoDB> resources)
+    public boolean obtenerDatos()
     {
         try
         {
@@ -34,8 +34,9 @@ public class RecursoDB_Empresas extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_ZonaVentas.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         try
         {
             ResultSet result = super.executeQuery();
@@ -43,13 +44,18 @@ public class RecursoDB_Empresas extends RecursoDB
             //recorrer result para crear objetos
             while (result != null && result.next())
             {
-                int idAux = result.getInt("id");
+                String idAux = result.getString("id");
                 String nombreAux = result.getString("nombre");
-                String direccionAux = result.getString("direccion");
-                String descripcionAux = result.getString("descripcion");
-                if(add(new Empresa(idAux+"", nombreAux, direccionAux, descripcionAux))==-1)
+                if(!this.db.zonaVentas.containsKey(idAux))
                 {
-                    return false;
+                    ZonaVentas aux = new ZonaVentas(idAux, nombreAux);
+                    this.add(aux);
+                    this.db.zonaVentas.put(idAux, aux);
+                    System.out.println("ZonaVenta: "+idAux);
+                }
+                else
+                {
+                    this.add(this.db.zonaVentas.get(idAux));
                 }
             }
             this.close();
@@ -57,7 +63,7 @@ public class RecursoDB_Empresas extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_ZonaVentas.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

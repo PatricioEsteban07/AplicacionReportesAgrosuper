@@ -41,6 +41,7 @@ public class ThreadProcess_DB extends ThreadProcess
                     || !threadsReady(threads))
             {
                 PaqueteBuzon aux=this.buzon.obtenerPaquete();
+                /*
                 if(aux!=null)
                 {
                     if(aux.id.containsKey("Centro") && this.executeInsert("SELECT id FROM centro WHERE id='"
@@ -55,7 +56,7 @@ public class ThreadProcess_DB extends ThreadProcess
                     if(aux.id.containsKey("Pedido") && this.executeInsert("SELECT id FROM pedido WHERE id='"
                             +aux.id.get("Pedido")+"'", aux.query.get("Pedido")))
                         this.db.pedidos.add(aux.id.get("Pedido"));
-                }
+                }*/
             }
             this.close();
         }

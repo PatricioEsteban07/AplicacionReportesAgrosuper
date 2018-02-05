@@ -13,7 +13,6 @@ import Model.TipoCliente;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +37,7 @@ public class RecursoDB_Pedidos extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Pedidos.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -82,7 +81,7 @@ public class RecursoDB_Pedidos extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Pedidos.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

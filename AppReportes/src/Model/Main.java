@@ -6,8 +6,6 @@
 package Model;
 
 import Model.Filtros.Filtro_Fecha;
-import Model.PobladorDB.CSVImport.CSVImport;
-import Model.PobladorDB.PobladorDB_ReporteNS;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;

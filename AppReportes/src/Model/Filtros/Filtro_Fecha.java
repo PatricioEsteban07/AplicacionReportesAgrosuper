@@ -29,8 +29,8 @@ public class Filtro_Fecha extends Filtro
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(2000, 0, 1);
-        this.fechaFin=new Date(2000, 0, 1);
+        this.fechaInicio=new Date(2015, 0, 1);
+        this.fechaFin=new Date(2015, 0, 1);
     }
 
     public void setFechaInicio(Date fechaInicio)
@@ -195,8 +195,8 @@ public class Filtro_Fecha extends Filtro
         this.semanas=new ArrayList<>();
         this.meses=new ArrayList<>();
         this.anios=new ArrayList<>();
-        this.fechaInicio=new Date(2000,0,1);
-        this.fechaFin=new Date(2000,0,1);
+        this.fechaInicio=new Date(2015,0,1);
+        this.fechaFin=new Date(2015,0,1);
         this.semanaInicio=0;
         this.semanaFin=0;
         this.opcion=0;
@@ -239,21 +239,21 @@ public class Filtro_Fecha extends Filtro
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"
                         +this.fechaFin.getYear();
             case 3://1 mes
-                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth();
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+1;
             case 4://rango mes
-                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaFin.getMonth()
-                        +" / "+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth();
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaFin.getMonth()+1
+                        +" / "+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth()+1;
             case 5://1 semana
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio;
             case 6://rango semanas
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio
                         +" / "+this.fechaFin.getYear()+"-"+this.semanaFin;
             case 7://fecha
-                return "Reporte para el dia "+this.fechaInicio.getDay()+"/"+this.fechaInicio.getMonth()+"/"
+                return "Reporte para el dia "+this.fechaInicio.getDate()+"/"+this.fechaInicio.getMonth()+1+"/"
                         +this.fechaInicio.getYear();
             case 8://rango fecha
-                return "Reporte para el período "+this.fechaInicio.getDay()+"/"+this.fechaInicio.getMonth()+"/"
-                        +this.fechaInicio.getYear()+" - "+this.fechaFin.getDay()+"/"+this.fechaFin.getMonth()+"/"
+                return "Reporte para el período "+this.fechaInicio.getDate()+"/"+this.fechaInicio.getMonth()+1+"/"
+                        +this.fechaInicio.getYear()+" - "+this.fechaFin.getDate()+"/"+this.fechaFin.getMonth()+1+"/"
                         +this.fechaFin.getYear();
         }
         return null;

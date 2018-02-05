@@ -52,6 +52,7 @@ public class RecursoDB_TipoClientes extends RecursoDB
                     TipoCliente aux = new TipoCliente(idAux, nombreAux);
                     this.add(aux);
                     this.db.tiposClientes.put(idAux, aux);
+                    System.out.println("TipoCliente: "+idAux);
                 }
                 else
                 {

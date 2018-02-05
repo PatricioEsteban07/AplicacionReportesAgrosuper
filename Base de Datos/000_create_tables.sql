@@ -227,8 +227,8 @@
   CREATE TABLE IF NOT EXISTS despacho_material(
   despacho_id VARCHAR(16) NOT NULL,
   material_id VARCHAR(8) NOT NULL,
-  despachoCj INT DEFAULT 0,
-  despachoKg INT DEFAULT 0,
+  despachoCj float DEFAULT 0,
+  despachoKg float DEFAULT 0,
 
   PRIMARY KEY (despacho_id,material_id),
   

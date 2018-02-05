@@ -42,9 +42,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                     idCentro="";
                     nombreCentro="";
                 }
-                else if(!this.db.centros.contains(idCentro))
+                else if(!this.db.centros.containsKey(idCentro))
                 {
-                    this.db.centros.add(idCentro);
+                   // this.db.centros.add(idCentro);
                     paqueteAux.addContenido("Centro",idCentro,"INSERT INTO centro(id,nombre) VALUES ('"
                             +idCentro+"','"+nombreCentro+"')");
                 }
@@ -58,9 +58,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                     idOficina="";
                     nombreOficina="";
                 }
-                else if(!this.db.oficinas.contains(idOficina))
+                else if(!this.db.oficinas.containsKey(idOficina))
                 {
-                    this.db.oficinas.add(idOficina);
+                  //  this.db.oficinas.add(idOficina);
                     paqueteAux.addContenido("Oficina",idOficina, "INSERT INTO oficinaVentas(id,nombre,centro_id) "
                             + "VALUES ('"+idOficina+"','"+nombreOficina+"','"+idCentro+"')");
                 }
@@ -74,9 +74,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                     idCentro="";
                     nombreCentro="";
                 }
-                else if(!this.db.materiales.contains(idMaterial))
+                else if(!this.db.materiales.containsKey(idMaterial))
                 {
-                    this.db.materiales.add(idMaterial);
+                  //  this.db.materiales.add(idMaterial);
                     paqueteAux.addContenido("Material",idMaterial,"INSERT INTO material(id,nombre) VALUES ('"
                             +idMaterial+"','"+nombreMaterial+"')");
                 }
@@ -101,9 +101,9 @@ public class ThreadProcess_Pedidos extends ThreadProcess
                 {
                     idCentro="";
                 }
-                else if(!this.db.pedidos.contains(idPedido))
+                else if(!this.db.pedidos.containsKey(idPedido))
                 {
-                    this.db.pedidos.add(idPedido);
+                   // this.db.pedidos.add(idPedido);
                     paqueteAux.addContenido("Pedido",idPedido,"INSERT INTO pedido(id,material_id,fecha,oficina_id,"
                             + "tipoCliente,pedidoCj,pedidoKg,pedidoNeto) "+ "VALUES ('"+idPedido+"','"+idMaterial
                             +"','"+fecha+"','"+idOficina+"','"+tipoCliente+"','"+pedidoCj+"','"+pedidoKg+"','"

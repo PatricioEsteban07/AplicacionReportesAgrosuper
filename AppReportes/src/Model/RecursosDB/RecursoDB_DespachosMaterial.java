@@ -9,11 +9,8 @@ import Model.Despacho;
 import Model.DespachoMaterial;
 import Model.LocalDB;
 import Model.Material;
-import Model.Pedido;
-import Model.PedidoMaterial;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +35,7 @@ public class RecursoDB_DespachosMaterial extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_DespachosMaterial.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -47,7 +44,6 @@ public class RecursoDB_DespachosMaterial extends RecursoDB
             //recorrer result para crear objetos
             while (result != null && result.next())
             {
-                String idAux = result.getString("id");
                 int despachoCjAux = result.getInt("despachoCj");
                 int despachoKgAux = result.getInt("despachoKg");
                 
@@ -61,6 +57,7 @@ public class RecursoDB_DespachosMaterial extends RecursoDB
                         this.db.materiales.get(idMaterial)
                         : this.db.materiales.put(idMaterial, new Material(idMaterial));
                 
+                String idAux = idDespacho+idMaterial+"";
                 if(this.db.despachos.containsKey(idDespacho))
                 {
                     if(!this.db.despachos.get(idDespacho).materiales.containsKey(idAux))
@@ -85,7 +82,7 @@ public class RecursoDB_DespachosMaterial extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_DespachosMaterial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

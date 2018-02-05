@@ -51,6 +51,7 @@ public class RecursoDB_Marcas extends RecursoDB
                     Marca aux = new Marca(idAux, nombreAux);
                     this.add(aux);
                     this.db.marcas.put(idAux, aux);
+                    System.out.println("Marca: "+idAux);
                 }
                 else
                 {

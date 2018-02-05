@@ -80,7 +80,7 @@ public abstract class Reporte
     
     public boolean generarRecurso(RecursoDB consulta)
     {
-        if(!consulta.obtenerDatos(resources))
+        if(!consulta.obtenerDatos())
         {
             System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
             return false;
@@ -122,85 +122,5 @@ public abstract class Reporte
         aux.add("Cargo 3");
         return aux;
     }
-
-    /*
-    public boolean importar(String ruta)
-    {
-        File archivo = new File(ruta);
-        BufferedWriter bw;
-        if (!archivo.exists())
-        {
-            System.out.println("Ojo, el archivo no existe :c");
-            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, CommandNames.MSG_INFO_FILE_DOESNT_EXISTS);
-            return false;
-        }
-
-        //lectura y carga del filtro
-        return false;
-    }
-
-    public boolean exportar(String nameFile) throws IOException
-    {
-        String ruta = System.getProperty("user.home") + "/Desktop/" + nameFile + ".txt";
-        File archivo = new File(ruta);
-        BufferedWriter bw;
-        if (archivo.exists())
-        {
-            System.out.println("Ojo, el archivo ya está creado.");
-            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, CommandNames.ESTADO_INFO, CommandNames.MSG_INFO_FILE_ALREADY_EXISTS);
-            return false;
-        }
-        bw = new BufferedWriter(new FileWriter(archivo));
-
-        if(this.filtros.get("Filtro_Fecha")!=null && ((Filtro_Fecha)this.filtros.get("Filtro_Fecha")).getOpcion()!=0 )
-        {
-            Filtro_Fecha aux=(Filtro_Fecha)this.filtros.get("Filtro_Fecha");
-            bw.write("Fecha\n");
-            bw.write(aux.getOpcion()+"\n");
-            switch(aux.getOpcion())
-            {
-                case 1:
-                    
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    break;
-                case 8:
-                    break;
-            }
-        }
-        if(this.filtros.get("Filtro_Canal")!=null)
-        {
-        
-        }
-        if(this.filtros.get("Filtro_CargoRRHH")!=null)
-        {
-        
-        }
-        if(this.filtros.get("Filtro_Cliente")!=null)
-        {
-        
-        }
-        if(this.filtros.get("Filtro_Sucursal")!=null)
-        {
-        
-        }
-        if(this.filtros.get("Filtro_Zona")!=null)
-        {
-        
-        }
-        //creacion y llenado de archivo
-        return false;
-    }
-*/
     
 }

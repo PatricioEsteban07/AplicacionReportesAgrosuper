@@ -138,7 +138,7 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
         {
             case 1:
                 this.filtro.vaciarFiltro();
-                this.filtro.setFechaInicio(new Date(inicio.getYear(),inicio.getMonthValue(),inicio.getDayOfMonth()));
+                this.filtro.setFechaInicio(new Date(inicio.getYear(),inicio.getMonthValue()-1,inicio.getDayOfMonth()));
                 this.filtro.setOpcion(7);
                 this.buttonCancelar();
                 break;
@@ -146,8 +146,8 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
                 if(inicio.isBefore(fin))
                 {
                     this.filtro.vaciarFiltro();
-                    this.filtro.setFechaInicio(new Date(inicio.getYear(),inicio.getMonthValue(),inicio.getDayOfMonth()));
-                    this.filtro.setFechaFin(new Date(fin.getYear(),fin.getMonthValue(),fin.getDayOfMonth()));
+                    this.filtro.setFechaInicio(new Date(inicio.getYear(),inicio.getMonthValue()-1,inicio.getDayOfMonth()));
+                    this.filtro.setFechaFin(new Date(fin.getYear(),fin.getMonthValue()-1,fin.getDayOfMonth()));
                     this.filtro.setOpcion(8);
                     this.buttonCancelar();
                 }

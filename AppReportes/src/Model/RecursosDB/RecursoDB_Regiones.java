@@ -9,7 +9,6 @@ import Model.LocalDB;
 import Model.Region;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +33,7 @@ public class RecursoDB_Regiones extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Regiones.class.getName()).log(Level.SEVERE, null, ex);
         }
         try
         {
@@ -52,6 +51,7 @@ public class RecursoDB_Regiones extends RecursoDB
                     Region aux = new Region(idAux,nombreAux,paisAux);
                     this.add(aux);
                     this.db.regiones.put(idAux, aux);
+                    System.out.println("Region: "+idAux);
                 }
                 else
                 {
@@ -63,7 +63,7 @@ public class RecursoDB_Regiones extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_Empresas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_Regiones.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
