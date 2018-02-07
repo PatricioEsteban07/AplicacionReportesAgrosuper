@@ -23,6 +23,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
@@ -126,11 +130,11 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         }       
         
         //generación de archivo excel base
-        String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+this.nombreTabla+".xls";
+        String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+this.nombreTabla+".xlsx";
         File archivoXLS = new File(rutaArchivo);
         
         //Se crea el libro de excel usando el objeto de tipo Workbook
-        HSSFWorkbook libro = new HSSFWorkbook();
+        XSSFWorkbook  libro = new XSSFWorkbook ();
         //Se inicializa el flujo de datos con el archivo xls
         FileOutputStream file = new FileOutputStream(archivoXLS);
         /*
@@ -144,14 +148,14 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         HSSFCellStyle evenRowStyle = createStyle(libro,contentFont, HSSFCellStyle.ALIGN_LEFT,   HSSFColor.GREY_25_PERCENT.index, true, HSSFColor.GREY_80_PERCENT.index);
         */
         //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
-        HSSFSheet hoja = libro.createSheet(this.nombreTabla);
+        XSSFSheet  hoja = libro.createSheet(this.nombreTabla);
                 
         //inicialiar fila de nombres de columnas
         System.out.println("Creando nombres de columnas...");        
-        HSSFRow fila = hoja.createRow( 0 );
+        XSSFRow  fila = hoja.createRow( 0 );
         for (int i = 0; i < this.columnas.size(); i++)
         {
-            HSSFCell celda = fila.createCell(i);
+            XSSFCell  celda = fila.createCell(i);
 //            celda.setCellStyle(headerStyle);
             celda.setCellValue(this.columnas.get(i));
             hoja.autoSizeColumn(i);
@@ -164,7 +168,7 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         Iterator<String> rows = filas.keySet().iterator();
         while(rows.hasNext()){
             
-            HSSFRow filaAux = hoja.createRow(contReg);
+            XSSFRow filaAux = hoja.createRow(contReg);
                 
             String key = rows.next();
             BaseReporteDisponibilidad row = filas.get(key);

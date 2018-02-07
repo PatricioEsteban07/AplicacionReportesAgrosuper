@@ -108,6 +108,18 @@
   PRIMARY KEY (id)
   );
   
+  CREATE TABLE IF NOT EXISTS oficinaVentas(
+  id VARCHAR(8) UNIQUE NOT NULL,
+  nombre VARCHAR(32) NOT NULL,
+  zonaVentas_id VARCHAR(4) NOT NULL,
+
+  PRIMARY KEY (id),
+  
+  FOREIGN KEY (zonaVentas_id) REFERENCES zonaVentas(id),
+  
+  UNIQUE INDEX idx_oficinaVentas_id USING BTREE (id) 
+  );
+  
   CREATE TABLE IF NOT EXISTS material(
   id VARCHAR(8) UNIQUE NOT NULL,
   nombre VARCHAR(64) NOT NULL,
@@ -129,18 +141,6 @@
   FOREIGN KEY (marca_id) REFERENCES marca(id),
   
   UNIQUE INDEX idx_material_id USING BTREE (id) 
-  );
-  
-  CREATE TABLE IF NOT EXISTS oficinaVentas(
-  id VARCHAR(8) UNIQUE NOT NULL,
-  nombre VARCHAR(32) NOT NULL,
-  zonaVentas_id VARCHAR(4) NOT NULL,
-
-  PRIMARY KEY (id),
-  
-  FOREIGN KEY (zonaVentas_id) REFERENCES zonaVentas(id),
-  
-  UNIQUE INDEX idx_oficinaVentas_id USING BTREE (id) 
   );
   
   CREATE TABLE IF NOT EXISTS cliente(
@@ -188,9 +188,9 @@
   CREATE TABLE IF NOT EXISTS pedido_material(
   pedido_id VARCHAR(16) NOT NULL,
   material_id VARCHAR(8) NOT NULL,
-  cantidadCj INT DEFAULT 0,
+  cantidadCj FLOAT DEFAULT 0,
   pesoKg FLOAT DEFAULT 0,
-  precioNeto INT DEFAULT 0,
+  precioNeto FLOAT DEFAULT 0,
 
   PRIMARY KEY (pedido_id,material_id),
   
@@ -227,8 +227,8 @@
   CREATE TABLE IF NOT EXISTS despacho_material(
   despacho_id VARCHAR(16) NOT NULL,
   material_id VARCHAR(8) NOT NULL,
-  despachoCj float DEFAULT 0,
-  despachoKg float DEFAULT 0,
+  despachoCj FLOAT DEFAULT 0,
+  despachoKg FLOAT DEFAULT 0,
 
   PRIMARY KEY (despacho_id,material_id),
   
