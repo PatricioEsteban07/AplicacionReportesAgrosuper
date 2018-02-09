@@ -22,9 +22,9 @@ import java.util.HashMap;
  */
 public abstract class RecursoDB
 {
-    private Connection conn = null;
+    protected Connection conn = null;
     private String queryBase;
-    private String query;
+    protected String query;
     public String nombre;
     protected ArrayList<Recurso> datos;
     public LocalDB db;

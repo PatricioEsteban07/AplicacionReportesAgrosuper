@@ -88,8 +88,11 @@
   CREATE TABLE IF NOT EXISTS agrupado(
   id VARCHAR(32) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
+  n2_id VARCHAR(6) NOT NULL,
 
   PRIMARY KEY (id),
+  
+  FOREIGN KEY (n2_id) REFERENCES n2(id),
   
   UNIQUE INDEX idx_agrupado_id USING BTREE (id) 
   );
@@ -234,4 +237,48 @@
   
   FOREIGN KEY (despacho_id) REFERENCES despacho(id),
   FOREIGN KEY (material_id) REFERENCES material(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS faltante(
+  centro_id VARCHAR(8) NOT NULL,
+  fecha DATE NOT NULL,
+  clienteLocal_id VARCHAR(16) NOT NULL,
+  material_id VARCHAR(8) NOT NULL,
+  faltanteKg FLOAT DEFAULT 0,
+  faltanteCj FLOAT DEFAULT 0,
+
+  PRIMARY KEY (centro_id,fecha,clienteLocal_id,material_id),
+  
+  FOREIGN KEY (centro_id) REFERENCES centro(id),
+  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
+  FOREIGN KEY (material_id) REFERENCES material(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS ns_cliente(
+  fecha DATE NOT NULL,
+  centro_id VARCHAR(8) NOT NULL,
+  oficina_id VARCHAR(8) NOT NULL,
+  clienteLocal_id VARCHAR(16) NOT NULL,
+  agrupado_id VARCHAR(32) NOT NULL,
+  pedidoKg FLOAT DEFAULT 0,
+  facturaKg FLOAT DEFAULT 0,
+  demandaKg FLOAT DEFAULT 0,
+  nsKg FLOAT DEFAULT 0,
+  faltanteKg FLOAT DEFAULT 0,
+  sobrefacturaKg FLOAT DEFAULT 0,
+  ppNeto INT DEFAULT 0,
+  faltanteNeto INT DEFAULT 0,
+  pedidoCj FLOAT DEFAULT 0,
+  facturaCj FLOAT DEFAULT 0,
+  demandaCj FLOAT DEFAULT 0,
+  nsCj FLOAT DEFAULT 0,
+  sobrefacturaCj FLOAT DEFAULT 0,
+  faltanteCj FLOAT DEFAULT 0,
+  
+  PRIMARY KEY (clienteLocal_id,agrupado_id,oficina_id,fecha),
+  
+  FOREIGN KEY (centro_id) REFERENCES centro(id),
+  FOREIGN KEY (oficina_id) REFERENCES oficinaVentas(id),
+  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
+  FOREIGN KEY (agrupado_id) REFERENCES agrupado(id)
   );

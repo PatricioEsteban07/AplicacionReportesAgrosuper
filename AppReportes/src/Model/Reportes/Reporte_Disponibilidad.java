@@ -20,11 +20,14 @@ import Model.RecursosDB.RecursoDB_OficinaVentas;
 import Model.RecursosDB.RecursoDB_Pedidos;
 import Model.RecursosDB.RecursoDB_PedidosMaterial;
 import Model.RecursosDB.RecursoDB_Regiones;
+import Model.RecursosDB.RecursoDB_ReporteDisponibilidad;
 import Model.RecursosDB.RecursoDB_Sectores;
 import Model.RecursosDB.RecursoDB_Stock;
 import Model.RecursosDB.RecursoDB_TipoClientes;
 import Model.RecursosDB.RecursoDB_TipoEnvasados;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,7 +46,7 @@ public class Reporte_Disponibilidad extends Reporte
     public Reporte_Disponibilidad(LocalDB db)
     {
         super("Reporte de Disponibilidad",db);
-        
+        /*
         //Materiales
         this.recursos.put("Sectores", new RecursoDB_Sectores(this.db));
         this.recursos.put("Estado Refrigerados", new RecursoDB_EstadoRefrigerados(this.db));
@@ -68,6 +71,8 @@ public class Reporte_Disponibilidad extends Reporte
         
         //Stocks
         this.recursos.put("Stocks", new RecursoDB_Stock(this.db));
+        */
+        this.recursos.put("DB Reporte", new RecursoDB_ReporteDisponibilidad(this.db));
         
         this.generarFiltrosBaseCustom();
     }
@@ -92,24 +97,7 @@ public class Reporte_Disponibilidad extends Reporte
             }
         }
         
-        
-        if( !generarRecurso(this.recursos.get("Sectores")) 
-            || !generarRecurso(this.recursos.get("Estado Refrigerados"))
-            || !generarRecurso(this.recursos.get("Agrupados"))
-            || !generarRecurso(this.recursos.get("Tipo Envasados"))
-            || !generarRecurso(this.recursos.get("Marcas"))
-            || !generarRecurso(this.recursos.get("Materiales"))
-            || !generarRecurso(this.recursos.get("Centros"))
-            || !generarRecurso(this.recursos.get("Oficinas"))
-            || !generarRecurso(this.recursos.get("Tipos Cliente"))
-            || !generarRecurso(this.recursos.get("Pedidos"))
-            || !generarRecurso(this.recursos.get("Pedido-Materiales"))
-            || !generarRecurso(this.recursos.get("Regiones"))
-            || !generarRecurso(this.recursos.get("Clientes"))
-            || !generarRecurso(this.recursos.get("Clientes Locales"))
-            || !generarRecurso(this.recursos.get("Despachos"))
-            || !generarRecurso(this.recursos.get("Despacho-Materiales"))
-            || !generarRecurso(this.recursos.get("Stocks")) )
+        if( !generarRecurso(this.recursos.get("Sectores"))) 
         {
             return false;
         }
@@ -151,28 +139,60 @@ public class Reporte_Disponibilidad extends Reporte
         ArrayList<String> columnas=new ArrayList<>();
         columnas.add("centro_id");
         columnas.add("centro_nombre");
-        columnas.add("material_sector");
+        columnas.add("sector_nombre");
         columnas.add("agrupado_id");
         columnas.add("agrupado_nombre");
-        columnas.add("pedido_fechaEntrega");
+        columnas.add("fecha");
         columnas.add("pedido_Cj");
         columnas.add("despacho_Cj");
-        columnas.add("stock_disponibleCj");
+        columnas.add("disponible_Cj");
         columnas.add("pedido_Kg");
         columnas.add("pedido_neto");
-        columnas.add("stock_disponibleKg");
-        columnas.add("faltanteCj");
-        columnas.add("faltanteKg");
+        columnas.add("disponible_Kg");
+        columnas.add("faltante_Cj");
+        columnas.add("faltante_Kg");
         columnas.add("semana");
-        columnas.add("sobranteCj");
-        columnas.add("sobranteKg");
-        columnas.add("faltanteDespachoCj");
-        columnas.add("faltanteAjustadoCj");
-        columnas.add("faltanteDespachoKg");
-        columnas.add("faltanteAjustadoKg");
+        columnas.add("sobrante_Cj");
+        columnas.add("sobrante_Kg");
+        columnas.add("faltanteDespacho_Cj");
+        columnas.add("faltanteAjustado_Cj");
+        columnas.add("faltanteDespacho_Kg");
+        columnas.add("faltanteAjustado_Kg");
         columnas.add("diaSemana");
         columnas.add("año");
         return columnas;
+    }
+
+    @Override
+    public boolean generarReporte()
+    {
+        try
+        {
+            /*
+            llamado a sp
+            recepcion de res sp
+            envio a genExcel para generacion de file
+            op: desplegar tabla en app
+            */
+            String fechaInicio="2018-01-30";
+            String fechaFin="2018-01-30";
+            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get("DB Reporte")).procedimientoAlmacenado(fechaInicio,fechaFin);
+            if(resultados==null)
+            {
+                return false;
+            }
+            //trabajar con arraylist -> separados elementos por ;
+            return true;
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
 }

@@ -122,5 +122,7 @@ public abstract class Reporte
         aux.add("Cargo 3");
         return aux;
     }
+
+    public abstract boolean generarReporte();
     
 }

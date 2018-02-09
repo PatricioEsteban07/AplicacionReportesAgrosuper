@@ -136,20 +136,20 @@ public class MainController implements Initializable
     public void initialize(URL url, ResourceBundle rb)
     {
         this.db = new LocalDB();
-        new RecursoDB_Regiones(db).obtenerDatos();
-        new RecursoDB_Centros(db).obtenerDatos();
-        new RecursoDB_ZonaVentas(db).obtenerDatos();
-        new RecursoDB_Sectores(db).obtenerDatos();
-        new RecursoDB_N2(db).obtenerDatos();
-        new RecursoDB_N3(db).obtenerDatos();
-        new RecursoDB_N4(db).obtenerDatos();
-        new RecursoDB_TipoClientes(db).obtenerDatos();
-        new RecursoDB_Marcas(db).obtenerDatos();
-        new RecursoDB_Agrupados(db).obtenerDatos();
-        new RecursoDB_TipoEnvasados(db).obtenerDatos();
-        new RecursoDB_EstadoRefrigerados(db).obtenerDatos();
-        new RecursoDB_Materiales(db).obtenerDatos();
-        new RecursoDB_OficinaVentas(db).obtenerDatos();
+//        new RecursoDB_Regiones(db).obtenerDatos();
+//        new RecursoDB_Centros(db).obtenerDatos();
+//        new RecursoDB_ZonaVentas(db).obtenerDatos();
+//        new RecursoDB_Sectores(db).obtenerDatos();
+//        new RecursoDB_N2(db).obtenerDatos();
+//        new RecursoDB_N3(db).obtenerDatos();
+//        new RecursoDB_N4(db).obtenerDatos();
+//        new RecursoDB_TipoClientes(db).obtenerDatos();
+//        new RecursoDB_Marcas(db).obtenerDatos();
+//        new RecursoDB_Agrupados(db).obtenerDatos();
+//        new RecursoDB_TipoEnvasados(db).obtenerDatos();
+//        new RecursoDB_EstadoRefrigerados(db).obtenerDatos();
+//        new RecursoDB_Materiales(db).obtenerDatos();
+//        new RecursoDB_OficinaVentas(db).obtenerDatos();
         this.menu_close.setOnAction(new EventHandler()
         {
             @Override
@@ -437,7 +437,29 @@ public class MainController implements Initializable
         this.text_estadoSistema.setText(estado+": "+mensaje);
                 
     }
-    
+    /*
+    @FXML
+    public boolean buttonGenerarReporte() throws InterruptedException
+    {
+        actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
+                
+        ArrayList<String> columnasTabla=this.reporteBase.columnasExcel;
+        if(columnasTabla==null)
+        {
+            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
+            return false;
+        }
+        if(!generarReporte(this.reporteBase, columnasTabla))
+        {
+            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
+            return false;
+        }
+        this.reportesGenerados.put(this.reporteBase.nombre,this.reporteBase);
+        this.generarReporteBase(this.opcion);
+        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
+        return true;
+    }
+    */
     @FXML
     public boolean buttonGenerarReporte() throws InterruptedException
     {
@@ -459,7 +481,6 @@ public class MainController implements Initializable
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
             return false;
         }
-        this.reportesGenerados.put(this.reporteBase.nombre,this.reporteBase);
         this.generarReporteBase(this.opcion);
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
         return true;
@@ -474,15 +495,10 @@ public class MainController implements Initializable
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
     {
         System.out.println("obteniendo reporte...");
-        if(!reporte.generarRecursos())
+        if(!reporte.generarReporte())
         {
-            System.out.println("ERROR: generar recursos :C");
-        }
-        if(!reporte.generarExcel())
-        {
-            System.out.println("ERROR: generar excel :C");
-            return false;
-        }        
+            System.out.println("ERROR: generar reporte MainController :C");
+        }  
         //generar tabla con reporte
         this.ReportesTableView=new TableView<>();
         
