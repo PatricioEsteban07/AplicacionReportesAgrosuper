@@ -5,65 +5,69 @@
  */
 package Model.Reportes;
 
-import java.util.Date;
+import Model.Recurso;
 
 /**
  *
  * @author Patricio
  */
-public class BaseReporteDisponibilidad
+public class BaseReporteDisponibilidad extends Recurso
 {
     public String centro_id;
     public String centro_nombre;
-    public String material_sector;
+    public String sector_id;
+    public String sector_nombre;
     public String agrupado_id;
     public String agrupado_nombre;
-    public Date pedido_fechaEntrega;
-    public int pedido_Cj;
-    public int despacho_Cj;
-    public float stock_disponibleCj;
-    public float pedido_Kg;
-    public int despacho_Kg;
-    public int pedido_neto;
-    public float stock_disponibilidadKg;
-    public float faltanteCj;
-    public float faltanteKg;
-    public int semana;
-    public float sobranteCj;
-    public float sobranteKg;
-    public float faltanteDespachoCj;
-    public float faltanteAjustadoCj;
-    public float faltanteDespachoKg;
-    public float faltanteAjustadoKg;
-    public int diaSemana;
-    public int anio;
-    
-    public BaseReporteDisponibilidad(String centro_id, String centro_nombre, String sector, String agrupado_id,
-            String agrupado_nombre, Date fecha)
+    public String pedido_fechaEntrega;
+    public String pedido_Cj;
+    public String despacho_Cj;
+    public String stock_disponibleCj;
+    public String pedido_Kg;
+    public String pedido_neto;
+    public String stock_disponibilidadKg;
+    public String faltanteCj;
+    public String faltanteKg;
+    public String semana;
+    public String sobranteCj;
+    public String sobranteKg;
+    public String faltanteDespachoCj;
+    public String faltanteAjustadoCj;
+    public String faltanteDespachoKg;
+    public String faltanteAjustadoKg;
+    public String diaSemana;
+    public String anio;
+
+    public BaseReporteDisponibilidad(String aux)
     {
-        this.centro_id=centro_id;
-        this.centro_nombre=centro_nombre;
-        this.material_sector=sector;
-        this.agrupado_id=agrupado_id;
-        this.agrupado_nombre=agrupado_nombre;
-        this.pedido_fechaEntrega=fecha;
-        this.diaSemana = fecha.getDay()+1;
-        this.anio = 1900+fecha.getYear();
-        this.pedido_Cj=0;
-        this.despacho_Cj=0;
-        this.stock_disponibleCj=0;
-        this.pedido_Kg=0;
-        this.despacho_Kg=0;
-        this.pedido_neto=0;
-        this.stock_disponibilidadKg=0;
-        this.faltanteCj=0;
-        this.faltanteKg=0;
-        this.sobranteCj=0;
-        this.sobranteKg=0;
-        this.faltanteDespachoCj=0;
-        this.faltanteAjustadoCj=0;
-        this.faltanteDespachoKg=0;
-        this.faltanteAjustadoKg=0;
+        super();
+        //separacion entre ;
+        String content[] = aux.split(";");
+        this.centro_id=content[1];
+        this.centro_nombre=content[2];
+        this.sector_id=content[3];
+        this.sector_nombre=content[4];
+        this.agrupado_id=content[5];
+        this.agrupado_nombre=content[6];
+        this.pedido_fechaEntrega=content[7].substring(8)+"-"+content[7].substring(5, 7)+"-"+content[7].substring(0, 4);
+        this.pedido_Cj=content[8].replace('.', ',');
+        this.despacho_Cj=content[9].replace('.', ',');
+        this.stock_disponibleCj=content[10].replace('.', ',');
+        this.pedido_Kg=content[11].replace('.', ',');
+        this.pedido_neto=content[12].replace('.', ',');
+        this.stock_disponibilidadKg=content[13].replace('.', ',');
+        this.faltanteCj=content[14].replace('.', ',');
+        this.faltanteKg=content[15].replace('.', ',');
+        this.semana = content[16];
+        this.sobranteCj=content[17].replace('.', ',');
+        this.sobranteKg=content[18].replace('.', ',');
+        this.faltanteDespachoCj=content[19].replace('.', ',');
+        this.faltanteAjustadoCj=content[20].replace('.', ',');
+        this.faltanteDespachoKg=content[21].replace('.', ',');
+        this.faltanteAjustadoKg=content[22].replace('.', ',');
+        this.diaSemana = content[23];
+        this.anio = content[24];
+        
     }
     
 }

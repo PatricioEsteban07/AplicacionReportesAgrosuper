@@ -18,7 +18,7 @@ BEGIN
 	SUM(pedido_material.pesoKg) AS pedido_Kg, SUM(pedido_material.precioNeto) AS pedido_neto,
 	0 AS disponible_Cj, 0 AS disponible_Kg, 0 AS despacho_Cj, 0 AS despacho_Kg
 		FROM pedido, pedido_material, material
-		WHERE pedido.fechaEntrega = fechaInicio AND pedido.id = pedido_material.pedido_id 
+		WHERE (pedido.fechaEntrega BETWEEN fechaInicio AND fechaFin) AND pedido.id = pedido_material.pedido_id 
 		AND pedido_material.material_id = material.id
 		GROUP BY material.agrupado_id, pedido.fechaEntrega, pedido.centro_id
 	);
@@ -30,7 +30,7 @@ BEGIN
 	despacho.fecha, 0, 0, 0, 0, 0, TRUNCATE(SUM(despacho_material.despachoCj),1), 
 	TRUNCATE(SUM(despacho_material.despachoKg),3)
 	FROM despacho, despacho_material, material
-	WHERE despacho.fecha = fechaInicio AND despacho.id = despacho_material.despacho_id
+	WHERE (despacho.fecha BETWEEN fechaInicio AND fechaFin) AND despacho.id = despacho_material.despacho_id
 		AND despacho_material.material_id = material.id
 	GROUP BY material.agrupado_id, despacho.fecha, despacho.centro_id
 	);
@@ -41,7 +41,7 @@ BEGIN
 	SELECT stock.centro_id, material.sector_id, material.agrupado_id, stock.fecha, 0, 0, 0, 
 	TRUNCATE(SUM((stock.stock+stock.salidas)/material.pesoCaja),1), TRUNCATE(SUM(stock.stock+stock.salidas), 3), 0, 0
 	FROM stock, material
-	WHERE stock.fecha = fechaInicio AND stock.material_id = material.id
+	WHERE (stock.fecha BETWEEN fechaInicio AND fechaFin) AND stock.material_id = material.id
 	GROUP BY material.agrupado_id, stock.fecha, stock.centro_id
 	);
 
@@ -85,7 +85,7 @@ BEGIN
 END 
 $$
 
-CALL sp_generate_reporte_disponibilidad('2018-01-30','2018-01-30');
+CALL sp_generate_reporte_disponibilidad('2018-01-20','2018-01-25');
 	
 SELECT COUNT(*) FROM tablaDisponibilidad;
 

@@ -169,6 +169,7 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
                 this.filtro.setFechaInicio(new Date(anioInicio, 1, 1));
                 this.filtro.setSemanas(semanaInicio,0);
                 this.filtro.setOpcion(5);
+                this.filtro.prepararFiltro();
                 this.buttonCancelar();
                 break;
             case 2:
@@ -179,6 +180,7 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
                     this.filtro.setFechaFin(new Date(anioFin, 1, 1));
                     this.filtro.setSemanas(semanaInicio,semanaFin);
                     this.filtro.setOpcion(6);
+                    this.filtro.prepararFiltro();
                     this.buttonCancelar();
                 }
                 else

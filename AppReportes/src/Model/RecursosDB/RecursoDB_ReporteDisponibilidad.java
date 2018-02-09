@@ -7,14 +7,13 @@ package Model.RecursosDB;
 
 import Model.Agrupado;
 import Model.LocalDB;
+import Model.Reportes.BaseReporteDisponibilidad;
 import java.sql.CallableStatement;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
  *
@@ -59,15 +58,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
                     rs.getString("faltanteDespacho_Kg")+";"+rs.getString("faltanteAjustado_Kg")+";"+rs.getString("diaSemana")+";"+
                     rs.getString("año");
             resultados.add(aux);
-            System.out.println("r "+(ctRow++)+";"+rs.getString("centro_id")+";"+rs.getString("centro_nombre")+";"+
-                    rs.getString("sector_id")+";"+rs.getString("sector_nombre")+";"+rs.getString("agrupado_id")+";"+
-                    rs.getString("agrupado_nombre")+";"+rs.getString("fecha")+";"+rs.getString("pedido_Cj")+";"+
-                    rs.getString("despacho_Cj")+";"+rs.getString("disponible_Cj")+";"+rs.getString("pedido_Kg")+";"+
-                    rs.getString("pedido_neto")+";"+rs.getString("disponible_Kg")+";"+rs.getString("faltante_Cj")+";"+
-                    rs.getString("faltante_Kg")+";"+rs.getString("semana")+";"+rs.getString("sobrante_Cj")+";"+
-                    rs.getString("sobrante_Kg")+";"+rs.getString("faltanteDespacho_Cj")+";"+rs.getString("faltanteAjustado_Cj")+";"+
-                    rs.getString("faltanteDespacho_Kg")+";"+rs.getString("faltanteAjustado_Kg")+";"+rs.getString("diaSemana")+";"+
-                    rs.getString("año"));
+            this.datos.add(new BaseReporteDisponibilidad(aux));
         }
         close();
         return resultados;

@@ -5,28 +5,11 @@
  */
 package Model.Reportes;
 
+import Model.Filtros.Filtro_Fecha;
 import Model.GeneradoresExcel.GeneradorExcel_ReporteDisponibilidad;
 import Model.LocalDB;
-import Model.RecursosDB.RecursoDB_Agrupados;
-import Model.RecursosDB.RecursoDB_Centros;
-import Model.RecursosDB.RecursoDB_Clientes;
-import Model.RecursosDB.RecursoDB_ClientesLocales;
-import Model.RecursosDB.RecursoDB_Despachos;
-import Model.RecursosDB.RecursoDB_DespachosMaterial;
-import Model.RecursosDB.RecursoDB_EstadoRefrigerados;
-import Model.RecursosDB.RecursoDB_Marcas;
-import Model.RecursosDB.RecursoDB_Materiales;
-import Model.RecursosDB.RecursoDB_OficinaVentas;
-import Model.RecursosDB.RecursoDB_Pedidos;
-import Model.RecursosDB.RecursoDB_PedidosMaterial;
-import Model.RecursosDB.RecursoDB_Regiones;
 import Model.RecursosDB.RecursoDB_ReporteDisponibilidad;
-import Model.RecursosDB.RecursoDB_Sectores;
-import Model.RecursosDB.RecursoDB_Stock;
-import Model.RecursosDB.RecursoDB_TipoClientes;
-import Model.RecursosDB.RecursoDB_TipoEnvasados;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +23,6 @@ import java.util.logging.Logger;
  */
 public class Reporte_Disponibilidad extends Reporte
 {
-
     private HashMap<String, BaseReporteDisponibilidad> elementos;
 
     public Reporte_Disponibilidad(LocalDB db)
@@ -72,7 +54,7 @@ public class Reporte_Disponibilidad extends Reporte
         //Stocks
         this.recursos.put("Stocks", new RecursoDB_Stock(this.db));
         */
-        this.recursos.put("DB Reporte", new RecursoDB_ReporteDisponibilidad(this.db));
+        this.recursos.put("Reporte Disponibilidad", new RecursoDB_ReporteDisponibilidad(this.db));
         
         this.generarFiltrosBaseCustom();
     }
@@ -107,19 +89,21 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarExcel()
     {
-        this.generadorExcel.put("Reporte Disponibilidad", new GeneradorExcel_ReporteDisponibilidad());
+        this.generadorExcel.put("Reporte Disponibilidad", new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
         try
         {
             if(!this.generadorExcel.get("Reporte Disponibilidad").generarArchivo(this.recursos))
             {
-                System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad :c");
+                System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
+                return false;
             }
+            return true;
         }
         catch (IOException ex)
         {
             Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -139,6 +123,7 @@ public class Reporte_Disponibilidad extends Reporte
         ArrayList<String> columnas=new ArrayList<>();
         columnas.add("centro_id");
         columnas.add("centro_nombre");
+        columnas.add("sector_id");
         columnas.add("sector_nombre");
         columnas.add("agrupado_id");
         columnas.add("agrupado_nombre");
@@ -174,14 +159,36 @@ public class Reporte_Disponibilidad extends Reporte
             envio a genExcel para generacion de file
             op: desplegar tabla en app
             */
+            Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
+            ff.prepararFiltro();
             String fechaInicio="2018-01-30";
-            String fechaFin="2018-01-30";
-            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get("DB Reporte")).procedimientoAlmacenado(fechaInicio,fechaFin);
+            String fechaFin=null;
+            if(ff != null)
+            {
+                if(ff.getFechaInicio()!=null)
+                {       
+                    fechaInicio=ff.getFechaInicio().getYear()+"-"
+                            +(((ff.getFechaInicio().getMonth())<9) ? "0"+(ff.getFechaInicio().getMonth()+1): (ff.getFechaInicio().getMonth()+1))+"-"
+                            +(((ff.getFechaInicio().getDate())<10) ? "0"+(ff.getFechaInicio().getDate()): (ff.getFechaInicio().getDate()));
+                }
+                if(ff.getFechaFin()!=null)
+                {
+                    fechaFin=ff.getFechaFin().getYear()+"-"+(((ff.getFechaFin().getMonth())<9) ? "0"+(ff.getFechaFin().getMonth()+1): (ff.getFechaFin().getMonth()+1))+"-"
+                            +(((ff.getFechaFin().getDate())<10) ? "0"+(ff.getFechaFin().getDate()): (ff.getFechaFin().getDate()));
+                }
+            }
+            
+            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get("Reporte Disponibilidad")).procedimientoAlmacenado(fechaInicio,fechaFin);
             if(resultados==null)
             {
                 return false;
             }
+            if(!generarExcel())
+            {
+                System.out.println("No existen datos o algo malo paso :c");
+            }
             //trabajar con arraylist -> separados elementos por ;
+            
             return true;
         }
         catch (SQLException ex)

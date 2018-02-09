@@ -18,5 +18,10 @@ public abstract class Recurso
         this.id = id;
     }
     
+    public Recurso()
+    {
+    
+    }
+    
   //  public abstract boolean recuperarDatos();
 }

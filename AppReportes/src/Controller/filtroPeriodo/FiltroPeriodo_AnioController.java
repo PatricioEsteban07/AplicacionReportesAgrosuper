@@ -134,6 +134,7 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
                 this.filtro.vaciarFiltro();
                 this.filtro.setFechaInicio(new Date(inicio, 1, 1));
                 this.filtro.setOpcion(1);
+                this.filtro.prepararFiltro();
                 this.buttonCancelar();
                 break;
             case 2:
@@ -143,6 +144,7 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
                     this.filtro.setFechaInicio(new Date(inicio, 1, 1));
                     this.filtro.setFechaFin(new Date(fin, 1, 1));
                     this.filtro.setOpcion(2);
+                    this.filtro.prepararFiltro();
                     this.buttonCancelar();
                 }
                 else

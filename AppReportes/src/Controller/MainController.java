@@ -374,7 +374,9 @@ public class MainController implements Initializable
                 this.cargarModalFiltroFecha("/Views/filtroPeriodo/filtroPeriodo_Mes.fxml","Filtrado por mes");
                 break;
             case 2://semana
-                this.cargarModalFiltroFecha("/Views/filtroPeriodo/filtroPeriodo_Semana.fxml","Filtrado por semana");
+                CommandNames.generaMensaje("Información de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes", 
+                    "Opción en proceso de desarrollo :)");
+               // this.cargarModalFiltroFecha("/Views/filtroPeriodo/filtroPeriodo_Semana.fxml","Filtrado por semana");
                 break;
             case 3://fecha
                 this.cargarModalFiltroFecha("/Views/filtroPeriodo/filtroPeriodo_Dia.fxml","Filtrado por dia");

@@ -6,6 +6,7 @@
 package Model.Filtros;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -227,6 +228,58 @@ public class Filtro_Fecha extends Filtro
         }
         return false;
     }
+    
+    public static Calendar toCalendar(Date date){ 
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+      }
+    
+    public static Date toDate(Calendar cal){ 
+        return cal.getTime();
+      }
+    
+    public boolean prepararFiltro()
+    {
+        switch(this.opcion)
+        {
+            case 1://1 año
+                System.out.println("paso");
+                this.fechaInicio=new Date(this.fechaInicio.getYear(),0,1);
+                this.fechaFin=new Date(this.fechaInicio.getYear(),11,31);
+                break;
+            case 2://rango año
+                this.fechaInicio=new Date(this.fechaInicio.getYear(),0,1);
+                this.fechaFin=new Date(this.fechaFin.getYear(),11,31);
+                break;
+            case 3://un mes
+                this.fechaInicio=new Date(this.fechaInicio.getYear(),this.fechaInicio.getMonth(),1);
+                Calendar aux=toCalendar(new Date(this.fechaInicio.getYear(),this.fechaInicio.getMonth(),1));
+                aux.add(Calendar.MONTH, 1);
+                aux.add(Calendar.DAY_OF_MONTH, -1);
+                this.fechaFin = toDate(aux);
+                break;
+            case 4://rango mes
+                this.fechaInicio=new Date(this.fechaInicio.getYear(),this.fechaInicio.getMonth(),1);
+                aux=toCalendar(new Date(this.fechaFin.getYear(),this.fechaFin.getMonth(),1));
+                aux.add(Calendar.MONTH, 1);
+                aux.add(Calendar.DAY_OF_MONTH, -1);
+                this.fechaFin = toDate(aux);
+                break;
+            case 5://1 semana
+                System.out.println("implementar");
+                break;
+            case 6://rango semana
+                System.out.println("implementar");
+                break;
+            case 7://fecha
+                this.fechaFin=null;
+                break;
+            case 8://rango fecha
+                break;
+        }
+        return true;
+    }
 
     @Override
     public String generarEtiquetaInfo()
@@ -241,7 +294,7 @@ public class Filtro_Fecha extends Filtro
             case 3://1 mes
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+1;
             case 4://rango mes
-                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaFin.getMonth()+1
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+1
                         +" / "+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth()+1;
             case 5://1 semana
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio;

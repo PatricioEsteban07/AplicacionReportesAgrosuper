@@ -168,6 +168,7 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
                 this.filtro.vaciarFiltro();
                 this.filtro.setFechaInicio(new Date(anioInicio, mesInicio-1, 1));
                 this.filtro.setOpcion(3);
+                this.filtro.prepararFiltro();
                 this.buttonCancelar();
                 break;
             case 2:
@@ -177,6 +178,7 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
                     this.filtro.setFechaInicio(new Date(anioInicio,mesInicio-1,1));
                     this.filtro.setFechaFin(new Date(anioFin,mesFin-1,1));
                     this.filtro.setOpcion(4);
+                    this.filtro.prepararFiltro();
                     this.buttonCancelar();
                 }
                 else
