@@ -6,10 +6,10 @@
 package Model.Reportes;
 
 import Model.Filtros.Filtro_Fecha;
-import Model.GeneradoresExcel.GeneradorExcel_ReporteDisponibilidad;
+import Model.GeneradoresExcel.GeneradorExcel_ReporteArbolPerdidas;
 import Model.LocalDB;
 import Model.Recurso;
-import Model.RecursosDB.RecursoDB_ReporteDisponibilidad;
+import Model.RecursosDB.RecursoDB_ReporteArbolPerdidas;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,13 +28,13 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author Patricio
  */
-public class Reporte_Disponibilidad extends Reporte
+public class Reporte_ArbolPerdidas extends Reporte
 {
     private HashMap<String, BaseReporteDisponibilidad> elementos;
 
-    public Reporte_Disponibilidad(LocalDB db)
+    public Reporte_ArbolPerdidas(LocalDB db)
     {
-        super("Reporte de Disponibilidad",db);
+        super("Reporte Árbol Pérdidas",db);
         /*
         //Materiales
         this.recursos.put("Sectores", new RecursoDB_Sectores(this.db));
@@ -61,7 +61,7 @@ public class Reporte_Disponibilidad extends Reporte
         //Stocks
         this.recursos.put("Stocks", new RecursoDB_Stock(this.db));
         */
-        this.recursos.put("Reporte Disponibilidad", new RecursoDB_ReporteDisponibilidad(this.db));
+        this.recursos.put("Reporte Árbol Pérdidas", new RecursoDB_ReporteArbolPerdidas(this.db));
         
         this.generarFiltrosBaseCustom();
     }
@@ -96,19 +96,19 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarExcel()
     {
-        this.generadorExcel.put("Reporte Disponibilidad", new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
+        this.generadorExcel.put("Reporte Árbol Pérdidas", new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
         try
         {
-            if(!this.generadorExcel.get("Reporte Disponibilidad").generarArchivo(this.recursos))
+            if(!this.generadorExcel.get("Reporte Árbol Pérdidas").generarArchivo(this.recursos))
             {
-                System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
+                System.out.println("ERROR: problema generando archivos excel Reporte Árbol Pérdidas");
                 return false;
             }
             return true;
         }
         catch (IOException ex)
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -128,30 +128,39 @@ public class Reporte_Disponibilidad extends Reporte
     public ArrayList<String> completarColumnasTabla()
     {
         ArrayList<String> columnas=new ArrayList<>();
+        columnas.add("mes");
+        columnas.add("semana");
+        columnas.add("sector_nombre");
+        columnas.add("tipoCliente");
         columnas.add("centro_id");
         columnas.add("centro_nombre");
-        columnas.add("sector_id");
-        columnas.add("sector_nombre");
         columnas.add("agrupado_id");
         columnas.add("agrupado_nombre");
-        columnas.add("fecha");
-        columnas.add("pedido_Cj");
-        columnas.add("despacho_Cj");
-        columnas.add("disponible_Cj");
-        columnas.add("pedido_Kg");
-        columnas.add("pedido_neto");
-        columnas.add("disponibleKg");
-        columnas.add("faltanteCj");
+        columnas.add("n2_nombre");
+        columnas.add("Pedido_Kg");
+        columnas.add("Factura_Kg");
+        columnas.add("Demanda_Kg");
+        columnas.add("NS_Kg");
+        columnas.add("Faltante_Kg");
         columnas.add("faltanteKg");
-        columnas.add("semana");
-        columnas.add("sobranteCj");
-        columnas.add("sobranteKg");
-        columnas.add("faltanteDespachoCj");
-        columnas.add("faltanteAjustadoCj");
-        columnas.add("faltanteDespachoKg");
-        columnas.add("faltanteAjustadoKg");
-        columnas.add("diaSemana");
-        columnas.add("anio");
+        columnas.add("Sobrefactura_Kg");
+        columnas.add("PP_Neto");
+        columnas.add("Faltante_Neto");
+        columnas.add("Pedido_Cj");
+        columnas.add("Factura_Cj");
+        columnas.add("Demanda_Cj");
+        columnas.add("NS_Cj");
+        columnas.add("Sobrefactura_Cj");
+        columnas.add("Faltante_Cj");
+        columnas.add("Disp_Pedido_Cj");
+        columnas.add("Disp_Faltante_Cj");
+        columnas.add("Disp_Pedido_Kg");
+        columnas.add("Disp_Faltante_Kg");
+        columnas.add("Factura_Faltante_Kg");
+        columnas.add("Factura_Faltante_Cj");
+        columnas.add("Pedido_Neto");
+        columnas.add("Anio");
+        columnas.add("semanaAnio");
         return columnas;
     }
 
@@ -185,7 +194,7 @@ public class Reporte_Disponibilidad extends Reporte
                 }
             }
             
-            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get("Reporte Disponibilidad")).procedimientoAlmacenado(fechaInicio,fechaFin);
+            ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get("Reporte Árbol Pérdidas")).procedimientoAlmacenado(fechaInicio,fechaFin);
             if(resultados==null)
             {
                 return false;
@@ -200,11 +209,11 @@ public class Reporte_Disponibilidad extends Reporte
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (ClassNotFoundException ex)
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -212,21 +221,21 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean desplegarInfoExcelApp(TableView<Recurso> asdf, AnchorPane panelTabla)
     {
-        TableView<BaseReporteDisponibilidad> ReportesTableView = new TableView<>();
+        TableView<BaseReporteArbolPerdidas> ReportesTableView = new TableView<>();
         for (int i = 0; i < this.completarColumnasTabla().size(); i++)
         {
-            TableColumn<BaseReporteDisponibilidad, String> tc = new TableColumn(this.completarColumnasTabla().get(i));
-            tc.setCellValueFactory(new PropertyValueFactory<BaseReporteDisponibilidad,String>(this.completarColumnasTabla().get(i)));
+            TableColumn<BaseReporteArbolPerdidas, String> tc = new TableColumn(this.completarColumnasTabla().get(i));
+            tc.setCellValueFactory(new PropertyValueFactory<BaseReporteArbolPerdidas,String>(this.completarColumnasTabla().get(i)));
             System.out.println("TC: "+this.completarColumnasTabla().get(i));
             ReportesTableView.getColumns().add(tc);
         }
         
-        ObservableList<BaseReporteDisponibilidad> list = FXCollections.observableArrayList();
+        ObservableList<BaseReporteArbolPerdidas> list = FXCollections.observableArrayList();
         //mostrar tabla en app
-        ArrayList<Recurso> elements= this.recursos.get("Reporte Disponibilidad").getAll();
+        ArrayList<Recurso> elements= this.recursos.get("Reporte Árbol Pérdidas").getAll();
         for (int i = 0; i < elements.size(); i++)
         {
-            BaseReporteDisponibilidad aux = (BaseReporteDisponibilidad)elements.get(i);
+            BaseReporteArbolPerdidas aux = (BaseReporteArbolPerdidas)elements.get(i);
             list.add(aux);
             System.out.println("E: "+aux.centro_nombre);
         }

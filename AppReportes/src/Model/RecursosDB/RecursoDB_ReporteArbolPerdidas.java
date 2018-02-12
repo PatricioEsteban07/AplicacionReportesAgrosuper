@@ -7,7 +7,7 @@ package Model.RecursosDB;
 
 import Model.Agrupado;
 import Model.LocalDB;
-import Model.Reportes.BaseReporteDisponibilidad;
+import Model.Reportes.BaseReporteArbolPerdidas;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,12 +19,12 @@ import java.util.logging.Logger;
  *
  * @author Patricio
  */
-public class RecursoDB_ReporteDisponibilidad extends RecursoDB
+public class RecursoDB_ReporteArbolPerdidas extends RecursoDB
 {
     
-    public RecursoDB_ReporteDisponibilidad(LocalDB db)
+    public RecursoDB_ReporteArbolPerdidas(LocalDB db)
     {
-        super("Reporte Disponibilidad","{call sp_reporte_disponibilidad(?,?) }",db);
+        super("Reporte Árbol Pérdidas","{call sp_reporte_arbol_perdidas(?,?) }",db);
     }
     
     public ArrayList<String> procedimientoAlmacenado(String fechaInicio, String fechaFin) throws SQLException, ClassNotFoundException
@@ -41,7 +41,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
         // Step-5: execute the stored procedures: proc3
         if(!cs.execute())
         {
-            System.out.println("error con ejecutar SP RecursoDB reporte disponibilidad:C");
+            System.out.println("error con ejecutar SP RecursoDB reporte arbol perdidas :C");
             return null;
         }
         ResultSet rs = cs.getResultSet();
@@ -49,17 +49,20 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
         ArrayList<String> resultados = new ArrayList<>();
         while (rs.next())
         {
-            String aux = (ctRow++)+";"+rs.getString("centro_id")+";"+rs.getString("centro_nombre")+";"+
-                    rs.getString("sector_id")+";"+rs.getString("sector_nombre")+";"+rs.getString("agrupado_id")+";"+
-                    rs.getString("agrupado_nombre")+";"+rs.getString("fecha")+";"+rs.getString("pedido_Cj")+";"+
-                    rs.getString("despacho_Cj")+";"+rs.getString("disponible_Cj")+";"+rs.getString("pedido_Kg")+";"+
-                    rs.getString("pedido_neto")+";"+rs.getString("disponible_Kg")+";"+rs.getString("faltante_Cj")+";"+
-                    rs.getString("faltante_Kg")+";"+rs.getString("semana")+";"+rs.getString("sobrante_Cj")+";"+
-                    rs.getString("sobrante_Kg")+";"+rs.getString("faltanteDespacho_Cj")+";"+rs.getString("faltanteAjustado_Cj")+";"+
-                    rs.getString("faltanteDespacho_Kg")+";"+rs.getString("faltanteAjustado_Kg")+";"+rs.getString("diaSemana")+";"+
-                    rs.getString("año");
+            String aux = (ctRow++)+";"+rs.getString("mes")+";"+rs.getString("semana")+";"+
+                    rs.getString("sector_nombre")+";"+rs.getString("tipoCliente")+";"+
+                    rs.getString("centro_id")+";"+rs.getString("centro_nombre")+";"+rs.getString("agrupado_id")+";"+
+                    rs.getString("agrupado_nombre")+";"+rs.getString("n2_nombre")+";"+rs.getString("Pedido_Kg")+";"+
+                    rs.getString("Factura_Kg")+";"+rs.getString("Demanda_Kg")+";"+rs.getString("NS_Kg")+";"+
+                    rs.getString("Faltante_Kg")+";"+rs.getString("Sobrefactura_Kg")+";"+rs.getString("PP_Neto")+";"+
+                    rs.getString("Faltante_Neto")+";"+rs.getString("Pedido_Cj")+";"+rs.getString("Factura_Cj")+";"+
+                    rs.getString("Demanda_Cj")+";"+rs.getString("NS_Cj")+";"+rs.getString("Sobrefactura_Cj")+";"+
+                    rs.getString("Faltante_Cj")+";"+rs.getString("Disp_Pedido_Cj")+";"+rs.getString("Disp_Faltante_Cj")+";"+
+                    rs.getString("Disp_Pedido_Kg")+";"+rs.getString("Disp_Faltante_Kg")+";"+
+                    rs.getString("Factura_Faltante_Kg")+";"+rs.getString("Factura_Faltante_Cj")+";"+
+                    rs.getString("Pedido_Neto")+";"+rs.getString("Año")+";"+rs.getString("semanaAño");
             resultados.add(aux);
-            this.datos.add(new BaseReporteDisponibilidad(aux));
+            this.datos.add(new BaseReporteArbolPerdidas(aux));
         }
         if(ctRow==0)
         {
@@ -78,7 +81,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_ReporteArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         try
@@ -107,7 +110,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_ReporteArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

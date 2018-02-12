@@ -273,7 +273,7 @@ public class Filtro_Fecha extends Filtro
                 System.out.println("implementar");
                 break;
             case 7://fecha
-                this.fechaFin=null;
+                this.fechaFin=this.fechaInicio;
                 break;
             case 8://rango fecha
                 break;

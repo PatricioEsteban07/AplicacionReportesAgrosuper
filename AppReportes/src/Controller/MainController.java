@@ -13,21 +13,9 @@ import Model.Filtros.Filtro_Cliente;
 import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.LocalDB;
-import Model.RecursosDB.RecursoDB_Agrupados;
-import Model.RecursosDB.RecursoDB_Centros;
-import Model.RecursosDB.RecursoDB_EstadoRefrigerados;
-import Model.RecursosDB.RecursoDB_Marcas;
-import Model.RecursosDB.RecursoDB_Materiales;
-import Model.RecursosDB.RecursoDB_N2;
-import Model.RecursosDB.RecursoDB_N3;
-import Model.RecursosDB.RecursoDB_N4;
-import Model.RecursosDB.RecursoDB_OficinaVentas;
-import Model.RecursosDB.RecursoDB_Regiones;
-import Model.RecursosDB.RecursoDB_Sectores;
-import Model.RecursosDB.RecursoDB_TipoClientes;
-import Model.RecursosDB.RecursoDB_TipoEnvasados;
-import Model.RecursosDB.RecursoDB_ZonaVentas;
+import Model.Recurso;
 import Model.Reportes.Reporte;
+import Model.Reportes.Reporte_ArbolPerdidas;
 import Model.Reportes.Reporte_Disponibilidad;
 import java.io.IOException;
 import java.net.URL;
@@ -60,11 +48,9 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -121,7 +107,7 @@ public class MainController implements Initializable
     private CheckComboBox checkComboBox_clientes;
     
     @FXML 
-    private TableView<ArrayList<String>> ReportesTableView;
+    private TableView<Recurso> ReportesTableView;
     
     private int opcion;
     private Reporte reporteBase;
@@ -190,6 +176,10 @@ public class MainController implements Initializable
             {
                 case 0://reporte disponibilidad
                     this.reporteBase=new Reporte_Disponibilidad(this.db);
+                    this.text_areaReporte.setText("Área Servicios");
+                    break;
+                case 1://reporte árbol pérdidas
+                    this.reporteBase=new Reporte_ArbolPerdidas(this.db);
                     this.text_areaReporte.setText("Área Servicios");
                     break;
             }
@@ -494,6 +484,12 @@ public class MainController implements Initializable
         generarReporteBase(0);
     }
     
+    @FXML
+    public void buttonReporteArbolPerdidas() throws InterruptedException
+    {
+        generarReporteBase(1);
+    }
+    
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
     {
         System.out.println("obteniendo reporte...");
@@ -503,39 +499,10 @@ public class MainController implements Initializable
         }  
         //generar tabla con reporte
         this.ReportesTableView=new TableView<>();
-        
-        for (int i = 0; i < columnsGeneral.size(); i++)
-        {
-            TableColumn<ArrayList<String>, String> tc = new TableColumn(columnsGeneral.get(i));
-            tc.setCellValueFactory(new PropertyValueFactory<ArrayList<String>,String>(columnsGeneral.get(i)));
-            this.ReportesTableView.getColumns().add(tc);
-        }
-        
-        ObservableList<ArrayList<String>> list = FXCollections.observableArrayList();
-        //mostrar tabla en app
-        for (int i = 0; i < 5; i++)
-        {
-            ArrayList<String> aux=new ArrayList<>();
-            aux.add("hola"); aux.add("hola"); aux.add("hola");
-            aux.add("hola"); aux.add("hola"); aux.add("hola");
-            aux.add("hola"); aux.add("hola"); aux.add("hola");
-            aux.add("hola");
-            list.add(aux);
-        }
-
-        ReportesTableView.getSelectionModel().setCellSelectionEnabled(true);
-        ReportesTableView.setItems(list);
-        
-        ReportesTableView.setPrefSize(panelTabla.getWidth(), panelTabla.getHeight());
-        
-        panelTabla.setTopAnchor(ReportesTableView, 0.0);
-        panelTabla.setLeftAnchor(ReportesTableView, 0.0);
-        panelTabla.setRightAnchor(ReportesTableView, 0.0);
-
-        this.panelTabla.getChildren().clear();
-        this.panelTabla.getChildren().add(ReportesTableView);
+        this.reporteBase.desplegarInfoExcelApp(this.ReportesTableView, panelTabla);
         return true;
     }
+    
     
     private void cargarModalFiltroFecha(String resource, String title)
     {

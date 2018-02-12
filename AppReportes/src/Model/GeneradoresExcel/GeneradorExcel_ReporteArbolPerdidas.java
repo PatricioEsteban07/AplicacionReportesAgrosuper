@@ -7,7 +7,7 @@ package Model.GeneradoresExcel;
 
 import Model.Recurso;
 import Model.RecursosDB.RecursoDB;
-import Model.Reportes.BaseReporteDisponibilidad;
+import Model.Reportes.BaseReporteArbolPerdidas;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,19 +24,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author Patricio
  */
-public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
+public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
 {
     
-    public GeneradorExcel_ReporteDisponibilidad(ArrayList<String> columnas)
+    public GeneradorExcel_ReporteArbolPerdidas(ArrayList<String> columnas)
     {
-        super("Reporte Disponibilidad");
+        super("Reporte Árbol Pérdidas");
         this.columnas=columnas;
     }
 
     @Override
     public boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException
     {
-        HashMap<String, BaseReporteDisponibilidad> filas = new HashMap<>();
+        HashMap<String, BaseReporteArbolPerdidas> filas = new HashMap<>();
         
         //parte 1 : tabla básica
             //sacar centro (se hizo anteriormente)
@@ -89,31 +89,39 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         { 
             XSSFRow filaAux = hoja.createRow(i+1);
                 
-            BaseReporteDisponibilidad row = (BaseReporteDisponibilidad)recursosAux.get(i);
-            filaAux.createCell(0).setCellValue(row.centro_id);
-            filaAux.createCell(1).setCellValue(row.centro_nombre);
-            filaAux.createCell(2).setCellValue(row.sector_id);
-            filaAux.createCell(3).setCellValue(row.sector_nombre);
-            filaAux.createCell(4).setCellValue(row.agrupado_id);
-            filaAux.createCell(5).setCellValue(row.agrupado_nombre);
-            filaAux.createCell(6).setCellValue(row.fecha);
-            filaAux.createCell(7).setCellValue(row.pedido_Cj);
-            filaAux.createCell(8).setCellValue(row.despacho_Cj);
-            filaAux.createCell(9).setCellValue(row.disponibleCj);
-            filaAux.createCell(10).setCellValue(row.pedido_Kg);
-            filaAux.createCell(11).setCellValue(row.pedido_neto);
-            filaAux.createCell(12).setCellValue(row.disponibleKg);
-            filaAux.createCell(13).setCellValue(row.faltanteCj);
-            filaAux.createCell(14).setCellValue(row.faltanteKg);
-            filaAux.createCell(15).setCellValue(row.semana);
-            filaAux.createCell(16).setCellValue(row.sobranteCj);
-            filaAux.createCell(17).setCellValue(row.sobranteKg);
-            filaAux.createCell(18).setCellValue(row.faltanteDespachoCj);
-            filaAux.createCell(19).setCellValue(row.faltanteAjustadoCj);
-            filaAux.createCell(20).setCellValue(row.faltanteDespachoKg);
-            filaAux.createCell(21).setCellValue(row.faltanteAjustadoKg);
-            filaAux.createCell(22).setCellValue(row.diaSemana);
-            filaAux.createCell(23).setCellValue(row.anio);
+            BaseReporteArbolPerdidas row = (BaseReporteArbolPerdidas)recursosAux.get(i);
+            filaAux.createCell(0).setCellValue(row.mes);
+            filaAux.createCell(1).setCellValue(row.semana);
+            filaAux.createCell(2).setCellValue(row.sector_nombre);
+            filaAux.createCell(3).setCellValue(row.tipoCliente);
+            filaAux.createCell(4).setCellValue(row.centro_id);
+            filaAux.createCell(5).setCellValue(row.centro_nombre);
+            filaAux.createCell(6).setCellValue(row.agrupado_id);
+            filaAux.createCell(7).setCellValue(row.agrupado_nombre);
+            filaAux.createCell(8).setCellValue(row.n2_nombre);
+            filaAux.createCell(9).setCellValue(row.Pedido_Kg);
+            filaAux.createCell(10).setCellValue(row.Factura_Kg);
+            filaAux.createCell(11).setCellValue(row.Demanda_Kg);
+            filaAux.createCell(12).setCellValue(row.NS_Kg);
+            filaAux.createCell(13).setCellValue(row.Faltante_Kg);
+            filaAux.createCell(14).setCellValue(row.Sobrefactura_Kg);
+            filaAux.createCell(15).setCellValue(row.PP_Neto);
+            filaAux.createCell(16).setCellValue(row.Faltante_Neto);
+            filaAux.createCell(17).setCellValue(row.Pedido_Cj);
+            filaAux.createCell(18).setCellValue(row.Factura_Cj);
+            filaAux.createCell(19).setCellValue(row.Demanda_Cj);
+            filaAux.createCell(20).setCellValue(row.NS_Cj);
+            filaAux.createCell(21).setCellValue(row.Sobrefactura_Cj);
+            filaAux.createCell(22).setCellValue(row.Faltante_Cj);
+            filaAux.createCell(23).setCellValue(row.Disp_Pedido_Cj);
+            filaAux.createCell(24).setCellValue(row.Disp_Faltante_Cj);
+            filaAux.createCell(25).setCellValue(row.Disp_Pedido_Kg);
+            filaAux.createCell(26).setCellValue(row.Disp_Faltante_Kg);
+            filaAux.createCell(27).setCellValue(row.Factura_Faltante_Kg);
+            filaAux.createCell(28).setCellValue(row.Factura_Faltante_Cj);
+            filaAux.createCell(29).setCellValue(row.Pedido_Neto);
+            filaAux.createCell(30).setCellValue(row.Anio);
+            filaAux.createCell(31).setCellValue(row.semanaAnio);
             contReg++;
         }
         

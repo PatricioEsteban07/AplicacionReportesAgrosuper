@@ -14,10 +14,13 @@ import Model.Filtros.Filtro_Sucursal;
 import Model.Filtros.Filtro_Zona;
 import Model.GeneradoresExcel.GeneradorExcel;
 import Model.LocalDB;
+import Model.Recurso;
 import Model.RecursosDB.RecursoDB;
 import java.util.ArrayList;
 
 import java.util.HashMap;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 
 /**
  *
@@ -124,5 +127,7 @@ public abstract class Reporte
     }
 
     public abstract boolean generarReporte();
+
+    public abstract boolean desplegarInfoExcelApp(TableView<Recurso> tableView, AnchorPane ap);
     
 }
