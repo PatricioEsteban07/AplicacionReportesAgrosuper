@@ -75,7 +75,7 @@
                 <Menu mnemonicParsing="false" text="Base de Datos">
                   <items>
                     <MenuItem fx:id="menu_dbPoblate" mnemonicParsing="false" text="Poblar Base de datos" />
-                        <MenuItem fx:id="menu_DBConfig" mnemonicParsing="false" text="Configuración de conexión..." />
+                        <MenuItem fx:id="menu_DBConfig" mnemonicParsing="false" onAction="#setConfigDB" text="Configuración de conexión..." />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Ayuda">

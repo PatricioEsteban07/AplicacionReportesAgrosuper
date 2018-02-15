@@ -52,7 +52,8 @@ public abstract class RecursoDB
             try
             {
                 Class.forName("com.mysql.jdbc.Driver");
-                this.conn = DriverManager.getConnection(CommandNames.URL_CONNECT_DB, "root", "12345678");
+                this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
+                        this.db.dbConfig.pass);
             }
             catch (SQLException ex)
             {

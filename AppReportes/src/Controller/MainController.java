@@ -7,6 +7,7 @@ package Controller;
 
 import Controller.filtroPeriodo.FiltroPeriodoController;
 import Model.CommandNames;
+import Model.DBConfig;
 import Model.Filtros.Filtro;
 import Model.Filtros.Filtro_Canal;
 import Model.Filtros.Filtro_Cliente;
@@ -47,7 +48,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -111,15 +111,13 @@ public class MainController implements Initializable
     private Reporte reporteBase;
     private LocalDB db;
     
-    private HashMap<String, Reporte> reportesGenerados;
-    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        this.db = new LocalDB();
+        this.db = new LocalDB(new DBConfig());
 //        new RecursoDB_Regiones(db).obtenerDatos();
 //        new RecursoDB_Centros(db).obtenerDatos();
 //        new RecursoDB_ZonaVentas(db).obtenerDatos();
@@ -135,7 +133,6 @@ public class MainController implements Initializable
 //        new RecursoDB_Materiales(db).obtenerDatos();
 //        new RecursoDB_OficinaVentas(db).obtenerDatos();
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
-        this.reportesGenerados=new HashMap<>();
         
         try
         {
@@ -155,6 +152,7 @@ public class MainController implements Initializable
         {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.db.probarDBConection();
     }
     
     public boolean generarReporteBase(int opcion) throws InterruptedException
@@ -483,7 +481,6 @@ public class MainController implements Initializable
         return true;
     }
     
-    
     private void cargarModalFiltroFecha(String resource, String title)
     {
         Parent root = cargarModal(resource,title);
@@ -524,54 +521,39 @@ public class MainController implements Initializable
         }      
         return root;
     }
-    
-    @FXML
-    public void generarGraficoPrueba() throws SQLException, ClassNotFoundException, InterruptedException
-    {
-        actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_GRAPHICS);
-        System.out.println("Inicio generación grafico prueba");
-        
-        String s0="Norte", s1="Santiago", s2="Centro", s3="Sur";
-        
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        BarChart chart_ejemplo=new BarChart(xAxis, yAxis);
-        
-        chart_ejemplo.setTitle("Gráfico Clientes por Sucursal");
-        xAxis.setLabel("Empresas");       
-        yAxis.setLabel("Cantidad Clientes");
- 
-        XYChart.Series series1 = new XYChart.Series();
-        series1.setName("2003");       
-        series1.getData().add(new XYChart.Data(s0, 25601.34));
-        series1.getData().add(new XYChart.Data(s1, 20148.82));
-        series1.getData().add(new XYChart.Data(s2, 10000));
-        series1.getData().add(new XYChart.Data(s3, 35407.15)); 
-        
-        XYChart.Series series2 = new XYChart.Series();
-        series2.setName("2004");
-        series2.getData().add(new XYChart.Data(s0, 57401.85));
-        series2.getData().add(new XYChart.Data(s1, 41941.19));
-        series2.getData().add(new XYChart.Data(s2, 45263.37));
-        series2.getData().add(new XYChart.Data(s3, 117320.16)); 
-        
-        XYChart.Series series3 = new XYChart.Series();
-        series3.setName("2005");
-        series3.getData().add(new XYChart.Data(s0, 45000.65));
-        series3.getData().add(new XYChart.Data(s1, 44835.76));
-        series3.getData().add(new XYChart.Data(s2, 18722.18));
-        series3.getData().add(new XYChart.Data(s3, 17557.31));
-        
-        chart_ejemplo.getData().addAll(series1, series2, series3);
-        this.panelGrafico.getChildren().add(chart_ejemplo);
-        
-        System.out.println("finalizado :)");
-        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_GRAPHICS);
-    }
 
     private void generarEtiqueta(Filtro filtroAux, javafx.scene.control.Control component)
     {
         component.setTooltip(new Tooltip(filtroAux.generarEtiquetaInfo()));
+    }
+    
+    @FXML
+    private void setConfigDB()
+    {
+        String resource = "/Views/configDBInfo.fxml";
+        String title="Configuración de conexión a DB";
+        Parent root = cargarModal(resource,title);
+        FXMLLoader loader = null;
+    
+        try {
+            loader = new FXMLLoader(getClass().getResource(resource));
+            root = loader.load();
+        } catch (IOException ex) {
+            System.out.println("Error al abrir el modal "+title+" ("+resource+")");
+            ex.printStackTrace();
+            System.exit(0);
+        }
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(title);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        configDBInfoController controller = loader.getController();
+        //setea valores base
+        controller.completaInfo(db);
+        stage.setResizable(false);
+        //stage.initOwner();
+        //stage.getIcons().add(new Image("img/icon.png"));
+        stage.showAndWait();
     }
     
     @FXML

@@ -11,8 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
+import javafx.scene.control.Alert;
 
 /**
  *
@@ -20,6 +20,7 @@ import java.util.Set;
  */
 public class LocalDB
 {
+    public DBConfig dbConfig;
     public HashMap<String, Material> materiales;
     public HashMap<String, Marca> marcas;
     public HashMap<String, Sector> sectores;
@@ -42,8 +43,9 @@ public class LocalDB
     
     private Connection conn = null;
 
-    public LocalDB()
+    public LocalDB(DBConfig config)
     {
+        this.dbConfig=config;
         this.materiales = new HashMap<>();
         this.marcas = new HashMap<>();
         this.sectores = new HashMap<>();
@@ -93,7 +95,7 @@ public class LocalDB
         try
         {
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(CommandNames.URL_CONNECT_DB, "root", "12345678");
+            conn = DriverManager.getConnection(dbConfig.urlConector(), dbConfig.user, dbConfig.pass);
         }
         catch (ClassNotFoundException | SQLException ex)
         {
@@ -118,7 +120,7 @@ public class LocalDB
             try
             {
                 Class.forName("com.mysql.jdbc.Driver");
-                this.conn = DriverManager.getConnection(CommandNames.URL_CONNECT_DB, "root", "12345678");
+                this.conn = DriverManager.getConnection(dbConfig.urlConector(), dbConfig.user, dbConfig.pass);
             }
             catch (SQLException ex)
             {
@@ -151,6 +153,24 @@ public class LocalDB
         {
             this.conn.close();
         }
+    }
+    
+    public boolean probarDBConection()
+    {
+        try
+        {
+            connect();
+            close();
+        }
+        catch (SQLException | ClassNotFoundException ex)
+        {
+            CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de aplicación",
+                "Reconfigure información de base de datos, información actual no puede ser utilizada para la conexión.");
+            return false;
+        }
+        CommandNames.generaMensaje("Información del Sistema", Alert.AlertType.INFORMATION, "Información del sistema", 
+            "Conexión a la base de datos realizada exitosamente. Puede generar reportes siempre y cuando la información exista."); 
+        return true;
     }
     
 }

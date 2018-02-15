@@ -69,13 +69,13 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Inicio">
                   <items>
-                    <MenuItem fx:id="menu_close" mnemonicParsing="false" text="Cerrar" />
+                    <MenuItem fx:id="menu_close" mnemonicParsing="false" onAction="#closeApp" text="Cerrar" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Datos">
+                <Menu mnemonicParsing="false" text="Base de Datos">
                   <items>
                     <MenuItem fx:id="menu_dbPoblate" mnemonicParsing="false" text="Poblar Base de datos" />
-                        <MenuItem mnemonicParsing="false" text="Exportar reporte" />
+                        <MenuItem fx:id="menu_DBConfig" mnemonicParsing="false" onAction="#setConfigDB" text="Configuración de conexión..." />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Ayuda">
