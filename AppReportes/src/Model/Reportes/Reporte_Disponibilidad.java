@@ -34,7 +34,7 @@ public class Reporte_Disponibilidad extends Reporte
 
     public Reporte_Disponibilidad(LocalDB db)
     {
-        super("Reporte de Disponibilidad",db);
+        super("Reporte Disponibilidad",db);
         /*
         //Materiales
         this.recursos.put("Sectores", new RecursoDB_Sectores(this.db));
@@ -96,10 +96,10 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarExcel()
     {
-        this.generadorExcel.put("Reporte Disponibilidad", new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
+        this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
         try
         {
-            if(!this.generadorExcel.get("Reporte Disponibilidad").generarArchivo(this.recursos))
+            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
             {
                 System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
                 return false;
@@ -185,7 +185,7 @@ public class Reporte_Disponibilidad extends Reporte
                 }
             }
             
-            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get("Reporte Disponibilidad")).procedimientoAlmacenado(fechaInicio,fechaFin);
+            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
             if(resultados==null)
             {
                 return false;
@@ -223,7 +223,7 @@ public class Reporte_Disponibilidad extends Reporte
         
         ObservableList<BaseReporteDisponibilidad> list = FXCollections.observableArrayList();
         //mostrar tabla en app
-        ArrayList<Recurso> elements= this.recursos.get("Reporte Disponibilidad").getAll();
+        ArrayList<Recurso> elements= this.recursos.get(this.nombre).getAll();
         for (int i = 0; i < elements.size(); i++)
         {
             BaseReporteDisponibilidad aux = (BaseReporteDisponibilidad)elements.get(i);

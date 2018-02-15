@@ -96,10 +96,10 @@ public class Reporte_ArbolPerdidas extends Reporte
     @Override
     public boolean generarExcel()
     {
-        this.generadorExcel.put("Reporte Árbol Pérdidas", new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
+        this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
         try
         {
-            if(!this.generadorExcel.get("Reporte Árbol Pérdidas").generarArchivo(this.recursos))
+            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
             {
                 System.out.println("ERROR: problema generando archivos excel Reporte Árbol Pérdidas");
                 return false;
@@ -194,7 +194,7 @@ public class Reporte_ArbolPerdidas extends Reporte
                 }
             }
             
-            ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get("Reporte Árbol Pérdidas")).procedimientoAlmacenado(fechaInicio,fechaFin);
+            ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
             if(resultados==null)
             {
                 return false;
@@ -232,7 +232,7 @@ public class Reporte_ArbolPerdidas extends Reporte
         
         ObservableList<BaseReporteArbolPerdidas> list = FXCollections.observableArrayList();
         //mostrar tabla en app
-        ArrayList<Recurso> elements= this.recursos.get("Reporte Árbol Pérdidas").getAll();
+        ArrayList<Recurso> elements= this.recursos.get(this.nombre).getAll();
         for (int i = 0; i < elements.size(); i++)
         {
             BaseReporteArbolPerdidas aux = (BaseReporteArbolPerdidas)elements.get(i);

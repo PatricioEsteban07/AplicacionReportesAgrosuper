@@ -14,7 +14,10 @@ import javafx.scene.control.Alert.AlertType;
  */
 public final class CommandNames
 {        
-    public final static String URL_CONNECT_DB="jdbc:mysql://localhost:3306/db_app_agrosuper3";
+    public final static String IP_CONNECT_DB="localhost";
+    public final static String PORT_CONNECT_DB="3306";
+    public final static String NAME_CONNECT_DB="db_app_agrosuper3";
+    public final static String URL_CONNECT_DB="jdbc:mysql://"+IP_CONNECT_DB+":"+PORT_CONNECT_DB+"/"+NAME_CONNECT_DB;
     
     public final static String ESTADO_SUCCESS="Éxito";
     public final static String ESTADO_INFO="Información";

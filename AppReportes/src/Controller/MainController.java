@@ -66,8 +66,6 @@ import org.controlsfx.control.CheckComboBox;
 public class MainController implements Initializable
 {    
     @FXML
-    private MenuItem menu_close;
-    @FXML
     private TitledPane titledPane_areaEstrategica;
     @FXML
     private TitledPane titledPane_areaVentas;
@@ -136,14 +134,6 @@ public class MainController implements Initializable
 //        new RecursoDB_EstadoRefrigerados(db).obtenerDatos();
 //        new RecursoDB_Materiales(db).obtenerDatos();
 //        new RecursoDB_OficinaVentas(db).obtenerDatos();
-        this.menu_close.setOnAction(new EventHandler()
-        {
-            @Override
-            public void handle(Event event)
-            {
-                Platform.exit();
-            }
-        });
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
         this.reportesGenerados=new HashMap<>();
         
@@ -186,7 +176,7 @@ public class MainController implements Initializable
             this.opcion=opcion;
             this.text_nombreReporte.setText(this.reporteBase.nombre);
             this.text_filtroReporte.setText("pendiente...");
-            this.actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Elementos de configuración de reporte generado y listo para ser trabajado.");
+            this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, this.reporteBase.nombre+" seleccionado para trabajar.");
             return true;
         }
         catch (InterruptedException e)
@@ -229,7 +219,9 @@ public class MainController implements Initializable
     
     public void inicializarFiltros()
     {
+        /*
         ObservableList<String> listadoAux = FXCollections.observableArrayList();
+        
         if(this.reporteBase.filtros.containsKey("Filtro_Zona"))
         {
             listadoAux.addAll(((Filtro_Zona)(this.reporteBase.filtros.get("Filtro_Zona"))).zonas);
@@ -320,6 +312,8 @@ public class MainController implements Initializable
                 }
             });
         }
+        */
+        this.text_filtroReporte.setText("Sin filtros aplicados");
     }
     
     public void inicializarFechas()
@@ -376,6 +370,7 @@ public class MainController implements Initializable
                 break;
         }
         generarEtiqueta(this.reporteBase.filtros.get("Filtro_Fecha"),this.choiceBox_periodo);
+        this.text_filtroReporte.setText(this.reporteBase.filtros.get("Filtro_Fecha").generarEtiquetaInfo());
     }
 
     @FXML
@@ -429,32 +424,15 @@ public class MainController implements Initializable
         this.text_estadoSistema.setText(estado+": "+mensaje);
                 
     }
-    /*
+    
     @FXML
     public boolean buttonGenerarReporte() throws InterruptedException
     {
-        actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
-                
-        ArrayList<String> columnasTabla=this.reporteBase.columnasExcel;
-        if(columnasTabla==null)
+        if(this.choiceBox_periodo.getSelectionModel().getSelectedIndex()==-1)
         {
-            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
+            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,"Debe seleccionar un rango de fechas para generar tal reporte.");
             return false;
         }
-        if(!generarReporte(this.reporteBase, columnasTabla))
-        {
-            actualizarEstadoProceso(CommandNames.ESTADO_ERROR,CommandNames.MSG_ERROR_GEN_REPORTE);
-            return false;
-        }
-        this.reportesGenerados.put(this.reporteBase.nombre,this.reporteBase);
-        this.generarReporteBase(this.opcion);
-        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS,CommandNames.MSG_SUCCESS_GEN_REPORTE);
-        return true;
-    }
-    */
-    @FXML
-    public boolean buttonGenerarReporte() throws InterruptedException
-    {
         actualizarEstadoProceso(CommandNames.ESTADO_INFO,CommandNames.MSG_INFO_GEN_REPORTE);
         
         /*
@@ -487,7 +465,9 @@ public class MainController implements Initializable
     @FXML
     public void buttonReporteArbolPerdidas() throws InterruptedException
     {
-        generarReporteBase(1);
+        CommandNames.generaMensaje("Información del Sistema", AlertType.INFORMATION, "Reporte en Construcción", "Te dije que aún no lo pruebo xd");
+        this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, this.reporteBase.nombre+" seleccionado para trabajar.");
+        //generarReporteBase(1);
     }
     
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
@@ -593,4 +573,11 @@ public class MainController implements Initializable
     {
         component.setTooltip(new Tooltip(filtroAux.generarEtiquetaInfo()));
     }
+    
+    @FXML
+    private void closeApp()
+    {
+        Platform.exit();
+    }
+    
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
  *
  * @author Patricio
  */
-public class CSVImport
+public abstract class CSVImport
 {
     public final String dirBase=(System.getProperty("user.home")).replace("\\", "/")+"/Desktop/";
     public Connection conn;
@@ -71,23 +71,26 @@ public class CSVImport
                     switch(types.get(i))
                     {
                         case "ID"://eliminar posiles 0 a la izquierda
-                            
+                            int j=0;
+                            while(datos[i].charAt(j)=='0'){j++;}
+                            datos[i]=datos[i].substring(j);
                             break;
                         case "INT"://hasta el momento procurar que sea int
                             
                             break;
                         case "FLOAT"://formato 12.12
-                            
+                            datos[i].replace(".","").replace(",", ".");
                             break;
                         case "DATE"://formato 2018-01-30
-                            
+                            datos[i]=datos[i].substring(6)+"-"+datos[i].substring(3,5)+"-"+datos[i].substring(0,2);
                             break;
                         case "STRING"://mantener
                             
                             break;
                     }
+                    System.out.print(datos[i]+"/");
                 }
-               System.out.println(datos[0] + ", " + datos[1] + ", " + datos[2] + ", " + datos[3] + ", " + datos[4] + ", " + datos[5]);
+               System.out.println();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -109,7 +112,7 @@ public class CSVImport
         //leer linea por linea
         //no pescar lineas de comentarios (tratar)
         //comprobar que cant types correspondan a numero de columnas
-            //si no corresponden retornar flase con msj
+            //si no corresponden retornar frase con msj
         //para cada linea
             //capturar elementos por separado (ArrayList<String>)
             //para cada elemento del araylist
@@ -119,6 +122,7 @@ public class CSVImport
                     //si es ID eliminar 0 a la izq
                     //si es float dejar con estructura algo.otro
                 //reescribir elemento en doc / cargar directo en DB
+                    //si se carga directo en la db, comprobar si es nuevo/existente
                     //en caso que no se pueda, retornar false con msj
         
         return false;

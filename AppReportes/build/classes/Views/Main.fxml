@@ -124,11 +124,11 @@
                                                                     </rowConstraints>
                                                                      <children>
                                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Período:" GridPane.columnIndex="1" />
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Zona:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Canal:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sucursal:" GridPane.columnIndex="5" />
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cliente:" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RRHH:" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Zona:" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Canal:" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sucursal:" visible="false" GridPane.columnIndex="5" />
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cliente:" visible="false" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RRHH:" visible="false" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                                                                         <ChoiceBox fx:id="choiceBox_periodo" prefWidth="211.0" GridPane.columnIndex="3" />
                                                                         <Button mnemonicParsing="false" onAction="#buttonVaciarFiltro" prefHeight="25.0" prefWidth="188.0" text="Vaciar Filtro" GridPane.columnIndex="7" GridPane.rowIndex="3" />
                                                                      </children>
