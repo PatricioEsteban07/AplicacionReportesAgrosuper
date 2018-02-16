@@ -11,6 +11,8 @@ import Model.LocalDB;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -25,7 +27,6 @@ import javafx.stage.Stage;
  */
 public class configDBInfoController implements Initializable
 {
-
     @FXML
     private Button button_Aceptar;
     @FXML
@@ -33,13 +34,7 @@ public class configDBInfoController implements Initializable
     @FXML
     private TextField fieldText_nameDB;
     @FXML
-    private TextField fieldText_ip1;
-    @FXML
-    private TextField fieldText_ip2;
-    @FXML
-    private TextField fieldText_ip3;
-    @FXML
-    private TextField fieldText_ip4;
+    private TextField fieldText_ip;
     @FXML
     private TextField fieldText_port;
     @FXML
@@ -58,11 +53,7 @@ public class configDBInfoController implements Initializable
     {
         this.db = db;
         this.fieldText_nameDB.setText(this.db.dbConfig.dbName);
-        String[] ips = this.db.dbConfig.host.split("\\.");
-        this.fieldText_ip1.setText(ips[0]);
-        this.fieldText_ip2.setText(ips[1]);
-        this.fieldText_ip3.setText(ips[2]);
-        this.fieldText_ip4.setText(ips[3]);
+        this.fieldText_ip.setText(this.db.dbConfig.host);
         this.fieldText_port.setText(this.db.dbConfig.port);
         this.fieldText_user.setText(this.db.dbConfig.user);
         this.passField_pass.setText(this.db.dbConfig.pass);
@@ -74,23 +65,23 @@ public class configDBInfoController implements Initializable
         //validar datos
         if (validarInfoIngresada())
         {
-            
             //probar conexión
             String name=this.fieldText_nameDB.getText();
-            String host=Integer.parseInt(this.fieldText_ip1.getText())+"."+Integer.parseInt(this.fieldText_ip2.getText())+"."
-                    +Integer.parseInt(this.fieldText_ip3.getText())+"."+Integer.parseInt(this.fieldText_ip4.getText());
-            String port=Integer.parseInt(this.fieldText_ip1.getText())+"";
+            String host=this.fieldText_ip.getText();
+            String port=Integer.parseInt(this.fieldText_port.getText())+"";
             String user=this.fieldText_user.getText();
             String pass=this.passField_pass.getText();
             if(new LocalDB(new DBConfig(host, port, name, user, pass)).probarDBConection())
             {
                 //copiar datos
+                this.db.dbConfig.dbName=name;
+                this.db.dbConfig.host=host;
+                this.db.dbConfig.port=port;
+                this.db.dbConfig.user=user;
+                this.db.dbConfig.pass=pass;
                 this.buttonCancelar();
             }
         }
-
-        //probar datos nuevo
-        //guardar datos
     }
 
     @FXML
@@ -105,8 +96,8 @@ public class configDBInfoController implements Initializable
         ArrayList<String> errores = new ArrayList<>();
         if (this.fieldText_nameDB.getText().isEmpty())
             errores.add("El nombre de la db no puede ser nulo o vacío");
-        if (!validarIP())
-            errores.add("El formato de ip es en base a números entre 0 y 255 (Ej: 192.168.2.1)");
+        if (!validarIP(this.fieldText_ip.getText()))
+            errores.add("El formato de ip es en base a números entre 0 y 255 (Ej: 192.168.2.1), o en su defecto 'localhost'.");
         if(!validarPuerto())
             errores.add("El formato del puerto debe ser en base a un número entre 1024 y 65535");
         if (this.fieldText_user.getText().isEmpty())
@@ -125,21 +116,24 @@ public class configDBInfoController implements Initializable
             return false;
         }
         return true;
+
+    }
+    
+    public boolean validarIP(String ip) {
+        if(ip.toLowerCase().equals("localhost"))
+            return true;
+        Pattern pattern;
+        Matcher matcher;
+        String IPADDRESS_PATTERN
+                = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+        pattern = Pattern.compile(IPADDRESS_PATTERN);
+        matcher = pattern.matcher(ip);
+        return matcher.matches();
     }
 
-    private boolean validarIP()
-    {
-        if (!(isNumeric(this.fieldText_ip1.getText())) || !(isNumeric(this.fieldText_ip2.getText()))
-                || !(isNumeric(this.fieldText_ip3.getText())) || !(isNumeric(this.fieldText_ip4.getText())) 
-                || !(Integer.parseInt(this.fieldText_ip1.getText()) > 0 && Integer.parseInt(this.fieldText_ip1.getText()) < 256)
-                || !(Integer.parseInt(this.fieldText_ip2.getText()) > 0 && Integer.parseInt(this.fieldText_ip2.getText()) < 256)
-                || !(Integer.parseInt(this.fieldText_ip3.getText()) > 0 && Integer.parseInt(this.fieldText_ip3.getText()) < 256)
-                || !(Integer.parseInt(this.fieldText_ip4.getText()) > 0 && Integer.parseInt(this.fieldText_ip4.getText()) < 256))
-        {
-            return false;
-        }
-        return true;
-    }
     private boolean validarPuerto()
     {
         if (!(isNumeric(this.fieldText_port.getText())) || !(Integer.parseInt(this.fieldText_port.getText()) > 1023 

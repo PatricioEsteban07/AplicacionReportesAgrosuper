@@ -6,8 +6,12 @@
 package Model.GeneradoresExcel;
 
 import Model.RecursosDB.RecursoDB;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -58,6 +62,33 @@ public abstract class GeneradorExcel
         return style;
     }
     */
+    
+    public static void copyFile(File sourceFile, File destFile) throws IOException 
+    {
+        if(!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel origen = null;
+        FileChannel destino = null;
+        try {
+            origen = new FileInputStream(sourceFile).getChannel();
+            destino = new FileOutputStream(destFile).getChannel();
+
+            long count = 0;
+            long size = origen.size();              
+            while((count += destino.transferFrom(origen, count, size-count))<size);
+        }
+        finally {
+            if(origen != null) {
+                origen.close();
+            }
+            if(destino != null) {
+                destino.close();
+            }
+        }
+    }
+    
     public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException;
     
 }

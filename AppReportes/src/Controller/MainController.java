@@ -9,10 +9,6 @@ import Controller.filtroPeriodo.FiltroPeriodoController;
 import Model.CommandNames;
 import Model.DBConfig;
 import Model.Filtros.Filtro;
-import Model.Filtros.Filtro_Canal;
-import Model.Filtros.Filtro_Cliente;
-import Model.Filtros.Filtro_Sucursal;
-import Model.Filtros.Filtro_Zona;
 import Model.LocalDB;
 import Model.Recurso;
 import Model.Reportes.Reporte;
@@ -20,9 +16,7 @@ import Model.Reportes.Reporte_ArbolPerdidas;
 import Model.Reportes.Reporte_Disponibilidad;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -32,19 +26,12 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
@@ -118,20 +105,6 @@ public class MainController implements Initializable
     public void initialize(URL url, ResourceBundle rb)
     {
         this.db = new LocalDB(new DBConfig());
-//        new RecursoDB_Regiones(db).obtenerDatos();
-//        new RecursoDB_Centros(db).obtenerDatos();
-//        new RecursoDB_ZonaVentas(db).obtenerDatos();
-//        new RecursoDB_Sectores(db).obtenerDatos();
-//        new RecursoDB_N2(db).obtenerDatos();
-//        new RecursoDB_N3(db).obtenerDatos();
-//        new RecursoDB_N4(db).obtenerDatos();
-//        new RecursoDB_TipoClientes(db).obtenerDatos();
-//        new RecursoDB_Marcas(db).obtenerDatos();
-//        new RecursoDB_Agrupados(db).obtenerDatos();
-//        new RecursoDB_TipoEnvasados(db).obtenerDatos();
-//        new RecursoDB_EstadoRefrigerados(db).obtenerDatos();
-//        new RecursoDB_Materiales(db).obtenerDatos();
-//        new RecursoDB_OficinaVentas(db).obtenerDatos();
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
         
         try
@@ -174,6 +147,7 @@ public class MainController implements Initializable
             this.opcion=opcion;
             this.text_nombreReporte.setText(this.reporteBase.nombre);
             this.text_filtroReporte.setText("pendiente...");
+            buttonVaciarFiltro();
             this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, this.reporteBase.nombre+" seleccionado para trabajar.");
             return true;
         }
@@ -207,7 +181,6 @@ public class MainController implements Initializable
             while (it.hasNext()) 
             {
                 Map.Entry pair = (Map.Entry)it.next();
-                System.out.println(pair.getKey() + " = " + ((Filtro)(pair.getValue())).generarEtiquetaInfo());
                 it.remove(); // avoids a ConcurrentModificationException
             }
         this.reporteBase.generarFiltrosBase();
@@ -398,7 +371,7 @@ public class MainController implements Initializable
         }
     }
     
-    public void actualizarEstadoProceso(String estado, String mensaje) throws InterruptedException
+    public boolean actualizarEstadoProceso(String estado, String mensaje) throws InterruptedException
     {
         String style;
         switch(estado)
@@ -420,7 +393,7 @@ public class MainController implements Initializable
         }
         this.panel_estadoSistema.setStyle(style);
         this.text_estadoSistema.setText(estado+": "+mensaje);
-                
+        return true;
     }
     
     @FXML
@@ -473,11 +446,15 @@ public class MainController implements Initializable
         System.out.println("obteniendo reporte...");
         if(!reporte.generarReporte())
         {
+            CommandNames.generaMensaje("Error del Sistema", AlertType.ERROR, "Error al generar reporte",
+                    "Hubo un problema para la generación del reporte. Como sugerencia verifique los datos de conexión"
+                    + " a la Base de Datos y/o la integridad de éste e intente mas tarde.");
             System.out.println("ERROR: generar reporte MainController :C");
+            return false;
         }  
         //generar tabla con reporte
-        this.ReportesTableView=new TableView<>();
-        this.reporteBase.desplegarInfoExcelApp(this.ReportesTableView, panelTabla);
+        //this.ReportesTableView=new TableView<>();
+        //this.reporteBase.desplegarInfoExcelApp(this.ReportesTableView, panelTabla);
         return true;
     }
     
@@ -490,6 +467,9 @@ public class MainController implements Initializable
             loader = new FXMLLoader(getClass().getResource(resource));
             root = loader.load();
         } catch (IOException ex) {
+            CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes",
+                    "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
+                    + "\n La aplicación se cerrará...");
             System.out.println("Error al abrir el modal "+title+" ("+resource+")");
             ex.printStackTrace();
             System.exit(0);
@@ -511,12 +491,11 @@ public class MainController implements Initializable
         try {
             root = FXMLLoader.load(getClass().getResource(recurso));
         } catch (IOException ex) {
-            System.out.println("Error al abrir el modal "+titulo+" ("+recurso+")");
-            ex.printStackTrace();
-            
             CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes", 
                 "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
                         + "\n La aplicación se cerrará...");
+            System.out.println("Error al abrir el modal "+titulo+" ("+recurso+")");
+            ex.printStackTrace();
             System.exit(0);
         }      
         return root;
@@ -539,6 +518,9 @@ public class MainController implements Initializable
             loader = new FXMLLoader(getClass().getResource(resource));
             root = loader.load();
         } catch (IOException ex) {
+            CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes", 
+                "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
+                        + "\n La aplicación se cerrará...");
             System.out.println("Error al abrir el modal "+title+" ("+resource+")");
             ex.printStackTrace();
             System.exit(0);

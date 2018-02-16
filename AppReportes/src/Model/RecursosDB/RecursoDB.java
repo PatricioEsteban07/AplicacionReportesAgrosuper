@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javafx.scene.control.Alert;
 
 /**
  *
@@ -47,43 +48,44 @@ public abstract class RecursoDB
     
     public boolean connect() throws SQLException, ClassNotFoundException
     {
-        if (conn == null)
+        if(conn!=null)
         {
-            try
-            {
-                Class.forName("com.mysql.jdbc.Driver");
-                this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
-                        this.db.dbConfig.pass);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println("connect - SQLException: " + ex);
-                return false;
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.out.println("connect - ClassCastException: " + ex);
-                return false;
-            }
+            conn.close();
+        }
+        try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+            this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
+                    this.db.dbConfig.pass);
+        }
+        catch (SQLException | ClassNotFoundException ex)
+        {
+                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error con procedimiento en Base de Datos", 
+                    "Hubo problemas para ejecutar la consulta en la base de datos. El error es el siguiente: "+ex);
+            System.out.println("connect - SQLException: " + ex);
+            return false;
         }
         return true;
     }
 
     public ResultSet executeQuery() throws SQLException
     {
-        if (conn != null)
+        if(conn!=null)
         {
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(this.query);
-            return result;
+            conn.close();
         }
-        return null;
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(this.query);
+        return result;
     }
 
     public void close() throws SQLException
     {
         if (this.conn != null)
+        {
             this.conn.close();
+            this.conn=null;
+        }
     }
     
     public ArrayList<Recurso> getAll()

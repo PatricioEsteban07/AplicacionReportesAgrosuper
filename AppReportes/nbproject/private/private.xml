@@ -3,10 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/DBConfig.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/GeneradoresExcel/GeneradorExcel_ReporteDisponibilidad.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Reportes/Reporte.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/MainController.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/LocalDB.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/configDBInfoController.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Reportes/Reporte_Disponibilidad.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/RecursosDB/RecursoDB_ReporteDisponibilidad.java</file>
         </group>
     </open-files>
 </project-private>

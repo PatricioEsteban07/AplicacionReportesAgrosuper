@@ -28,10 +28,10 @@ public class DBConfig
 
     public DBConfig()
     {
-        this.host="192.168.1.88";
+        this.host="192.168.1.25";
         this.port="3306";
         this.dbName="db_app_agrosuper3";
-        this.user = "gest";
+        this.user = "gestionVentas";
         this.pass = "gestionVentas";
     }
     

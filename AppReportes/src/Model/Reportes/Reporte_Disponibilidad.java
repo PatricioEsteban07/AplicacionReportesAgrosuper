@@ -5,6 +5,7 @@
  */
 package Model.Reportes;
 
+import Model.CommandNames;
 import Model.Filtros.Filtro_Fecha;
 import Model.GeneradoresExcel.GeneradorExcel_ReporteDisponibilidad;
 import Model.LocalDB;
@@ -19,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -188,6 +190,8 @@ public class Reporte_Disponibilidad extends Reporte
             ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
             if(resultados==null)
             {
+                CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                    "No existe información asociada al período seleccionado para el reporte.");
                 return false;
             }
             if(!generarExcel())

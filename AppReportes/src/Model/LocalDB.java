@@ -65,29 +65,6 @@ public class LocalDB
         this.zonaVentas = new HashMap<>();
         this.tiposClientes = new HashMap<>();
         this.clientesLocales = new HashMap<>();
-        /*
-        try
-        {
-            consultarExistencias(this.materiales,"SELECT id FROM material");
-            consultarExistencias(this.marcas,"SELECT id FROM marca");
-            consultarExistencias(this.sectores,"SELECT id FROM sector");
-            consultarExistencias(this.agrupados,"SELECT id FROM agrupado");
-            consultarExistencias(this.tiposEnvasados,"SELECT id FROM tipoenvasado");
-            consultarExistencias(this.estadosRefrigerados,"SELECT id FROM estadorefrigerado");
-            consultarExistencias(this.n2s,"SELECT id FROM n2");
-            consultarExistencias(this.n3s,"SELECT id FROM n3");
-            consultarExistencias(this.n4s,"SELECT id FROM n4");
-            consultarExistencias(this.centros,"SELECT id FROM centro");
-            consultarExistencias(this.oficinas,"SELECT id FROM oficinaventas");
-       //     consultarExistencias(this.pedidos,"SELECT id FROM pedido");
-       //     consultarExistencias(this.stocks,"SELECT id FROM stock");
-       //     consultarExistencias(this.despachos,"SELECT id FROM despacho");
-            consultarExistencias(this.clientes,"SELECT id FROM cliente");
-        }
-        catch (ClassNotFoundException ex)
-        {
-            Logger.getLogger(LocalDB.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
     }
     
     private boolean consultarExistencias(Set<String> dbLocal, String query) throws SQLException, ClassNotFoundException
@@ -99,6 +76,8 @@ public class LocalDB
         }
         catch (ClassNotFoundException | SQLException ex)
         {
+            CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.ERROR, "Problema al ejecutar SP en DB",
+                    "Hubo un problema al momento de ejecutar la consulta en la Base de Datos. El error es el siguiente: "+ex);
             System.out.println("Problemas para consultar existentes: " + ex);
             close();
             return false;
@@ -122,14 +101,11 @@ public class LocalDB
                 Class.forName("com.mysql.jdbc.Driver");
                 this.conn = DriverManager.getConnection(dbConfig.urlConector(), dbConfig.user, dbConfig.pass);
             }
-            catch (SQLException ex)
+            catch (SQLException | ClassNotFoundException ex)
             {
+                CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.ERROR, "Problema al conectar con DB",
+                    "Hubo un problema al momento de conectarse a la base de datos. El error es el siguiente: "+ex);
                 System.out.println("connect - SQLException: " + ex);
-                return false;
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.out.println("connect - ClassCastException: " + ex);
                 return false;
             }
         }
@@ -152,6 +128,7 @@ public class LocalDB
         if (this.conn != null)
         {
             this.conn.close();
+            this.conn=null;
         }
     }
     
@@ -159,13 +136,18 @@ public class LocalDB
     {
         try
         {
-            connect();
+            if(!connect())
+            {
+                CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de aplicación",
+                    "Reconfigure información de base de datos, información actual no puede ser utilizada para la conexión.");
+                return false;
+            }
             close();
         }
         catch (SQLException | ClassNotFoundException ex)
         {
-            CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de aplicación",
-                "Reconfigure información de base de datos, información actual no puede ser utilizada para la conexión.");
+            CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de Sistema",
+                "Hubo un problema con la DB, información actual no puede ser utilizada para la conexión.");
             return false;
         }
         CommandNames.generaMensaje("Información del Sistema", Alert.AlertType.INFORMATION, "Información del sistema", 
