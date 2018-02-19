@@ -67,33 +67,6 @@ public class Reporte_ArbolPerdidas extends Reporte
     }
 
     @Override
-    public boolean generarRecursos()
-    {
-        //obtener recursos de db
-        //Material: sector, refrig, agrupado, tipoEnvasado, marca
-        //pedido
-        //pedido-material
-        //despacho
-        //despacho-material
-        //stock
-        
-        Iterator<String> itFiltro = this.filtros.keySet().iterator();
-        while(itFiltro.hasNext()){
-            String key = itFiltro.next();
-            if(this.filtros.get(key).getOpcion()!=0)
-            {
-                
-            }
-        }
-        
-        if( !generarRecurso(this.recursos.get("Sectores"))) 
-        {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public boolean generarExcel()
     {
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
@@ -121,6 +94,8 @@ public class Reporte_ArbolPerdidas extends Reporte
         generarFiltrosBase();
         this.filtros.remove("Filtro_Cliente");
         this.filtros.remove("Filtro_Sucursal");
+        this.filtros.remove("Filtro_Canal");
+        this.filtros.remove("Filtro_CargoRRHH");
         return true;
     }
 
@@ -195,7 +170,7 @@ public class Reporte_ArbolPerdidas extends Reporte
             }
             
             ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
-            if(resultados==null)
+            if(resultados==null || resultados.isEmpty())
             {
                 return false;
             }

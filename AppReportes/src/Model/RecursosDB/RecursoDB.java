@@ -130,6 +130,4 @@ public abstract class RecursoDB
         this.datos.add(element);
         return this.datos.size();
     }
-    
-    public abstract boolean obtenerDatos();
 }

@@ -12,12 +12,8 @@ import Model.LocalDB;
 import Model.Recurso;
 import Model.RecursosDB.RecursoDB_ReporteDisponibilidad;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -69,50 +65,38 @@ public class Reporte_Disponibilidad extends Reporte
     }
 
     @Override
-    public boolean generarRecursos()
-    {
-        //obtener recursos de db
-        //Material: sector, refrig, agrupado, tipoEnvasado, marca
-        //pedido
-        //pedido-material
-        //despacho
-        //despacho-material
-        //stock
-        
-        Iterator<String> itFiltro = this.filtros.keySet().iterator();
-        while(itFiltro.hasNext()){
-            String key = itFiltro.next();
-            if(this.filtros.get(key).getOpcion()!=0)
-            {
-                
-            }
-        }
-        
-        if( !generarRecurso(this.recursos.get("Sectores"))) 
-        {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public boolean generarExcel()
     {
+        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "DENTRO DE GENERAR EXCEL");
+        if(this.generadorExcel==null)
+            return false;
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
+        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "SE AGREGA GEN EXCEL, GENERANDO ARCHIVO");
         try
         {
             if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
-            {
+            {        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "ERROR, NO SE GENERO ARCHIVO");
+                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
+                    "Hubo problemas para generar el reporte.");
                 System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
                 return false;
-            }
+            }        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "SI SE GENERO ARCHIVO");
+            CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.INFORMATION, "Reporte generado exitosamente",
+                    "El reporte ha sido generado con el nombre '"+this.nombre+"', el cual está ubicado en el Escritorio. Por recomendación"
+            + " cambiar el nombre del archivo o ubicarlo en alguna carpeta.");
             return true;
         }
         catch (IOException ex)
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
+                "Hubo problemas para generar el reporte.");
+                System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad. El error es el siguiente: "+ex);
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -123,6 +107,9 @@ public class Reporte_Disponibilidad extends Reporte
         generarFiltrosBase();
         this.filtros.remove("Filtro_Cliente");
         this.filtros.remove("Filtro_Sucursal");
+        this.filtros.remove("Filtro_Canal");
+        this.filtros.remove("Filtro_Zona");
+        this.filtros.remove("Filtro_CargoRRHH");
         return true;
     }
 
@@ -160,57 +147,51 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarReporte()
     {
-        try
+        /*
+        llamado a sp
+        recepcion de res sp
+        envio a genExcel para generacion de file
+        op: desplegar tabla en app
+        */
+        Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
+        ff.prepararFiltro();
+        String fechaInicio="2018-01-30";
+        String fechaFin=null;
+        if(ff != null)
         {
-            /*
-            llamado a sp
-            recepcion de res sp
-            envio a genExcel para generacion de file
-            op: desplegar tabla en app
-            */
-            Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
-            ff.prepararFiltro();
-            String fechaInicio="2018-01-30";
-            String fechaFin=null;
-            if(ff != null)
-            {
-                if(ff.getFechaInicio()!=null)
-                {       
-                    fechaInicio=ff.getFechaInicio().getYear()+"-"
-                            +(((ff.getFechaInicio().getMonth())<9) ? "0"+(ff.getFechaInicio().getMonth()+1): (ff.getFechaInicio().getMonth()+1))+"-"
-                            +(((ff.getFechaInicio().getDate())<10) ? "0"+(ff.getFechaInicio().getDate()): (ff.getFechaInicio().getDate()));
-                }
-                if(ff.getFechaFin()!=null)
-                {
-                    fechaFin=ff.getFechaFin().getYear()+"-"+(((ff.getFechaFin().getMonth())<9) ? "0"+(ff.getFechaFin().getMonth()+1): (ff.getFechaFin().getMonth()+1))+"-"
-                            +(((ff.getFechaFin().getDate())<10) ? "0"+(ff.getFechaFin().getDate()): (ff.getFechaFin().getDate()));
-                }
+            if(ff.getFechaInicio()!=null)
+            {       
+                fechaInicio=ff.getFechaInicio().getYear()+"-"
+                        +(((ff.getFechaInicio().getMonth())<9) ? "0"+(ff.getFechaInicio().getMonth()+1): (ff.getFechaInicio().getMonth()+1))+"-"
+                        +(((ff.getFechaInicio().getDate())<10) ? "0"+(ff.getFechaInicio().getDate()): (ff.getFechaInicio().getDate()));
             }
-            
-            ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
-            if(resultados==null)
+            if(ff.getFechaFin()!=null)
             {
-                CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
-                    "No existe información asociada al período seleccionado para el reporte.");
-                return false;
+                fechaFin=ff.getFechaFin().getYear()+"-"+(((ff.getFechaFin().getMonth())<9) ? "0"+(ff.getFechaFin().getMonth()+1): (ff.getFechaFin().getMonth()+1))+"-"
+                        +(((ff.getFechaFin().getDate())<10) ? "0"+(ff.getFechaFin().getDate()): (ff.getFechaFin().getDate()));
             }
-            if(!generarExcel())
-            {
-                System.out.println("No existen datos o algo malo paso :c");
-            }
-            //trabajar con arraylist -> separados elementos por ;
-            
-            return true;
         }
-        catch (SQLException ex)
+        ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
+                if(resultados==null || resultados.isEmpty())
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                "No existe información asociada al período seleccionado para el reporte.");
+            return false;
         }
-        catch (ClassNotFoundException ex)
+        
+        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "SP CORRECTO, GENERANDO EXCEL...");
+        if(!generarExcel())
         {
-            Logger.getLogger(Reporte_Disponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                "Hubo problemas para generar el excel.");
+            System.out.println("No existen datos o algo malo paso :c");
+            return false;
         }
-        return false;
+        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "EXCEL GENERADO, VOLVIENDO A MAIN");
+        //trabajar con arraylist -> separados elementos por ;
+        return true;
     }
 
     @Override
@@ -221,7 +202,6 @@ public class Reporte_Disponibilidad extends Reporte
         {
             TableColumn<BaseReporteDisponibilidad, String> tc = new TableColumn(this.completarColumnasTabla().get(i));
             tc.setCellValueFactory(new PropertyValueFactory<BaseReporteDisponibilidad,String>(this.completarColumnasTabla().get(i)));
-            System.out.println("TC: "+this.completarColumnasTabla().get(i));
             ReportesTableView.getColumns().add(tc);
         }
         
@@ -232,7 +212,6 @@ public class Reporte_Disponibilidad extends Reporte
         {
             BaseReporteDisponibilidad aux = (BaseReporteDisponibilidad)elements.get(i);
             list.add(aux);
-            System.out.println("E: "+aux.centro_nombre);
         }
 
         ReportesTableView.getSelectionModel().setCellSelectionEnabled(true);

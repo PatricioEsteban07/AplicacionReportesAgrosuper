@@ -21,50 +21,12 @@ import javafx.scene.control.Alert;
 public class LocalDB
 {
     public DBConfig dbConfig;
-    public HashMap<String, Material> materiales;
-    public HashMap<String, Marca> marcas;
-    public HashMap<String, Sector> sectores;
-    public HashMap<String, Agrupado> agrupados;
-    public HashMap<String, TipoEnvasado> tiposEnvasados;
-    public HashMap<String, EstadoRefrigerado> estadosRefrigerados;
-    public HashMap<String, N2> n2s;
-    public HashMap<String, N3> n3s;
-    public HashMap<String, N4> n4s;
-    public HashMap<String, Centro> centros;
-    public HashMap<String, OficinaVentas> oficinas;
-    public HashMap<String, Pedido> pedidos;
-    public HashMap<String, Stock> stocks;
-    public HashMap<String, Despacho> despachos;
-    public HashMap<String, Cliente> clientes;
-    public HashMap<String, Region> regiones;
-    public HashMap<String, ZonaVentas> zonaVentas;
-    public HashMap<String, TipoCliente> tiposClientes;
-    public HashMap<String, ClienteLocal> clientesLocales;
     
     private Connection conn = null;
 
     public LocalDB(DBConfig config)
     {
         this.dbConfig=config;
-        this.materiales = new HashMap<>();
-        this.marcas = new HashMap<>();
-        this.sectores = new HashMap<>();
-        this.agrupados = new HashMap<>();
-        this.tiposEnvasados = new HashMap<>();
-        this.estadosRefrigerados = new HashMap<>();
-        this.n2s = new HashMap<>();
-        this.n3s = new HashMap<>();
-        this.n4s = new HashMap<>();
-        this.centros = new HashMap<>();
-        this.oficinas = new HashMap<>();
-        this.pedidos = new HashMap<>();
-        this.stocks = new HashMap<>();
-        this.despachos = new HashMap<>();
-        this.clientes = new HashMap<>();
-        this.regiones = new HashMap<>();
-        this.zonaVentas = new HashMap<>();
-        this.tiposClientes = new HashMap<>();
-        this.clientesLocales = new HashMap<>();
     }
     
     private boolean consultarExistencias(Set<String> dbLocal, String query) throws SQLException, ClassNotFoundException

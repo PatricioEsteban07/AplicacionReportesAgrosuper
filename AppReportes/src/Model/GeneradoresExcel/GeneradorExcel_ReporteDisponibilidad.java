@@ -15,10 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.control.Alert;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 
 /**
@@ -41,38 +42,36 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         try
         {
             HashMap<String, BaseReporteDisponibilidad> filas = new HashMap<>();
-            
             //generación de archivo excel base
             // System.out.println("El directorio temporal del sistema es "+System.getProperty("java.io.tmpdir"));
             String rutaArchivo = System.getProperty("java.io.tmpdir") + "/" + this.nombreTabla + ".xlsx";
             // String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+this.nombreTabla+".xlsx";
             File archivoXLS = new File(rutaArchivo);
             //Se crea el libro de excel usando el objeto de tipo Workbook
-            XSSFWorkbook libro = new XSSFWorkbook();
+            SXSSFWorkbook libro = new SXSSFWorkbook();
             //Se inicializa el flujo de datos con el archivo xls
             file = new FileOutputStream(archivoXLS);
-            
             //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
-            XSSFSheet hoja = libro.createSheet(this.nombreTabla);
+            SXSSFSheet hoja = libro.createSheet(this.nombreTabla);
             //inicialiar fila de nombres de columnas
-            System.out.println("Creando nombres de columnas...");
-            XSSFRow fila = hoja.createRow(0);
+            SXSSFRow fila = hoja.createRow(0);
             if (this.columnas == null || this.columnas.isEmpty())
             {
+                CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
+                    "OJO, ENCABEZADO COLUMNAS NO INICIALIZADO");
                 System.out.println("no esta inicializado encabezado columnas, at GenExcel-ReporteDisp");
                 return false;
             }
             for (int i = 0; i < this.columnas.size(); i++)
             {
-                XSSFCell celda = fila.createCell(i);
+                Cell celda = fila.createCell(i);
                 celda.setCellValue(this.columnas.get(i));
-                hoja.autoSizeColumn(i);
             }
             int contReg = 1;
             ArrayList<Recurso> recursosAux = resources.get(this.nombreTabla).getAll();
             for (int i = 0; i < recursosAux.size(); i++)
             {
-                XSSFRow filaAux = hoja.createRow(i + 1);
+                Row filaAux = hoja.createRow(i + 1);
 
                 BaseReporteDisponibilidad row = (BaseReporteDisponibilidad) recursosAux.get(i);
                 filaAux.createCell(0).setCellValue(row.centro_id);
@@ -106,6 +105,8 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
             if (contReg == 1)
             {
                 //eliminar archivo
+                CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.ERROR, "Problema al generar Reporte",
+                    "No existen registros para generar un archivo. El Reporte no se generará.");
                 archivoXLS = new File(rutaArchivo);
                 archivoXLS.delete();
                 return false;

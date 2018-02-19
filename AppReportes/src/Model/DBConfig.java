@@ -28,7 +28,7 @@ public class DBConfig
 
     public DBConfig()
     {
-        this.host="192.168.1.25";
+        this.host="LOCALHOST";
         this.port="3306";
         this.dbName="db_app_agrosuper3";
         this.user = "gestionVentas";

@@ -56,7 +56,7 @@ public abstract class Reporte
         this.filtros.put("Filtro_Sucursal", new Filtro_Sucursal(generaSucursales()));
         this.filtros.put("Filtro_Cliente", new Filtro_Cliente(generaClientes()));
         this.filtros.put("Filtro_CargoRRHH", new Filtro_CargoRRHH(generaCargosRRHH()));
-        return false;
+        return true;
     }
 
     public ArrayList<String> generaZonas()
@@ -80,18 +80,6 @@ public abstract class Reporte
         canales.add("Cliente Importante");
         return canales;
     }
-    
-    public boolean generarRecurso(RecursoDB consulta)
-    {
-        if(!consulta.obtenerDatos())
-        {
-            System.out.println("ERROR: problemas al momento de obtener datos de la DB.");
-            return false;
-        }
-        return true;
-    }
-
-    public abstract boolean generarRecursos();
 
     public abstract boolean generarExcel();
 

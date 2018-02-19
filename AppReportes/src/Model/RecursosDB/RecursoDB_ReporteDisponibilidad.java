@@ -5,7 +5,6 @@
  */
 package Model.RecursosDB;
 
-import Model.Agrupado;
 import Model.CommandNames;
 import Model.LocalDB;
 import Model.Reportes.BaseReporteDisponibilidad;
@@ -72,6 +71,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
                 CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.ERROR, "Error del Sistema", 
                     "Hubo un problema al ejecutar el procedimiento en la base de datos.");
                 System.out.println("OJO SE CAE DESDE RECURSODB-SP");
+                return null;
             }
             close();
             return resultados;
@@ -83,48 +83,5 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
             Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-    }
-
-    @Override
-    public boolean obtenerDatos()
-    {
-        try
-        {
-            this.connect();
-        }
-        catch (SQLException | ClassNotFoundException ex)
-        {
-            Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try
-        {
-            ResultSet result = super.executeQuery();
-
-            //recorrer result para crear objetos
-            while (result != null && result.next())
-            {
-                String idAux = result.getString("id");
-                String nombreAux = result.getString("nombre");
-                if(!this.db.agrupados.containsKey(idAux))
-                {
-                    Agrupado aux = new Agrupado(idAux, nombreAux);
-                    this.add(aux);
-                    this.db.agrupados.put(idAux, aux);
-                    System.out.println("Agrupado: "+idAux);
-                }
-                else
-                {
-                    this.add(this.db.agrupados.get(idAux));
-                }
-            }
-            this.close();
-            return true;
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
     }
 }

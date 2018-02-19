@@ -47,35 +47,8 @@ public class Main extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidFormatException, SQLException, ClassNotFoundException {
-        launch(args);
-        
-    //    new CSVImport(new LocalDB());
-  //      PobladorDB_ReporteNS aux=new PobladorDB_ReporteNS(new LocalDB());
-      //  System.out.println("FASE 0 - Tabla Maestra Materiales");
-      //  aux.importarMateriales();
-      //  System.out.println("FASE 1 - Tabla Pedidos");
-     //   aux.importarPedidos();
-        //aux.importarPedidosThreads();
-      //  System.out.println("FASE 2 - Tabla Stock");
-     //   aux.importarStock();
-     //   System.out.println("FASE 3 - Tabla Despachos y Faltantes");
-    //    aux.importarDespachos();
-     //   System.exit(0);
-        
-        
-        Filtro_Fecha f=new Filtro_Fecha();
-        f.setFechaInicio(new Date(2010,04,05));
-        //f.fechaFin=new Date(2010,10,05);
-        HashMap<String,String> data=new HashMap<>();
-        data.put("Dia","dia");
-        data.put("Mes","mes");
-        data.put("Año","año");
-        data.put("Semana","semana");
-        data.put("Fecha","fecha");
-        System.out.println(f.generarWhere(data));
-        System.exit(0);
-        
+    public static void main(String[] args){
+        launch(args);      
         
         //código para implementar exportación CSV->DB
         //IMPLEMENTAR
