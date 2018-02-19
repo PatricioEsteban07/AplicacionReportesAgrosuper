@@ -5,18 +5,12 @@
  */
 package Model;
 
-import Model.Filtros.Filtro_Fecha;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
+import Model.PobladorDB.CSVImport.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 /**
  *
@@ -48,11 +42,15 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-        launch(args);      
+        //launch(args);      
         
         //código para implementar exportación CSV->DB
         //IMPLEMENTAR
         //lecturaArchivoPrueba();
+        
+        new CSVImport_Cliente(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/",
+                "clientes").procesarArchivo();
+        System.exit(0);
     }
     
     public void updateTitle(){

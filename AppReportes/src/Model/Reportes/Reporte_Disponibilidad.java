@@ -72,19 +72,15 @@ public class Reporte_Disponibilidad extends Reporte
         if(this.generadorExcel==null)
             return false;
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "SE AGREGA GEN EXCEL, GENERANDO ARCHIVO");
         try
         {
             if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
-            {        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "ERROR, NO SE GENERO ARCHIVO");
+            {        
                 CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
                     "Hubo problemas para generar el reporte.");
                 System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
                 return false;
-            }        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "SI SE GENERO ARCHIVO");
+            }        
             CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.INFORMATION, "Reporte generado exitosamente",
                     "El reporte ha sido generado con el nombre '"+this.nombre+"', el cual está ubicado en el Escritorio. Por recomendación"
             + " cambiar el nombre del archivo o ubicarlo en alguna carpeta.");
@@ -178,9 +174,6 @@ public class Reporte_Disponibilidad extends Reporte
                 "No existe información asociada al período seleccionado para el reporte.");
             return false;
         }
-        
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "SP CORRECTO, GENERANDO EXCEL...");
         if(!generarExcel())
         {
             CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
@@ -188,8 +181,6 @@ public class Reporte_Disponibilidad extends Reporte
             System.out.println("No existen datos o algo malo paso :c");
             return false;
         }
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "EXCEL GENERADO, VOLVIENDO A MAIN");
         //trabajar con arraylist -> separados elementos por ;
         return true;
     }

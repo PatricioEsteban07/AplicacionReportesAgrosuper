@@ -30,7 +30,7 @@ public class DBConfig
     {
         this.host="LOCALHOST";
         this.port="3306";
-        this.dbName="db_app_agrosuper3";
+        this.dbName="db_ejemplo";
         this.user = "gestionVentas";
         this.pass = "gestionVentas";
     }

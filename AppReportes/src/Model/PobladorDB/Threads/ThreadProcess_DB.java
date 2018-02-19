@@ -5,7 +5,6 @@
  */
 package Model.PobladorDB.Threads;
 
-import Model.CommandNames;
 import Model.LocalDB;
 import java.sql.Connection;
 import java.sql.DriverManager;

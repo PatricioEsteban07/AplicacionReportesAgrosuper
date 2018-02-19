@@ -6,8 +6,6 @@
 package Model.PobladorDB.Threads;
 
 import Model.LocalDB;
-import java.util.HashMap;
-import org.apache.poi.ss.usermodel.Row;
 
 /**
  *

@@ -8,15 +8,20 @@ package Model.PobladorDB.CSVImport;
 import Model.CommandNames;
 import Model.LocalDB;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 
 /**
  *
@@ -24,34 +29,29 @@ import java.util.ArrayList;
  */
 public abstract class CSVImport
 {
-    public final String dirBase=(System.getProperty("user.home")).replace("\\", "/")+"/Desktop/";
+    public final char separadorCSV = ';';
+    public final char contenedorCamposCSV = '\"';
     public Connection conn;
     public LocalDB db;
     
-    public CSVImport(LocalDB db)
+    public int cantRowsIgnoradas;
+    public String fileName;
+    public String fileDir;
+    public String tableName;
+    public ArrayList<String> types;
+    
+    public CSVImport(LocalDB db, int rowsIgnore)
     {
         this.db=db;
         this.conn=null;
-        /*
-        String loadQuery = "LOAD DATA LOCAL INFILE '"+this.dirBase+"CSV Base/zonaVentas.csv"+"' " 
-            +"INTO TABLE zonaVentas FIELDS TERMINATED BY ';' ENCLOSED BY '\"' "
-            +"LINES TERMINATED BY '\\n' IGNORE 8 ROWS";
-        /*
-        String loadQuery = "LOAD DATA LOCAL INFILE '"+this.dirBase+"CSV Base/oficinaVentas.csv"+"' " 
-            +"INTO TABLE oficinaVentas FIELDS TERMINATED BY ';' ENCLOSED BY '\"' "
-            +"LINES TERMINATED BY '\\n' IGNORE 8 ROWS";
-        */
-        /*
-        String loadQuery = "LOAD DATA LOCAL INFILE '"+this.dirBase+"CSV Base/tipoCliente.csv"+"' " 
-            +"INTO TABLE tipoCliente FIELDS TERMINATED BY ';' ENCLOSED BY '\"' "
-            +"LINES TERMINATED BY '\\n' IGNORE 8 ROWS";
-        */
         
-        String loadQuery = "LOAD DATA LOCAL INFILE '"+this.dirBase+"CSV Base/clientes.csv"+"' " 
-            +"INTO TABLE cliente FIELDS TERMINATED BY ';' ENCLOSED BY '\"' "
-            +"LINES TERMINATED BY '\\n' IGNORE 8 ROWS";
-        
-        cargarCsv(loadQuery);
+        this.cantRowsIgnoradas=rowsIgnore;
+        this.types=new ArrayList<>();
+    }
+    
+    public boolean validarName(String fileNameBase, String fileNameConsulta)
+    {
+        return fileNameBase.equals(fileNameConsulta);
     }
     
     public boolean formatCSV(String fileDir, ArrayList<String> types)
@@ -130,10 +130,9 @@ public abstract class CSVImport
     
     public String obtenerContenido(String content, char caracter)
     {
-        int idxInicio=0;
-        int idxFin=content.length();
-        if(content.contains(caracter+""))
+        if(content==null || content.equals(""))
             return null;
+        int idxInicio=0, idxFin=content.length();
         for (int i = 0; i < idxFin; i++)
         {
             if(content.charAt(i)==caracter)
@@ -152,66 +151,148 @@ public abstract class CSVImport
         }
         if(idxInicio!=idxFin)
         {
-            return content.substring(idxInicio, idxFin+1);
+            return content.substring(idxInicio+1, idxFin);
         }
         return null;
     }
-            
-            
-
-    private void cargarCsv(String query)
+    
+    public boolean procesarArchivo()
     {
         try
         {
-            this.connect();
-            this.executeQuery(query);
-            this.close();
+            File inputFile = new File(this.fileDir + "/" + this.fileName + ".csv");
+            File tempFile = new File(System.getProperty("java.io.tmpdir") + "/tempCSV.csv");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            int ct_rows = 0;
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null)
+            {
+                if (ct_rows >= this.cantRowsIgnoradas)
+                {
+                    String[] datos = currentLine.split(this.separadorCSV+"");
+                    //Imprime datos.
+                    if(!currentLine.equals(""))
+                    {
+                        String content="";
+                        for (int i = 0; i < types.size(); i++)
+                        {
+                            //datos[i]
+                            datos[i] = obtenerContenido(datos[i], this.contenedorCamposCSV);
+                            if(!datos[i].equals("#"))
+                            {
+                                switch (types.get(i))
+                                {
+                                    case "ID"://eliminar posiles 0 a la izquierda
+                                        int j = 0;
+                                        while (datos[i]!=null && j<datos[i].length() && datos[i].charAt(j) == '0')
+                                        {
+                                            j++;
+                                        }
+                                        datos[i] = datos[i].substring(j);
+                                        break;
+                                    case "INT"://hasta el momento procurar que sea int
+                                        if(datos[i]==null || datos[i].equals(""))
+                                            datos[i]="0";
+                                        break;
+                                    case "FLOAT"://formato 12.12
+                                        datos[i].replace(".", "").replace(",", ".");
+                                        break;
+                                    case "DATE"://formato 2018-01-30
+                                        datos[i] = datos[i].substring(6) + "-" + datos[i].substring(3, 5) + "-" + datos[i].substring(0, 2);
+                                        break;
+                                    case "STRING"://mantener
+                                        break;
+                                }
+                            }
+                            content=content+this.contenedorCamposCSV+datos[i]+this.contenedorCamposCSV;
+                            if(i<types.size()-1)
+                                content=content+";";
+                        }
+                        //System.out.println("D: "+content);
+                        writer.write(content+"\n");
+                    }
+                }
+                ct_rows++;
+            }
+            System.out.println("rows: "+ct_rows);
+            writer.close();
+            reader.close();
+            tempFile.renameTo(inputFile);
+            String dir = tempFile.getPath().replaceAll("\\\\", "/");
+            return this.cargarCsv(dir, this.tableName);
+      //      GeneradorExcel_ReporteDisponibilidad.copyFile(tempFile, new File(System.getProperty("user.home") + "/Desktop/"+fileName+".csv"));   
         }
-        catch (ClassNotFoundException | SQLException e)
+        catch (IOException ex)
         {
-            e.printStackTrace();
+            System.out.println("Problemas para leer archivo!");
+            Logger.getLogger(CSVImport_Region.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+       
+    public boolean cargarCsv(String fileDir, String tableName)
+    {
+        String loadQuery="LOAD DATA LOCAL INFILE '"+fileDir+"' INTO TABLE "+tableName+" FIELDS TERMINATED BY '"
+                +this.separadorCSV+"' ENCLOSED BY '"+this.contenedorCamposCSV+"' LINES TERMINATED BY '\\n';";
+        System.out.println("L: "+loadQuery);
+        try
+        {
+            this.connect();
+            int res = this.executeQuery(loadQuery);
+            this.close();
+            System.out.println("R: "+res);
+            return true;
+        }
+        catch (ClassNotFoundException | SQLException ex)
+        {
+            System.out.println("OJO, PASO ALGO: "+ex);
+            return false;
         }
     }
     
     public boolean connect() throws SQLException, ClassNotFoundException
     {
-        if (conn == null)
+        if (conn != null)
         {
-            try
-            {
-                Class.forName("com.mysql.jdbc.Driver");
-                this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
-                        this.db.dbConfig.pass);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println("connect - SQLException: " + ex);
-                return false;
-            }
-            catch (ClassNotFoundException ex)
-            {
-                System.out.println("connect - ClassCastException: " + ex);
-                return false;
-            }
+            this.conn.close();
+            this.conn=null;
+        }
+        try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+            this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
+                    this.db.dbConfig.pass);
+        }
+        catch (SQLException | ClassNotFoundException ex)
+        {
+            CommandNames.generaMensaje("Error del Sistema", Alert.AlertType.ERROR, "Error conexión DB", 
+                    "Hubo un problema al momento de conectar a la base de datos. El error es el siguiente: "+ex);
+            return false;
         }
         return true;
     }
     
-    public ResultSet executeQuery(String query) throws SQLException
+    public int executeQuery(String query) throws SQLException
     {
         if (conn != null)
         {
             Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(query);
+            int result = stmt.executeUpdate(query);
             return result;
         }
-        return null;
+        return 0;
     }
 
     public void close() throws SQLException
     {
         if (this.conn != null)
             this.conn.close();
+        this.conn=null;
     }
+    
 }
 

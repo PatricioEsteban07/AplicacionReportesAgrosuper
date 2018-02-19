@@ -1,0 +1,32 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Model.PobladorDB.CSVImport;
+
+import Model.LocalDB;
+
+/**
+ *
+ * @author Patricio
+ */
+public class CSVImport_Marca extends CSVImport
+{
+
+    public CSVImport_Marca(LocalDB db, String fileDir, String fileName)
+    {
+        super(db, 8);
+        this.fileDir=fileDir;
+        this.fileName=fileName;
+        this.tableName="marca";
+        completaTypes();
+    }
+
+    public void completaTypes()
+    {
+        this.types.add("ID");
+        this.types.add("STRING");
+    }
+
+}

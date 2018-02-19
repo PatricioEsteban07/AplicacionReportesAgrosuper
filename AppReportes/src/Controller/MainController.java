@@ -422,16 +422,14 @@ public class MainController implements Initializable
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
             return false;
         }
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "generando reporte");
         if (!generarReporte(this.reporteBase, columnasTabla))
         {
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
             return false;
         }
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "reporte generado, ahora generando reporte base");
         this.generarReporteBase(this.opcion);
+        buttonVaciarFiltro();
+        this.inicializarFiltros();
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, CommandNames.MSG_SUCCESS_GEN_REPORTE);
         return true;
     }
