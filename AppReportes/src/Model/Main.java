@@ -42,12 +42,12 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-        launch(args);      
+       // launch(args);      
         
         //código para implementar exportación CSV->DB
         //IMPLEMENTAR
         //lecturaArchivoPrueba();
-    /*    
+        
         new CSVImport_Region(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/regiones.csv",
                 "regiones").procesarArchivo();
         new CSVImport_Centro(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/centros.csv",
@@ -92,7 +92,7 @@ public class Main extends Application {
                 "despachos_material").procesarArchivo();
 
         System.exit(0);
-        */
+        
     }
     
     public void updateTitle(){

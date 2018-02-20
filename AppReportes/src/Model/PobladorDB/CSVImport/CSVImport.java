@@ -10,7 +10,6 @@ import Model.LocalDB;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,8 +28,8 @@ import javafx.scene.control.Alert;
  */
 public class CSVImport
 {
-    public final char separadorCSV = ';';
-    public final char contenedorCamposCSV = '\"';
+    public static final char separadorCSV = ';';
+    public static final char contenedorCamposCSV = '\"';
     public Connection conn;
     public LocalDB db;
     
@@ -47,88 +46,6 @@ public class CSVImport
         
         this.cantRowsIgnoradas=rowsIgnore;
         this.types=new ArrayList<>();
-    }
-    
-    public boolean validarName(String fileNameBase, String fileNameConsulta)
-    {
-        return fileNameBase.equals(fileNameConsulta);
-    }
-    
-    public boolean formatCSV(String fileDir, ArrayList<String> types)
-    {
-        String separadorCSV = ";";
-        BufferedReader br = null;
-        String line = "";
-        try {
-            br = new BufferedReader(new FileReader(fileDir));
-            while ((line = br.readLine()) != null) { 
-                System.out.println("--------------------");
-                System.out.println("D: "+line);
-                String[] datos = line.split(separadorCSV);
-                //Imprime datos.
-                for (int i = 0; i < types.size(); i++)
-                {
-                    //datos[i]
-                    datos[i]=obtenerContenido(datos[i], '"');
-                    System.out.println("->"+datos[i]);
-                    switch(types.get(i))
-                    {
-                        case "ID"://eliminar posiles 0 a la izquierda
-                            int j=0;
-                            while(datos[i].charAt(j)=='0'){j++;}
-                            datos[i]=datos[i].substring(j);
-                            break;
-                        case "INT"://hasta el momento procurar que sea int
-                            datos[i].replace(".", "");
-                            break;
-                        case "FLOAT"://formato 12.12
-                            datos[i].replace(".","").replace(",", ".");
-                            break;
-                        case "DATE"://formato 2018-01-30
-                            datos[i]=datos[i].substring(6)+"-"+datos[i].substring(3,5)+"-"+datos[i].substring(0,2);
-                            break;
-                        case "STRING"://mantener
-                            
-                            break;
-                    }
-                    System.out.print(datos[i]+"/");
-                }
-               System.out.println();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        //cargar archivo csv para procesar
-            //si no existe archivo, retornar false con msj 
-            //si no se puede abrir archivo, retornar false con msj
-        //abrir archivo
-        //leer linea por linea
-        //no pescar lineas de comentarios (tratar)
-        //comprobar que cant types correspondan a numero de columnas
-            //si no corresponden retornar frase con msj
-        //para cada linea
-            //capturar elementos por separado (ArrayList<String>)
-            //para cada elemento del araylist
-                //definir tipo esperado de acuerdo a types
-                    //si es Date, formatear omo corresponde
-                    //si es String, dejar igual
-                    //si es ID eliminar 0 a la izq
-                    //si es float dejar con estructura algo.otro
-                //reescribir elemento en doc / cargar directo en DB
-                    //si se carga directo en la db, comprobar si es nuevo/existente
-                    //en caso que no se pueda, retornar false con msj
-        
-        return false;
     }
     
     public String obtenerContenido(String content, char caracter)
@@ -182,7 +99,7 @@ public class CSVImport
                 {
                     String[] datos = currentLine.split(this.separadorCSV+"");
                     //Imprime datos.
-                    if(ct_rows == this.cantRowsIgnoradas+1 && datos.length!=this.types.size())
+                    if(ct_rows == this.cantRowsIgnoradas && datos.length!=this.types.size())
                     {
                         System.out.println("OJO: CANT ELEMENTOS CSV NO COINCIDE CON CANT COLUMNAS TABLA! NO SE AGREGARÁN");
                         System.out.println("datos: "+datos.length+" /col: "+this.types.size());

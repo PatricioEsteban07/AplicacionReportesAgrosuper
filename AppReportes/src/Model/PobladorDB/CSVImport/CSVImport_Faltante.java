@@ -11,23 +11,26 @@ import Model.LocalDB;
  *
  * @author Patricio
  */
-public class CSVImport_Agrupado extends CSVImport
+public class CSVImport_Faltante extends CSVImport
 {
 
-    public CSVImport_Agrupado(LocalDB db, String fileDir, String fileName)
+    public CSVImport_Faltante(LocalDB db, String fileDir, String fileName)
     {
         super(db, 8);
         this.fileDir=fileDir;
         this.fileName=fileName;
-        this.tableName="agrupado";
+        this.tableName="faltante";
         completaTypes();
     }
 
     public void completaTypes()
     {
         this.types.add("ID");
-        this.types.add("STRING");
+        this.types.add("DATE");
         this.types.add("ID");
+        this.types.add("ID");
+        this.types.add("FLOAT");
+        this.types.add("FLOAT");
     }
 
 }

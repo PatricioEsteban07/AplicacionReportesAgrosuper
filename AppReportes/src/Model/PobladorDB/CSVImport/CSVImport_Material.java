@@ -35,6 +35,7 @@ public class CSVImport_Material extends CSVImport
         this.types.add("ID");
         this.types.add("ID");
         this.types.add("ID");
+        this.types.add("ID");
     }
 
 }

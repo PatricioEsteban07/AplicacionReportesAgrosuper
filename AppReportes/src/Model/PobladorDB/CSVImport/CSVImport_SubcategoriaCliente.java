@@ -11,15 +11,15 @@ import Model.LocalDB;
  *
  * @author Patricio
  */
-public class CSVImport_Agrupado extends CSVImport
+public class CSVImport_SubcategoriaCliente extends CSVImport
 {
 
-    public CSVImport_Agrupado(LocalDB db, String fileDir, String fileName)
+    public CSVImport_SubcategoriaCliente(LocalDB db, String fileDir, String fileName)
     {
         super(db, 8);
         this.fileDir=fileDir;
         this.fileName=fileName;
-        this.tableName="agrupado";
+        this.tableName="subcategoriaCliente";
         completaTypes();
     }
 

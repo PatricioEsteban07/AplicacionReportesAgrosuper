@@ -8,7 +8,6 @@ package Controller;
 import Model.CommandNames;
 import Model.LocalDB;
 import Model.PobladorDB.CSVImport.*;
-import com.sun.java.swing.SwingUtilities3;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -115,7 +114,7 @@ public class ImportarCSVController implements Initializable
                 style = "-fx-background-color: lightblue;";
                 break;
             case STATUS_ERROR:
-                texto = "No se ha cargado el archivo CSV debido a un error.";
+                texto = "No se ha cargado el archivo CSV debido a un error con el archivo.";
                 style = "-fx-background-color: orange;";
                 break;
         }
@@ -127,9 +126,11 @@ public class ImportarCSVController implements Initializable
     {
         ArrayList<String> nombreTablas = new ArrayList<>();
         nombreTablas.add("Agrupado");
+        nombreTablas.add("Categoría Cliente");
         nombreTablas.add("Centro");
         nombreTablas.add("Cliente");
         nombreTablas.add("Cliente-Local");
+        nombreTablas.add("Club Cliente");
         nombreTablas.add("Despacho");
         nombreTablas.add("Despacho-Material");
         nombreTablas.add("Estado Refrigerado");
@@ -146,6 +147,7 @@ public class ImportarCSVController implements Initializable
         nombreTablas.add("Región");
         nombreTablas.add("Sector");
         nombreTablas.add("Stock");
+        nombreTablas.add("Subcategoría Cliente");
         nombreTablas.add("Tipo de Cliente");
         nombreTablas.add("Tipo Envasado");
         nombreTablas.add("Zona de Ventas");
@@ -163,7 +165,6 @@ public class ImportarCSVController implements Initializable
                     System.out.println("TS: " + newValue);
                     setSelectionTable(newValue.intValue());
                 }
-
             }
         });
         this.choiceBox_TablasDestino.setPrefWidth(300);
@@ -178,74 +179,81 @@ public class ImportarCSVController implements Initializable
             case 0://agrupado
                 this.csvImport = new CSVImport_Agrupado(this.db, "", "");
                 break;
-            case 1://centro
+            case 1://categoriaCliente
+                this.csvImport = new CSVImport_CategoriaCliente(this.db, "", "");
+                break;
+            case 2://centro
                 this.csvImport = new CSVImport_Centro(this.db, "", "");
                 break;
-            case 2://cliente
+            case 3://cliente
                 this.csvImport = new CSVImport_Cliente(this.db, "", "");
                 break;
-            case 3://cliente-local
+            case 4://cliente-local
                 this.csvImport = new CSVImport_ClienteLocal(this.db, "", "");
                 break;
-            case 4://despacho
+            case 5://clubCliente
+            //    this.csvImport = new CSVImport_ClubCliente(this.db, "", "");
+                    System.out.println("OJO, OPCION NO IMPLEMENTADA");
+                    this.csvImport=null;
+                break;
+            case 6://despacho
                 this.csvImport = new CSVImport_Despacho(this.db, "", "");
                 break;
-            case 5://despacho-material
+            case 7://despacho-material
                 this.csvImport = new CSVImport_DespachoMaterial(this.db, "", "");
                 break;
-            case 6://estadoRefrigerado
+            case 8://estadoRefrigerado
                 this.csvImport = new CSVImport_EstadoRefrigerado(this.db, "", "");
                 break;
-            case 7://faltante
-//                this.csvImport=new CSVImport_Faltante(this.db,"","");
-                this.csvImport = null;
-                System.out.println("NO IMPLEMENTADO AUN");
+            case 9://faltante
+                this.csvImport=new CSVImport_Faltante(this.db,"","");
                 break;
-            case 8://marca
+            case 10://marca
                 this.csvImport = new CSVImport_Marca(this.db, "", "");
                 break;
-            case 9://material
+            case 11://material
                 this.csvImport = new CSVImport_Material(this.db, "", "");
                 break;
-            case 10://n2
+            case 12://n2
                 this.csvImport = new CSVImport_N2(this.db, "", "");
                 break;
-            case 11://n3
+            case 13://n3
                 this.csvImport = new CSVImport_N3(this.db, "", "");
                 break;
-            case 12://n4
+            case 14://n4
                 this.csvImport = new CSVImport_N4(this.db, "", "");
                 break;
-            case 13://ns cliente
-                //  this.csvImport=new CSVImport_NSCliente(this.db,"","");
-                this.csvImport = null;
-                System.out.println("NO IMPLEMENTADO AUN");
+            case 15://ns cliente
+                  this.csvImport=new CSVImport_NSCliente(this.db,"","");
                 break;
-            case 14://oficinaVentas
+            case 16://oficinaVentas
                 this.csvImport = new CSVImport_OficinaVentas(this.db, "", "");
                 break;
-            case 15://pedido
+            case 17://pedido
                 this.csvImport = new CSVImport_Pedido(this.db, "", "");
                 break;
-            case 16://pedido-material
+            case 18://pedido-material
                 this.csvImport = new CSVImport_PedidoMaterial(this.db, "", "");
                 break;
-            case 17://region
+            case 19://region
                 this.csvImport = new CSVImport_Region(this.db, "", "");
                 break;
-            case 18://sector
+            case 20://sector
                 this.csvImport = new CSVImport_Sector(this.db, "", "");
                 break;
-            case 19://stock
+            case 21://stock
                 this.csvImport = new CSVImport_Stock(this.db, "", "");
                 break;
-            case 20://tipo cliente
+            case 22://subcategoriaCliente
+                this.csvImport = new CSVImport_SubcategoriaCliente(this.db, "", "");
+                break;
+            case 23://tipo cliente
                 this.csvImport = new CSVImport_TipoCliente(this.db, "", "");
                 break;
-            case 21://tipoEnvasado
+            case 24://tipoEnvasado
                 this.csvImport = new CSVImport_TipoEnvasado(this.db, "", "");
                 break;
-            case 22://zonaVentas
+            case 25://zonaVentas
                 this.csvImport = new CSVImport_ZonaVentas(this.db, "", "");
                 break;
             default://no reconocido o -1

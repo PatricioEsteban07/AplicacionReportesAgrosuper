@@ -29,6 +29,8 @@ public class CSVImport_ClienteLocal extends CSVImport
         this.types.add("STRING");
         this.types.add("STRING");
         this.types.add("ID");
+        this.types.add("STRING");
+        this.types.add("ID");
         this.types.add("ID");
     }
 
