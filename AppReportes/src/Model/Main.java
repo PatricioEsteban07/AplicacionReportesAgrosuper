@@ -52,7 +52,6 @@ public class Main extends Application {
                 "regiones").procesarArchivo();
         new CSVImport_Centro(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/",
                 "centros").procesarArchivo();
-        /*
         new CSVImport_ZonaVentas(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/",
                 "zonaVentas").procesarArchivo();
         new CSVImport_Sector(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/",
@@ -91,7 +90,7 @@ public class Main extends Application {
                 "despachos").procesarArchivo();
         new CSVImport_DespachoMaterial(new LocalDB(new DBConfig()), System.getProperty("user.home") + "/Desktop/",
                 "despachos_material").procesarArchivo();
-*/
+
         System.exit(0);
         
     }

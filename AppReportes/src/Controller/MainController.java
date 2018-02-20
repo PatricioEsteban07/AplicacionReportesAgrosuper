@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,7 +31,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
@@ -43,6 +40,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -96,6 +94,8 @@ public class MainController implements Initializable
 
     @FXML
     private TableView<Recurso> ReportesTableView;
+    
+    private FileChooser fileChooser;
 
     private int opcion;
     private Reporte reporteBase;
@@ -107,7 +107,7 @@ public class MainController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        this.db = new LocalDB(new DBConfig());
+        this.db = new LocalDB(new DBConfig());    
         this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
 
         try
@@ -503,7 +503,7 @@ public class MainController implements Initializable
             root = FXMLLoader.load(getClass().getResource(recurso));
         }
         catch (IOException ex)
-        {
+        { 
             CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes",
                     "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
                     + "\n La aplicación se cerrará...");

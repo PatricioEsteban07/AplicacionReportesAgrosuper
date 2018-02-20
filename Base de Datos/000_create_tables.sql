@@ -88,11 +88,8 @@
   CREATE TABLE IF NOT EXISTS agrupado(
   id VARCHAR(32) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
-  n2_id VARCHAR(6) NOT NULL,
 
   PRIMARY KEY (id),
-  
-  FOREIGN KEY (n2_id) REFERENCES n2(id),
   
   UNIQUE INDEX idx_agrupado_id USING BTREE (id) 
   );

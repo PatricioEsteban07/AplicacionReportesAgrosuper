@@ -135,6 +135,8 @@ public abstract class CSVImport
     {
         if(content==null || content.equals(""))
             return null;
+        if(!content.contains("\""))
+            return content;
         int idxInicio=0, idxFin=content.length();
         for (int i = 0; i < idxFin; i++)
         {
@@ -174,12 +176,18 @@ public abstract class CSVImport
 
             while ((currentLine = reader.readLine()) != null)
             {
-                System.out.println("--------------------");
-                System.out.println("D: "+currentLine);
+             //   System.out.println("--------------------");
+             //   System.out.println("D: "+currentLine);
                 if (ct_rows >= this.cantRowsIgnoradas)
                 {
                     String[] datos = currentLine.split(this.separadorCSV+"");
                     //Imprime datos.
+                    if(ct_rows == this.cantRowsIgnoradas+1 && datos.length!=this.types.size())
+                    {
+                        System.out.println("OJO: CANT ELEMENTOS CSV NO COINCIDE CON CANT COLUMNAS TABLA! NO SE AGREGARÁN");
+                        System.out.println("datos: "+datos.length+" /col: "+this.types.size());
+                        return false;
+                    }
                     if(!currentLine.equals(""))
                     {
                         String content="";
@@ -188,7 +196,7 @@ public abstract class CSVImport
                             //datos[i]
                             datos[i] = obtenerContenido(datos[i], this.contenedorCamposCSV);
                             
-                            System.out.println("->"+datos[i]);
+                      //      System.out.println("->"+datos[i]);
                             if(!datos[i].equals("#"))
                             {
                                 switch (types.get(i))
@@ -251,7 +259,8 @@ public abstract class CSVImport
             this.connect();
             int res = this.executeQuery(loadQuery);
             this.close();
-            System.out.println("R: "+res);
+            System.out.println("Result: "+res);
+            System.out.println("-----------------");
             return true;
         }
         catch (ClassNotFoundException | SQLException ex)
