@@ -506,8 +506,8 @@ public class MainController implements Initializable
         { 
             CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes",
                     "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
-                    + "\n La aplicación se cerrará...");
-            System.out.println("Error al abrir el modal " + titulo + " (" + recurso + ")");
+                    + "\n La aplicación se cerrará..."+ex);
+            System.out.println("Error al abrir el modal " + titulo + " (" + recurso + ")"+ex);
             System.exit(0);
         }
         return root;
@@ -517,7 +517,41 @@ public class MainController implements Initializable
     {
         component.setTooltip(new Tooltip(filtroAux.generarEtiquetaInfo()));
     }
+    
+    @FXML
+    public void poblarDB()
+    {
+        String resource = "/Views/ImportarCSV.fxml";
+        String title = "Importar datos a Base de Datos";
+        Parent root = cargarModal(resource, title);
+        FXMLLoader loader = null;
 
+        try
+        {
+            loader = new FXMLLoader(getClass().getResource(resource));
+            root = loader.load();
+        }
+        catch (IOException ex)
+        {
+            CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes",
+                    "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
+                    + "\n La aplicación se cerrará...");
+            System.out.println("Error al abrir el modal " + title + " (" + resource + ")");
+            System.exit(0);
+        }
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(title);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        ImportarCSVController controller = loader.getController();
+        //setea valores base
+        controller.setDB(db);
+        stage.setResizable(false);
+        //stage.initOwner();
+        //stage.getIcons().add(new Image("img/icon.png"));
+        stage.showAndWait();
+    }
+    
     @FXML
     private void setConfigDB()
     {

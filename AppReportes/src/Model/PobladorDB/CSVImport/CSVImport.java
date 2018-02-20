@@ -27,7 +27,7 @@ import javafx.scene.control.Alert;
  *
  * @author Patricio
  */
-public abstract class CSVImport
+public class CSVImport
 {
     public final char separadorCSV = ';';
     public final char contenedorCamposCSV = '\"';
@@ -165,7 +165,7 @@ public abstract class CSVImport
     {
         try
         {
-            File inputFile = new File(this.fileDir + "/" + this.fileName + ".csv");
+            File inputFile = new File(this.fileDir);
             File tempFile = new File(System.getProperty("java.io.tmpdir") + "/tempCSV.csv");
 
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
@@ -261,6 +261,7 @@ public abstract class CSVImport
             this.close();
             System.out.println("Result: "+res);
             System.out.println("-----------------");
+            
             return true;
         }
         catch (ClassNotFoundException | SQLException ex)
