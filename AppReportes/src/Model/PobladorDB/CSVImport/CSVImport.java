@@ -61,13 +61,16 @@ public abstract class CSVImport
         String line = "";
         try {
             br = new BufferedReader(new FileReader(fileDir));
-            while ((line = br.readLine()) != null) {                
+            while ((line = br.readLine()) != null) { 
+                System.out.println("--------------------");
+                System.out.println("D: "+line);
                 String[] datos = line.split(separadorCSV);
                 //Imprime datos.
                 for (int i = 0; i < types.size(); i++)
                 {
                     //datos[i]
                     datos[i]=obtenerContenido(datos[i], '"');
+                    System.out.println("->"+datos[i]);
                     switch(types.get(i))
                     {
                         case "ID"://eliminar posiles 0 a la izquierda
@@ -76,7 +79,7 @@ public abstract class CSVImport
                             datos[i]=datos[i].substring(j);
                             break;
                         case "INT"://hasta el momento procurar que sea int
-                            
+                            datos[i].replace(".", "");
                             break;
                         case "FLOAT"://formato 12.12
                             datos[i].replace(".","").replace(",", ".");
@@ -171,6 +174,8 @@ public abstract class CSVImport
 
             while ((currentLine = reader.readLine()) != null)
             {
+                System.out.println("--------------------");
+                System.out.println("D: "+currentLine);
                 if (ct_rows >= this.cantRowsIgnoradas)
                 {
                     String[] datos = currentLine.split(this.separadorCSV+"");
@@ -182,6 +187,8 @@ public abstract class CSVImport
                         {
                             //datos[i]
                             datos[i] = obtenerContenido(datos[i], this.contenedorCamposCSV);
+                            
+                            System.out.println("->"+datos[i]);
                             if(!datos[i].equals("#"))
                             {
                                 switch (types.get(i))
