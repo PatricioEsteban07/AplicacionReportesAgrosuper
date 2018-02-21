@@ -443,9 +443,7 @@ public class MainController implements Initializable
     @FXML
     public void buttonReporteArbolPerdidas() throws InterruptedException
     {
-        CommandNames.generaMensaje("Información del Sistema", AlertType.INFORMATION, "Reporte en Construcción", "Te dije que aún no lo pruebo xd");
-        this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, this.reporteBase.nombre + " seleccionado para trabajar.");
-        //generarReporteBase(1);
+        generarReporteBase(1);
     }
 
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
@@ -553,6 +551,40 @@ public class MainController implements Initializable
     }
     
     @FXML
+    public void poblarDBMultiple()
+    {
+        String resource = "/Views/ImportarCSVMultiple.fxml";
+        String title = "Importación múltiple de datos a Base de Datos";
+        Parent root = cargarModal(resource, title);
+        FXMLLoader loader = null;
+
+        try
+        {
+            loader = new FXMLLoader(getClass().getResource(resource));
+            root = loader.load();
+        }
+        catch (IOException ex)
+        {
+            CommandNames.generaMensaje("Error de Aplicación", AlertType.ERROR, "Sistema de Generación de Reportes",
+                    "Ha ocurrido un problema abriendo una nueva ventana. Contáctese con un informático :c."
+                    + "\n La aplicación se cerrará...");
+            System.out.println("Error al abrir el modal " + title + " (" + resource + ")");
+            System.exit(0);
+        }
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(title);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        ImportarCSVMultipleController controller = loader.getController();
+        //setea valores base
+        controller.setDB(db);
+        stage.setResizable(false);
+        //stage.initOwner();
+        //stage.getIcons().add(new Image("img/icon.png"));
+        stage.showAndWait();
+    }
+    
+    @FXML
     private void setConfigDB()
     {
         String resource = "/Views/configDBInfo.fxml";
@@ -585,6 +617,7 @@ public class MainController implements Initializable
         //stage.getIcons().add(new Image("img/icon.png"));
         stage.showAndWait();
     }
+    
 
     @FXML
     private void closeApp()

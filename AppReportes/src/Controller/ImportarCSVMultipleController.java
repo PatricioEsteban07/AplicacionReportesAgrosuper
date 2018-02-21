@@ -1,0 +1,298 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Controller;
+
+import Model.CommandNames;
+import Model.DBConfig;
+import Model.LocalDB;
+import Model.PobladorDB.CSVImport.*;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+
+/**
+ * FXML Controller class
+ *
+ * @author Patricio
+ */
+public class ImportarCSVMultipleController implements Initializable
+{
+    public static final String STATUS_READY = "READY";
+    public static final String STATUS_SUCCESS = "SUCCESS";
+    public static final String STATUS_RUNNING = "RUNNING";
+    public static final String STATUS_ERROR = "ERROR";
+    public static final String STATUS_DEFAULT = "DEFAULT";
+    public static final String CSV_NON_SELECTED = "No ha seleccionado CSV";
+
+    @FXML
+    private Button button_Import;
+    @FXML
+    private Button button_Cancelar;
+    @FXML
+    private Button button_selectFile;
+    @FXML
+    private Text text_status;
+    @FXML
+    private Pane pane_status;
+    @FXML
+    private TextField textField_fileDir;
+
+    private LocalDB db;
+    private String directorio;
+
+    /**
+     * Initializes the controller class.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb)
+    {
+        this.button_Import.setDisable(true);
+        setEstadoOperacion(STATUS_DEFAULT);
+        setDirectorioSeleccionado(null);
+        validarFormulario();
+    }
+
+    private void setEstadoOperacion(String info)
+    {
+        //STATUS_DEFAULT
+        String texto = "Seleccione el directorio que contiene los archivos CSV para la importación de datos.";
+        String style = "-fx-background-color: lightblue;";
+        switch (info)
+        {
+            case STATUS_READY:
+                texto = "Directorio seleccionado para importación múltiple.";
+                style = "-fx-background-color: yellow;";
+                break;
+            case STATUS_SUCCESS:
+                texto = "Carga múltiple de archivos CSV realizado exitosamente.";
+                style = "-fx-background-color: lightgreen;";
+                break;
+            case STATUS_RUNNING:
+                texto = "Ejecutando importación múltiple de archivos CSV...";
+                style = "-fx-background-color: lightblue;";
+                break;
+            case STATUS_ERROR:
+                texto = "Hubo un problema en la carga simultánea de archivos CSV.";
+                style = "-fx-background-color: orange;";
+                break;
+        }
+        this.pane_status.setStyle(style);
+        this.text_status.setText(texto);
+    }
+
+    public boolean validarFormulario()
+    {
+        if (this.textField_fileDir.getText().equals(CSV_NON_SELECTED) || this.directorio == null)
+        {
+            setEstadoOperacion(STATUS_DEFAULT);
+            this.button_Import.setDisable(true);
+            return false;
+        }
+        setEstadoOperacion(STATUS_READY);
+        this.button_Import.setDisable(false);
+        return true;
+    }
+    
+    public void limpiarTablero()
+    {
+        this.directorio=null;
+        this.textField_fileDir.setText(CSV_NON_SELECTED);
+        this.button_Import.setDisable(true);
+    }
+
+    @FXML
+    public void importarCSV()
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Aviso de confirmación");
+        alert.setHeaderText("¿Está seguro de la acción a realizar?");
+        alert.setContentText("Considere verificar que la carpeta seleccionada contenga los archivos CSV con nombres "
+                + "acordes a las tablas y que los datos del archivo coincidan con los campos a completar en "
+                + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple de validación de "
+                + "nombres de archivo, por lo cuál si no está seguro de su selección, verifique y vuelva a intentarlo.");
+        alert.showAndWait().ifPresent(response ->
+        {
+            if (response == ButtonType.OK)
+            {
+                System.out.println("paso en buena");
+                setEstadoOperacion(STATUS_RUNNING);
+                if(procesarMultiplesArchivos(this.directorio))
+                {
+                    setEstadoOperacion(STATUS_SUCCESS);
+                }
+                else
+                {
+                    setEstadoOperacion(STATUS_ERROR);
+                }
+                limpiarTablero();
+                //validar datos
+                //no cerrar la ventana
+            }
+        });
+    }
+    
+    private void setDirectorioSeleccionado(String dirAux)
+    {
+        if (dirAux == null)
+        {
+            this.directorio = "";
+            this.textField_fileDir.setText(CSV_NON_SELECTED);
+        }
+        else
+        {
+            this.directorio = dirAux;
+            this.textField_fileDir.setText(dirAux);
+        }
+    }
+    
+    @FXML
+    public void seleccionarDirectorioCSV()
+    {
+        //validar datos
+        //no cerrar la ventana
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Selección de carpeta para importación múltiple de datos");
+        File selectedDir = dirChooser.showDialog(null);
+
+        if (selectedDir != null)
+        {
+            setDirectorioSeleccionado(selectedDir.getPath());
+        }
+        else
+        {
+            setDirectorioSeleccionado(null);
+        }
+        validarFormulario();
+    }
+
+    @FXML
+    public void buttonCancelar()
+    {
+        Stage s = (Stage) this.button_Cancelar.getScene().getWindow();
+        s.close();
+    }
+
+    public void setDB(LocalDB db)
+    {
+        this.db = db;
+    }
+    
+    public boolean procesarMultiplesArchivos(String directorio)
+    {
+        HashMap<String,CSVImport> csvEncontrados = new HashMap<>();
+        
+        String[] aux = new File(directorio).list();
+        HashMap<String,String> files=new HashMap<>();
+        for (int i = 0; aux!=null && i < aux.length; i++)
+        {
+            if(aux[i].contains(".csv"))
+            {
+                System.out.println("F:"+aux[i]);
+                files.put(aux[i].replace(".csv", ""),aux[i]);
+                System.out.println("H:"+aux[i].replace(".csv", ""));
+            }
+        }
+        if(files==null || files.isEmpty())
+        {
+            CommandNames.generaMensaje("Problemas con directorio seleccionado", Alert.AlertType.ERROR, "No existen archivos", 
+                "El directorio seleccionado no contiene archivos válidos para la importación.");
+            return false;
+        }
+        //comenzar "importación"
+        
+        setEstadoOperacion(STATUS_RUNNING);
+        
+        if(files.containsKey("region"))
+            new CSVImport_Region(new LocalDB(new DBConfig()), directorio+"/"+files.get("region"),
+                "regiones").procesarArchivo();
+        if(files.containsKey("centro"))
+            new CSVImport_Centro(new LocalDB(new DBConfig()), directorio+"/"+files.get("centro"),
+                "centro").procesarArchivo();
+        if(files.containsKey("zonaventas"))
+            new CSVImport_ZonaVentas(new LocalDB(new DBConfig()), directorio+"/"+files.get("zonaventas"),
+                "zonaventas").procesarArchivo();
+        if(files.containsKey("sector"))
+            new CSVImport_Sector(new LocalDB(new DBConfig()), directorio+"/"+files.get("sector"),
+                "sector").procesarArchivo();
+        if(files.containsKey("n2"))
+            new CSVImport_N2(new LocalDB(new DBConfig()), directorio+"/"+files.get("n2"),
+                "n2").procesarArchivo();
+        if(files.containsKey("n3"))
+            new CSVImport_N3(new LocalDB(new DBConfig()), directorio+"/"+files.get("n3"),
+                "n3").procesarArchivo();
+        if(files.containsKey("n4"))
+            new CSVImport_N4(new LocalDB(new DBConfig()), directorio+"/"+files.get("n4"),
+                "n4").procesarArchivo();
+        if(files.containsKey("tipocliente"))
+            new CSVImport_TipoCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("tipocliente"),
+                "tipocliente").procesarArchivo();
+        if(files.containsKey("categoriacliente"))
+            new CSVImport_CategoriaCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("categoriacliente"),
+                "categoriacliente").procesarArchivo();
+        if(files.containsKey("subcategoriacliente"))
+            new CSVImport_SubcategoriaCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("subcategoriacliente"),
+                "subcategoriacliente").procesarArchivo();
+        if(files.containsKey("marca"))
+            new CSVImport_Marca(new LocalDB(new DBConfig()), directorio+"/"+files.get("marca"),
+                "marca").procesarArchivo();
+        if(files.containsKey("agrupado"))
+            new CSVImport_Agrupado(new LocalDB(new DBConfig()), directorio+"/"+files.get("agrupado"),
+                "agrupado").procesarArchivo();
+        if(files.containsKey("tipoenvasado"))
+            new CSVImport_TipoEnvasado(new LocalDB(new DBConfig()), directorio+"/"+files.get("tipoenvasado"),
+                "tipoenvasado").procesarArchivo();
+        if(files.containsKey("estadorefrigerado"))
+            new CSVImport_EstadoRefrigerado(new LocalDB(new DBConfig()), directorio+"/"+files.get("estadorefrigerado"),
+                "estadorefrigerado").procesarArchivo();
+        if(files.containsKey("oficinaventas"))
+            new CSVImport_OficinaVentas(new LocalDB(new DBConfig()), directorio+"/"+files.get("oficinaventas"),
+                "oficinaventas").procesarArchivo();
+        if(files.containsKey("material"))
+            new CSVImport_Material(new LocalDB(new DBConfig()), directorio+"/"+files.get("material"),
+                "material").procesarArchivo();
+        if(files.containsKey("cliente"))
+            new CSVImport_Cliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("cliente"),
+                "cliente").procesarArchivo();
+        if(files.containsKey("clientelocal"))
+            new CSVImport_ClienteLocal(new LocalDB(new DBConfig()), directorio+"/"+files.get("clientelocal"),
+                "clientelocal").procesarArchivo();
+        if(files.containsKey("pedido"))
+            new CSVImport_Pedido(new LocalDB(new DBConfig()), directorio+"/"+files.get("pedido"),
+                "pedido").procesarArchivo();
+        if(files.containsKey("pedido_material"))
+            new CSVImport_PedidoMaterial(new LocalDB(new DBConfig()), directorio+"/"+files.get("pedido_material"),
+                "pedido_material").procesarArchivo();
+        if(files.containsKey("stock"))
+            new CSVImport_Stock(new LocalDB(new DBConfig()), directorio+"/"+files.get("stock"),
+                "stock").procesarArchivo();
+        if(files.containsKey("despacho"))
+            new CSVImport_Despacho(new LocalDB(new DBConfig()), directorio+"/"+files.get("despacho"),
+                "despacho").procesarArchivo();
+        if(files.containsKey("despacho_material"))
+            new CSVImport_DespachoMaterial(new LocalDB(new DBConfig()), directorio+"/"+files.get("despacho_material"),
+                "despacho_material").procesarArchivo();
+        if(files.containsKey("faltante"))
+            new CSVImport_Faltante(new LocalDB(new DBConfig()), directorio+"/"+files.get("faltante"),
+                "faltante").procesarArchivo();
+        if(files.containsKey("ns_cliente"))
+            new CSVImport_NSCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("ns_cliente"),
+                "ns_cliente").procesarArchivo();
+        
+        return true;
+    }
+}

@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.control.Alert;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -57,47 +57,47 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
             SXSSFRow fila = hoja.createRow(0);
             if (this.columnas == null || this.columnas.isEmpty())
             {
-                CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "OJO, ENCABEZADO COLUMNAS NO INICIALIZADO");
+                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error inicializando columnas Reporte",
+                    "OJO, ENCABEZADO COLUMNAS NO INICIALIZADO. Avisar al informático.");
                 System.out.println("no esta inicializado encabezado columnas, at GenExcel-ReporteDisp");
                 return false;
             }
             for (int i = 0; i < this.columnas.size(); i++)
             {
-                Cell celda = fila.createCell(i);
+                SXSSFCell celda = fila.createCell(i);
                 celda.setCellValue(this.columnas.get(i));
             }
             int contReg = 1;
             ArrayList<Recurso> recursosAux = resources.get(this.nombreTabla).getAll();
             for (int i = 0; i < recursosAux.size(); i++)
             {
-                Row filaAux = hoja.createRow(i + 1);
+                SXSSFRow filaAux = hoja.createRow(i + 1);
 
                 BaseReporteDisponibilidad row = (BaseReporteDisponibilidad) recursosAux.get(i);
-                filaAux.createCell(0).setCellValue(row.centro_id);
-                filaAux.createCell(1).setCellValue(row.centro_nombre);
-                filaAux.createCell(2).setCellValue(row.sector_id);
-                filaAux.createCell(3).setCellValue(row.sector_nombre);
-                filaAux.createCell(4).setCellValue(row.agrupado_id);
-                filaAux.createCell(5).setCellValue(row.agrupado_nombre);
-                filaAux.createCell(6).setCellValue(row.fecha);
-                filaAux.createCell(7).setCellValue(row.pedido_Cj);
-                filaAux.createCell(8).setCellValue(row.despacho_Cj);
-                filaAux.createCell(9).setCellValue(row.disponibleCj);
-                filaAux.createCell(10).setCellValue(row.pedido_Kg);
-                filaAux.createCell(11).setCellValue(row.pedido_neto);
-                filaAux.createCell(12).setCellValue(row.disponibleKg);
-                filaAux.createCell(13).setCellValue(row.faltanteCj);
-                filaAux.createCell(14).setCellValue(row.faltanteKg);
-                filaAux.createCell(15).setCellValue(row.semana);
-                filaAux.createCell(16).setCellValue(row.sobranteCj);
-                filaAux.createCell(17).setCellValue(row.sobranteKg);
-                filaAux.createCell(18).setCellValue(row.faltanteDespachoCj);
-                filaAux.createCell(19).setCellValue(row.faltanteAjustadoCj);
-                filaAux.createCell(20).setCellValue(row.faltanteDespachoKg);
-                filaAux.createCell(21).setCellValue(row.faltanteAjustadoKg);
-                filaAux.createCell(22).setCellValue(row.diaSemana);
-                filaAux.createCell(23).setCellValue(row.anio);
+                setCellContent(filaAux,0,row.centro_id,CellType.STRING);
+                setCellContent(filaAux,1,row.centro_nombre,CellType.STRING);
+                setCellContent(filaAux,2,row.sector_id,CellType.STRING);
+                setCellContent(filaAux,3,row.sector_nombre,CellType.STRING);
+                setCellContent(filaAux,4,row.agrupado_id,CellType.STRING);
+                setCellContent(filaAux,5,row.agrupado_nombre,CellType.STRING);
+                setCellContent(filaAux,6,row.fecha,CellType.STRING);
+                setCellContent(filaAux,7,row.pedido_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,8,row.despacho_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,9,row.disponibleCj,CellType.NUMERIC);
+                setCellContent(filaAux,10,row.pedido_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,11,row.pedido_neto,CellType.NUMERIC);
+                setCellContent(filaAux,12,row.disponibleKg,CellType.NUMERIC);
+                setCellContent(filaAux,13,row.faltanteCj,CellType.NUMERIC);
+                setCellContent(filaAux,14,row.faltanteKg,CellType.NUMERIC);
+                setCellContent(filaAux,15,row.semana,CellType.NUMERIC);
+                setCellContent(filaAux,16,row.sobranteCj,CellType.NUMERIC);
+                setCellContent(filaAux,17,row.sobranteKg,CellType.NUMERIC);
+                setCellContent(filaAux,18,row.faltanteDespachoCj,CellType.NUMERIC);
+                setCellContent(filaAux,19,row.faltanteAjustadoCj,CellType.NUMERIC);
+                setCellContent(filaAux,20,row.faltanteDespachoKg,CellType.NUMERIC);
+                setCellContent(filaAux,21,row.faltanteAjustadoKg,CellType.NUMERIC);
+                setCellContent(filaAux,22,row.diaSemana,CellType.NUMERIC);
+                setCellContent(filaAux,23,row.anio,CellType.NUMERIC);
                 contReg++;
             }
             libro.write(file);
@@ -122,6 +122,15 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
             return false;
         }
     }
+
+    private void setCellContent(SXSSFRow row, int i, String content, CellType cellType)
+    {
+        SXSSFCell cAux=row.createCell(i);
+       // System.out.println("Style:"+cAux.getCellStyle().getDataFormat());
+        cAux.setCellType(cellType);    
+        cAux.setCellValue(content);
+    }
+
 
     
 }

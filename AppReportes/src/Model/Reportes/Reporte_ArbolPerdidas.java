@@ -5,20 +5,18 @@
  */
 package Model.Reportes;
 
+import Model.CommandNames;
 import Model.Filtros.Filtro_Fecha;
 import Model.GeneradoresExcel.GeneradorExcel_ReporteArbolPerdidas;
 import Model.LocalDB;
 import Model.Recurso;
 import Model.RecursosDB.RecursoDB_ReporteArbolPerdidas;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -35,32 +33,6 @@ public class Reporte_ArbolPerdidas extends Reporte
     public Reporte_ArbolPerdidas(LocalDB db)
     {
         super("Reporte Árbol Pérdidas",db);
-        /*
-        //Materiales
-        this.recursos.put("Sectores", new RecursoDB_Sectores(this.db));
-        this.recursos.put("Estado Refrigerados", new RecursoDB_EstadoRefrigerados(this.db));
-        this.recursos.put("Agrupados", new RecursoDB_Agrupados(this.db));
-        this.recursos.put("Tipo Envasados", new RecursoDB_TipoEnvasados(this.db));
-        this.recursos.put("Marcas", new RecursoDB_Marcas(this.db));
-        this.recursos.put("Materiales", new RecursoDB_Materiales(this.db));
-        
-        //Pedidos
-        this.recursos.put("Centros", new RecursoDB_Centros(this.db));
-        this.recursos.put("Oficinas", new RecursoDB_OficinaVentas(this.db));
-        this.recursos.put("Tipos Cliente", new RecursoDB_TipoClientes(this.db));
-        this.recursos.put("Pedidos", new RecursoDB_Pedidos(this.db));
-        this.recursos.put("Pedido-Materiales", new RecursoDB_PedidosMaterial(this.db));
-        
-        //Despachos
-        this.recursos.put("Regiones", new RecursoDB_Regiones(this.db));
-        this.recursos.put("Clientes", new RecursoDB_Clientes(this.db));
-        this.recursos.put("Clientes Locales", new RecursoDB_ClientesLocales(this.db));
-        this.recursos.put("Despachos", new RecursoDB_Despachos(this.db));
-        this.recursos.put("Despacho-Materiales", new RecursoDB_DespachosMaterial(this.db));
-        
-        //Stocks
-        this.recursos.put("Stocks", new RecursoDB_Stock(this.db));
-        */
         this.recursos.put("Reporte Árbol Pérdidas", new RecursoDB_ReporteArbolPerdidas(this.db));
         
         this.generarFiltrosBaseCustom();
@@ -69,21 +41,30 @@ public class Reporte_ArbolPerdidas extends Reporte
     @Override
     public boolean generarExcel()
     {
+        if(this.generadorExcel==null)
+            return false;
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
         try
         {
             if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
-            {
+            {        
+                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
+                    "Hubo problemas para generar el reporte.");
                 System.out.println("ERROR: problema generando archivos excel Reporte Árbol Pérdidas");
                 return false;
-            }
+            }        
+            CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.INFORMATION, "Reporte generado exitosamente",
+                    "El reporte ha sido generado con el nombre '"+this.nombre+"', el cual está ubicado en el Escritorio. Por recomendación"
+            + " cambiar el nombre del archivo o ubicarlo en alguna carpeta.");
             return true;
         }
         catch (IOException ex)
         {
-            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
+                "Hubo problemas para generar el reporte.");
+                System.out.println("ERROR: problema generando archivos excel Reporte Árbol Pérdidas. El error es el siguiente: "+ex);
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -95,6 +76,7 @@ public class Reporte_ArbolPerdidas extends Reporte
         this.filtros.remove("Filtro_Cliente");
         this.filtros.remove("Filtro_Sucursal");
         this.filtros.remove("Filtro_Canal");
+        this.filtros.remove("Filtro_Zona");
         this.filtros.remove("Filtro_CargoRRHH");
         return true;
     }
@@ -103,94 +85,77 @@ public class Reporte_ArbolPerdidas extends Reporte
     public ArrayList<String> completarColumnasTabla()
     {
         ArrayList<String> columnas=new ArrayList<>();
-        columnas.add("mes");
-        columnas.add("semana");
-        columnas.add("sector_nombre");
-        columnas.add("tipoCliente");
-        columnas.add("centro_id");
-        columnas.add("centro_nombre");
-        columnas.add("agrupado_id");
-        columnas.add("agrupado_nombre");
-        columnas.add("n2_nombre");
-        columnas.add("Pedido_Kg");
-        columnas.add("Factura_Kg");
-        columnas.add("Demanda_Kg");
-        columnas.add("NS_Kg");
-        columnas.add("Faltante_Kg");
-        columnas.add("faltanteKg");
-        columnas.add("Sobrefactura_Kg");
-        columnas.add("PP_Neto");
-        columnas.add("Faltante_Neto");
-        columnas.add("Pedido_Cj");
-        columnas.add("Factura_Cj");
-        columnas.add("Demanda_Cj");
-        columnas.add("NS_Cj");
-        columnas.add("Sobrefactura_Cj");
-        columnas.add("Faltante_Cj");
-        columnas.add("Disp_Pedido_Cj");
-        columnas.add("Disp_Faltante_Cj");
-        columnas.add("Disp_Pedido_Kg");
-        columnas.add("Disp_Faltante_Kg");
-        columnas.add("Factura_Faltante_Kg");
-        columnas.add("Factura_Faltante_Cj");
-        columnas.add("Pedido_Neto");
-        columnas.add("Anio");
-        columnas.add("semanaAnio");
+        columnas.add("Mes natural");
+        columnas.add("sem");
+        columnas.add("Sector");
+        columnas.add("Tipo de cliente");
+        columnas.add("Cod Centro");
+        columnas.add("Centro");
+        columnas.add("Cod Agrup");
+        columnas.add("Producto Agrupado");
+        columnas.add("Nivel 2");
+        columnas.add("Pedido (kg)");
+        columnas.add("Factura (kg)");
+        columnas.add("Demanda (kg)");
+        columnas.add("NS (Kg)");
+        columnas.add("Faltante (kg)");
+        columnas.add("Sobrefactura (kg)");
+        columnas.add("PP ($/Kg)");
+        columnas.add("Faltante ($)");
+        columnas.add("Pedido (Cj)");
+        columnas.add("Factura (Cj)");
+        columnas.add("Demanda (Cj)");
+        columnas.add("NS (Cj)");
+        columnas.add("Sobrefactura (Cj)");
+        columnas.add("Faltante (Cj)");
+        columnas.add("Pedido CJ Disp");
+        columnas.add("Faltante CJ Disp");
+        columnas.add("Pedido KG Disp");
+        columnas.add("Faltante KG Disp");
+        columnas.add("Factura Faltante KG");
+        columnas.add("Factura Faltante CJ");
+        columnas.add("Pedido Neto");
+        columnas.add("Año");
+        columnas.add("sem-Año");
         return columnas;
     }
 
     @Override
     public boolean generarReporte()
     {
-        try
+        Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
+        ff.prepararFiltro();
+        String fechaInicio="2018-01-30";
+        String fechaFin=null;
+        if(ff != null)
         {
-            /*
-            llamado a sp
-            recepcion de res sp
-            envio a genExcel para generacion de file
-            op: desplegar tabla en app
-            */
-            Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
-            ff.prepararFiltro();
-            String fechaInicio="2018-01-30";
-            String fechaFin=null;
-            if(ff != null)
-            {
-                if(ff.getFechaInicio()!=null)
-                {       
-                    fechaInicio=ff.getFechaInicio().getYear()+"-"
-                            +(((ff.getFechaInicio().getMonth())<9) ? "0"+(ff.getFechaInicio().getMonth()+1): (ff.getFechaInicio().getMonth()+1))+"-"
-                            +(((ff.getFechaInicio().getDate())<10) ? "0"+(ff.getFechaInicio().getDate()): (ff.getFechaInicio().getDate()));
-                }
-                if(ff.getFechaFin()!=null)
-                {
-                    fechaFin=ff.getFechaFin().getYear()+"-"+(((ff.getFechaFin().getMonth())<9) ? "0"+(ff.getFechaFin().getMonth()+1): (ff.getFechaFin().getMonth()+1))+"-"
-                            +(((ff.getFechaFin().getDate())<10) ? "0"+(ff.getFechaFin().getDate()): (ff.getFechaFin().getDate()));
-                }
+            if(ff.getFechaInicio()!=null)
+            {       
+                fechaInicio=ff.getFechaInicio().getYear()+"-"
+                        +(((ff.getFechaInicio().getMonth())<9) ? "0"+(ff.getFechaInicio().getMonth()+1): (ff.getFechaInicio().getMonth()+1))+"-"
+                        +(((ff.getFechaInicio().getDate())<10) ? "0"+(ff.getFechaInicio().getDate()): (ff.getFechaInicio().getDate()));
             }
-            
-            ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
-            if(resultados==null || resultados.isEmpty())
+            if(ff.getFechaFin()!=null)
             {
-                return false;
+                fechaFin=ff.getFechaFin().getYear()+"-"+(((ff.getFechaFin().getMonth())<9) ? "0"+(ff.getFechaFin().getMonth()+1): (ff.getFechaFin().getMonth()+1))+"-"
+                        +(((ff.getFechaFin().getDate())<10) ? "0"+(ff.getFechaFin().getDate()): (ff.getFechaFin().getDate()));
             }
-            if(!generarExcel())
-            {
-                System.out.println("No existen datos o algo malo paso :c");
-            }
-            //trabajar con arraylist -> separados elementos por ;
-            
-            return true;
         }
-        catch (SQLException ex)
+        ArrayList<String> resultados = ((RecursoDB_ReporteArbolPerdidas)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
+                if(resultados==null || resultados.isEmpty())
         {
-            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                "No existe información asociada al período seleccionado para el reporte.");
+            return false;
         }
-        catch (ClassNotFoundException ex)
+        if(!generarExcel())
         {
-            Logger.getLogger(Reporte_ArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                "Hubo problemas para generar el excel.");
+            System.out.println("No existen datos o algo malo paso :c");
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override

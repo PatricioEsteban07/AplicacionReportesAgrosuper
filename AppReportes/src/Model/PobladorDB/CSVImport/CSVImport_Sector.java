@@ -16,7 +16,7 @@ public class CSVImport_Sector extends CSVImport
 
     public CSVImport_Sector(LocalDB db, String fileDir, String fileName)
     {
-        super(db, 9);
+        super(db, 8);
         this.fileDir=fileDir;
         this.fileName=fileName;
         this.tableName="sector";

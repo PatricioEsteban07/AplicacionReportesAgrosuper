@@ -273,7 +273,7 @@ public class Filtro_Fecha extends Filtro
                 System.out.println("implementar");
                 break;
             case 7://fecha
-                this.fechaFin=this.fechaInicio;
+                this.fechaFin=new Date(this.fechaInicio.getYear(),this.fechaInicio.getMonth(),this.fechaInicio.getDate());
                 break;
             case 8://rango fecha
                 break;
@@ -292,21 +292,21 @@ public class Filtro_Fecha extends Filtro
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"
                         +this.fechaFin.getYear();
             case 3://1 mes
-                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+1;
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+(this.fechaInicio.getMonth()+1);
             case 4://rango mes
-                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.fechaInicio.getMonth()+1
-                        +" / "+this.fechaFin.getYear()+"-"+this.fechaFin.getMonth()+1;
+                return "Reporte para el período "+this.fechaInicio.getYear()+"-"+(this.fechaInicio.getMonth()+1)
+                        +" / "+this.fechaFin.getYear()+"-"+(this.fechaFin.getMonth()+1);
             case 5://1 semana
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio;
             case 6://rango semanas
                 return "Reporte para el período "+this.fechaInicio.getYear()+"-"+this.semanaInicio
                         +" / "+this.fechaFin.getYear()+"-"+this.semanaFin;
             case 7://fecha
-                return "Reporte para el dia "+this.fechaInicio.getDate()+"/"+this.fechaInicio.getMonth()+1+"/"
+                return "Reporte para el dia "+this.fechaInicio.getDate()+"/"+(this.fechaInicio.getMonth()+1)+"/"
                         +this.fechaInicio.getYear();
             case 8://rango fecha
-                return "Reporte para el período "+this.fechaInicio.getDate()+"/"+this.fechaInicio.getMonth()+1+"/"
-                        +this.fechaInicio.getYear()+" - "+this.fechaFin.getDate()+"/"+this.fechaFin.getMonth()+1+"/"
+                return "Reporte para el período "+this.fechaInicio.getDate()+"/"+(this.fechaInicio.getMonth()+1)+"/"
+                        +this.fechaInicio.getYear()+" - "+this.fechaFin.getDate()+"/"+(this.fechaFin.getMonth()+1)+"/"
                         +this.fechaFin.getYear();
         }
         return null;

@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.control.Alert;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -59,55 +61,55 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
             SXSSFRow fila = hoja.createRow(0);
             if (this.columnas == null || this.columnas.isEmpty())
             {
-                CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "OJO, ENCABEZADO COLUMNAS NO INICIALIZADO");
-                System.out.println("no esta inicializado encabezado columnas, at GenExcel-ReporteArbol");
+                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error inicializando columnas Reporte",
+                    "OJO, ENCABEZADO COLUMNAS NO INICIALIZADO. Avisar al informático.");
+                System.out.println("no esta inicializado encabezado columnas, at GenExcel-ReporteArbolPerdidas");
                 return false;
             }
             for (int i = 0; i < this.columnas.size(); i++)
             {
-                Cell celda = fila.createCell(i);
+                SXSSFCell celda = fila.createCell(i);
                 celda.setCellValue(this.columnas.get(i));
             }
-            int contReg=1;
+            int contReg = 1;
             ArrayList<Recurso> recursosAux = resources.get(this.nombreTabla).getAll();
-            for (int i=0; i<recursosAux.size();i++)
-            { 
-                Row filaAux = hoja.createRow(i + 1);
+            for (int i = 0; i < recursosAux.size(); i++)
+            {
+                SXSSFRow filaAux = hoja.createRow(i + 1);
 
                 BaseReporteArbolPerdidas row = (BaseReporteArbolPerdidas)recursosAux.get(i);
-                filaAux.createCell(0).setCellValue(row.mes);
-                filaAux.createCell(1).setCellValue(row.semana);
-                filaAux.createCell(2).setCellValue(row.sector_nombre);
-                filaAux.createCell(3).setCellValue(row.tipoCliente);
-                filaAux.createCell(4).setCellValue(row.centro_id);
-                filaAux.createCell(5).setCellValue(row.centro_nombre);
-                filaAux.createCell(6).setCellValue(row.agrupado_id);
-                filaAux.createCell(7).setCellValue(row.agrupado_nombre);
-                filaAux.createCell(8).setCellValue(row.n2_nombre);
-                filaAux.createCell(9).setCellValue(row.Pedido_Kg);
-                filaAux.createCell(10).setCellValue(row.Factura_Kg);
-                filaAux.createCell(11).setCellValue(row.Demanda_Kg);
-                filaAux.createCell(12).setCellValue(row.NS_Kg);
-                filaAux.createCell(13).setCellValue(row.Faltante_Kg);
-                filaAux.createCell(14).setCellValue(row.Sobrefactura_Kg);
-                filaAux.createCell(15).setCellValue(row.PP_Neto);
-                filaAux.createCell(16).setCellValue(row.Faltante_Neto);
-                filaAux.createCell(17).setCellValue(row.Pedido_Cj);
-                filaAux.createCell(18).setCellValue(row.Factura_Cj);
-                filaAux.createCell(19).setCellValue(row.Demanda_Cj);
-                filaAux.createCell(20).setCellValue(row.NS_Cj);
-                filaAux.createCell(21).setCellValue(row.Sobrefactura_Cj);
-                filaAux.createCell(22).setCellValue(row.Faltante_Cj);
-                filaAux.createCell(23).setCellValue(row.Disp_Pedido_Cj);
-                filaAux.createCell(24).setCellValue(row.Disp_Faltante_Cj);
-                filaAux.createCell(25).setCellValue(row.Disp_Pedido_Kg);
-                filaAux.createCell(26).setCellValue(row.Disp_Faltante_Kg);
-                filaAux.createCell(27).setCellValue(row.Factura_Faltante_Kg);
-                filaAux.createCell(28).setCellValue(row.Factura_Faltante_Cj);
-                filaAux.createCell(29).setCellValue(row.Pedido_Neto);
-                filaAux.createCell(30).setCellValue(row.Anio);
-                filaAux.createCell(31).setCellValue(row.semanaAnio);
+                setCellContent(filaAux,0,row.mes,CellType.NUMERIC);
+                setCellContent(filaAux,1,row.semana,CellType.NUMERIC);
+                setCellContent(filaAux,2,row.sector_nombre,CellType.STRING);
+                setCellContent(filaAux,3,row.tipoCliente,CellType.STRING);
+                setCellContent(filaAux,4,row.centro_id,CellType.STRING);
+                setCellContent(filaAux,5,row.centro_nombre,CellType.STRING);
+                setCellContent(filaAux,6,row.agrupado_id,CellType.STRING);
+                setCellContent(filaAux,7,row.agrupado_nombre,CellType.STRING);
+                setCellContent(filaAux,8,row.n2_nombre,CellType.STRING);
+                setCellContent(filaAux,9,row.Pedido_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,10,row.Factura_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,11,row.Demanda_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,12,row.NS_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,13,row.Faltante_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,14,row.Sobrefactura_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,15,row.PP_Neto,CellType.NUMERIC);
+                setCellContent(filaAux,16,row.Faltante_Neto,CellType.NUMERIC);
+                setCellContent(filaAux,17,row.Pedido_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,18,row.Factura_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,19,row.Demanda_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,20,row.NS_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,21,row.Sobrefactura_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,22,row.Faltante_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,23,row.Disp_Pedido_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,24,row.Disp_Faltante_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,25,row.Disp_Pedido_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,26,row.Disp_Faltante_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,27,row.Factura_Faltante_Kg,CellType.NUMERIC);
+                setCellContent(filaAux,28,row.Factura_Faltante_Cj,CellType.NUMERIC);
+                setCellContent(filaAux,29,row.Pedido_Neto,CellType.NUMERIC);
+                setCellContent(filaAux,30,row.Anio,CellType.NUMERIC);
+                setCellContent(filaAux,31,row.semanaAnio,CellType.STRING);
                 contReg++;
             }
             libro.write(file);
@@ -121,7 +123,7 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
                 archivoXLS.delete();
                 return false;
             }
-            this.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
+            GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
             file.close();
             return true;
         }
@@ -133,5 +135,12 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
         }
     }
 
-    
+    private void setCellContent(SXSSFRow row, int i, String content, CellType cellType)
+    {
+        SXSSFCell cAux=row.createCell(i);
+       // System.out.println("Style:"+cAux.getCellStyle().getDataFormat());
+        cAux.setCellType(cellType);    
+        cAux.setCellValue(content);
+    }
+
 }

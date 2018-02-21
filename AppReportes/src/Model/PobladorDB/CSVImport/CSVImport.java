@@ -129,9 +129,10 @@ public class CSVImport
                                     case "INT"://hasta el momento procurar que sea int
                                         if(datos[i]==null || datos[i].equals(""))
                                             datos[i]="0";
+                                        datos[i]=datos[i].replace(".", "");
                                         break;
                                     case "FLOAT"://formato 12.12
-                                        datos[i].replace(".", "").replace(",", ".");
+                                        datos[i]=datos[i].replace(".", "").replace(",", ".");
                                         break;
                                     case "DATE"://formato 2018-01-30
                                         datos[i] = datos[i].substring(6) + "-" + datos[i].substring(3, 5) + "-" + datos[i].substring(0, 2);

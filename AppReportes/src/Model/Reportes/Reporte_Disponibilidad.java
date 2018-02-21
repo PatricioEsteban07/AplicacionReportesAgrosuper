@@ -33,32 +33,6 @@ public class Reporte_Disponibilidad extends Reporte
     public Reporte_Disponibilidad(LocalDB db)
     {
         super("Reporte Disponibilidad",db);
-        /*
-        //Materiales
-        this.recursos.put("Sectores", new RecursoDB_Sectores(this.db));
-        this.recursos.put("Estado Refrigerados", new RecursoDB_EstadoRefrigerados(this.db));
-        this.recursos.put("Agrupados", new RecursoDB_Agrupados(this.db));
-        this.recursos.put("Tipo Envasados", new RecursoDB_TipoEnvasados(this.db));
-        this.recursos.put("Marcas", new RecursoDB_Marcas(this.db));
-        this.recursos.put("Materiales", new RecursoDB_Materiales(this.db));
-        
-        //Pedidos
-        this.recursos.put("Centros", new RecursoDB_Centros(this.db));
-        this.recursos.put("Oficinas", new RecursoDB_OficinaVentas(this.db));
-        this.recursos.put("Tipos Cliente", new RecursoDB_TipoClientes(this.db));
-        this.recursos.put("Pedidos", new RecursoDB_Pedidos(this.db));
-        this.recursos.put("Pedido-Materiales", new RecursoDB_PedidosMaterial(this.db));
-        
-        //Despachos
-        this.recursos.put("Regiones", new RecursoDB_Regiones(this.db));
-        this.recursos.put("Clientes", new RecursoDB_Clientes(this.db));
-        this.recursos.put("Clientes Locales", new RecursoDB_ClientesLocales(this.db));
-        this.recursos.put("Despachos", new RecursoDB_Despachos(this.db));
-        this.recursos.put("Despacho-Materiales", new RecursoDB_DespachosMaterial(this.db));
-        
-        //Stocks
-        this.recursos.put("Stocks", new RecursoDB_Stock(this.db));
-        */
         this.recursos.put("Reporte Disponibilidad", new RecursoDB_ReporteDisponibilidad(this.db));
         
         this.generarFiltrosBaseCustom();
@@ -67,8 +41,6 @@ public class Reporte_Disponibilidad extends Reporte
     @Override
     public boolean generarExcel()
     {
-        CommandNames.generaMensaje("X", Alert.AlertType.INFORMATION, "X",
-                    "DENTRO DE GENERAR EXCEL");
         if(this.generadorExcel==null)
             return false;
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
@@ -113,42 +85,36 @@ public class Reporte_Disponibilidad extends Reporte
     public ArrayList<String> completarColumnasTabla()
     {
         ArrayList<String> columnas=new ArrayList<>();
-        columnas.add("centro_id");
-        columnas.add("centro_nombre");
-        columnas.add("sector_id");
-        columnas.add("sector_nombre");
-        columnas.add("agrupado_id");
-        columnas.add("agrupado_nombre");
-        columnas.add("fecha");
-        columnas.add("pedido_Cj");
-        columnas.add("despacho_Cj");
-        columnas.add("disponible_Cj");
-        columnas.add("pedido_Kg");
-        columnas.add("pedido_neto");
-        columnas.add("disponibleKg");
-        columnas.add("faltanteCj");
-        columnas.add("faltanteKg");
-        columnas.add("semana");
-        columnas.add("sobranteCj");
-        columnas.add("sobranteKg");
-        columnas.add("faltanteDespachoCj");
-        columnas.add("faltanteAjustadoCj");
-        columnas.add("faltanteDespachoKg");
-        columnas.add("faltanteAjustadoKg");
-        columnas.add("diaSemana");
-        columnas.add("anio");
+        columnas.add("Cod Centro");
+        columnas.add("Centro");
+        columnas.add("Cod Sector");
+        columnas.add("Sector");
+        columnas.add("Cod Agrupacion");
+        columnas.add("Producto Agrupado");
+        columnas.add("Fecha de entrega");
+        columnas.add("Pedido CJ");
+        columnas.add("Despacho CJ");
+        columnas.add("Disponible CJ");
+        columnas.add("Pedido KG");
+        columnas.add("Pedido Neto");
+        columnas.add("Disponible KG");
+        columnas.add("Faltante CJ");
+        columnas.add("Faltante KG");
+        columnas.add("Semana");
+        columnas.add("Sobrante CJ");
+        columnas.add("Sobrante KG");
+        columnas.add("Faltante Despacho CJ");
+        columnas.add("Faltante Ajustado CJ");
+        columnas.add("Faltante Despacho KG");
+        columnas.add("Faltante Ajustado KG");
+        columnas.add("Dia semana");
+        columnas.add("Año");
         return columnas;
     }
 
     @Override
     public boolean generarReporte()
     {
-        /*
-        llamado a sp
-        recepcion de res sp
-        envio a genExcel para generacion de file
-        op: desplegar tabla en app
-        */
         Filtro_Fecha ff= ((Filtro_Fecha)this.filtros.get("Filtro_Fecha"));
         ff.prepararFiltro();
         String fechaInicio="2018-01-30";
@@ -181,7 +147,6 @@ public class Reporte_Disponibilidad extends Reporte
             System.out.println("No existen datos o algo malo paso :c");
             return false;
         }
-        //trabajar con arraylist -> separados elementos por ;
         return true;
     }
 

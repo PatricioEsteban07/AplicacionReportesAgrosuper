@@ -61,13 +61,13 @@ BEGIN
 	disponible_Kg,despacho_Cj,despacho_Kg)
 	(
 	SELECT 
-		stock.centro_id,
+		(if(stock.centro_id='T011' OR stock.centro_id='T018','T005',stock.centro_id)),
 		material.sector_id,
 		material.agrupado_id,
 		stock.fecha, 
 		0, 0, 0, 
-		TRUNCATE(SUM((stock.stock+stock.salidas)/material.pesoCaja),1),
-		TRUNCATE(SUM(stock.stock+stock.salidas), 3), 0, 0
+		TRUNCATE(SUM(((IF(stock.stock<0,0,stock.stock))+stock.salidas)/material.pesoCaja),1),
+		TRUNCATE(SUM((IF(stock.stock<0,0,stock.stock))+stock.salidas), 3), 0, 0
 	FROM 
 		stock, material
 	WHERE 
