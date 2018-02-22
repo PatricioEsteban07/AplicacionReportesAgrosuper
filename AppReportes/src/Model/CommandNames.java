@@ -5,8 +5,12 @@
  */
 package Model;
 
+import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -56,6 +60,15 @@ public final class CommandNames
         alert.setHeaderText(mensaje);
         alert.setContentText(detail);
         alert.showAndWait();
+    }
+    
+    public static Alert generaMensaje(String titulo, AlertType tipo, String mensaje, String detail, boolean x)
+    {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(mensaje);
+        alert.setContentText(detail);
+        return alert;
     }
     
 }

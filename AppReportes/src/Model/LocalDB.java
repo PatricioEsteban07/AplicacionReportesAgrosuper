@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
  *
@@ -95,12 +96,17 @@ public class LocalDB
     
     public boolean probarDBConection()
     {
+        Alert alertAux=CommandNames.generaMensaje("Conectando a la Base de datos", 
+                Alert.AlertType.NONE, null,"Estamos intentando una conexión a la base de datos de acuerdo a la información ingresada...",false);
+        alertAux.show();
         try
         {
             if(!connect())
             {
                 CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de aplicación",
                     "Reconfigure información de base de datos, información actual no puede ser utilizada para la conexión.");
+                alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                alertAux.close();
                 return false;
             }
             close();
@@ -109,10 +115,14 @@ public class LocalDB
         {
             CommandNames.generaMensaje("Problemas de Configuración", Alert.AlertType.ERROR, "Error de Sistema",
                 "Hubo un problema con la DB, información actual no puede ser utilizada para la conexión.");
+            alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            alertAux.close();
             return false;
         }
         CommandNames.generaMensaje("Información del Sistema", Alert.AlertType.INFORMATION, "Información del sistema", 
-            "Conexión a la base de datos realizada exitosamente. Puede generar reportes siempre y cuando la información exista."); 
+            "Conexión a la base de datos realizada exitosamente. Puede generar reportes siempre y cuando la información exista.");
+        alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        alertAux.close();
         return true;
     }
     

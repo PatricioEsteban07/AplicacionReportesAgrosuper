@@ -48,8 +48,6 @@ public class Reporte_Disponibilidad extends Reporte
         {
             if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
             {        
-                CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
-                    "Hubo problemas para generar el reporte.");
                 System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
                 return false;
             }        
@@ -134,10 +132,8 @@ public class Reporte_Disponibilidad extends Reporte
             }
         }
         ArrayList<String> resultados = ((RecursoDB_ReporteDisponibilidad)this.recursos.get(this.nombre)).procedimientoAlmacenado(fechaInicio,fechaFin);
-                if(resultados==null || resultados.isEmpty())
+        if(resultados==null || resultados.isEmpty())
         {
-            CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
-                "No existe información asociada al período seleccionado para el reporte.");
             return false;
         }
         if(!generarExcel())

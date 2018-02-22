@@ -105,7 +105,7 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
             if (contReg == 1)
             {
                 //eliminar archivo
-                CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.ERROR, "Problema al generar Reporte",
+                CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.INFORMATION, "Problema al generar Reporte",
                     "No existen registros para generar un archivo. El Reporte no se generará.");
                 archivoXLS = new File(rutaArchivo);
                 archivoXLS.delete();

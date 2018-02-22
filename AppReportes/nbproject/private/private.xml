@@ -5,9 +5,11 @@
         <group>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/ImportarCSVMultipleController.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/ImportarCSVController.java</file>
-            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/PobladorDB/CSVImport/CSVImport.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/DBConfig.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/MainController.java</file>
             <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/Main.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Model/LocalDB.java</file>
+            <file>file:/C:/Users/Patricio/Documents/Repositorios/AplicacionReportesAgrosuper/AppReportes/src/Controller/configDBInfoController.java</file>
         </group>
     </open-files>
 </project-private>

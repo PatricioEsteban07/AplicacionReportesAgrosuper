@@ -5,6 +5,9 @@
  */
 package Controller;
 
+import static Controller.ImportarCSVController.STATUS_ERROR;
+import static Controller.ImportarCSVController.STATUS_RUNNING;
+import static Controller.ImportarCSVController.STATUS_SUCCESS;
 import Model.CommandNames;
 import Model.DBConfig;
 import Model.LocalDB;
@@ -13,6 +16,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -118,19 +122,23 @@ public class ImportarCSVMultipleController implements Initializable
     @FXML
     public void importarCSV()
     {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Aviso de confirmación");
-        alert.setHeaderText("¿Está seguro de la acción a realizar?");
-        alert.setContentText("Considere verificar que la carpeta seleccionada contenga los archivos CSV con nombres "
-                + "acordes a las tablas y que los datos del archivo coincidan con los campos a completar en "
-                + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple de validación de "
-                + "nombres de archivo, por lo cuál si no está seguro de su selección, verifique y vuelva a intentarlo.");
+        
+                 
+        Alert alert=CommandNames.generaMensaje("Aviso de confirmación", Alert.AlertType.CONFIRMATION, "¿Está seguro de la acción a realizar?", 
+                "Considere verificar el archivo CSV seleccionado y la tabla tal que, los datos del archivo coincidan con los campos a completar en "
+                + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple por lo cuál si no está seguro de su"
+                + "selección, verifique y vuelva a intentarlo.",false);
         alert.showAndWait().ifPresent(response ->
         {
             if (response == ButtonType.OK)
             {
                 System.out.println("paso en buena");
                 setEstadoOperacion(STATUS_RUNNING);
+                
+                Alert alertAux=CommandNames.generaMensaje("Importación múltiple en proceso", 
+                        Alert.AlertType.NONE, null,"Importación múltiple en proceso, esta operación puede demorar mucho...",false);
+                
+                alertAux.show();
                 if(procesarMultiplesArchivos(this.directorio))
                 {
                     setEstadoOperacion(STATUS_SUCCESS);
@@ -139,11 +147,14 @@ public class ImportarCSVMultipleController implements Initializable
                 {
                     setEstadoOperacion(STATUS_ERROR);
                 }
+                alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                alertAux.close();
                 limpiarTablero();
                 //validar datos
                 //no cerrar la ventana
             }
         });
+        
     }
     
     private void setDirectorioSeleccionado(String dirAux)
@@ -202,9 +213,8 @@ public class ImportarCSVMultipleController implements Initializable
         {
             if(aux[i].contains(".csv"))
             {
-                System.out.println("F:"+aux[i]);
+                System.out.println("F:"+directorio+"/"+aux[i]);
                 files.put(aux[i].replace(".csv", ""),aux[i]);
-                System.out.println("H:"+aux[i].replace(".csv", ""));
             }
         }
         if(files==null || files.isEmpty())
@@ -213,84 +223,85 @@ public class ImportarCSVMultipleController implements Initializable
                 "El directorio seleccionado no contiene archivos válidos para la importación.");
             return false;
         }
+        System.out.println("keys: "+files.keySet());
         //comenzar "importación"
         
         setEstadoOperacion(STATUS_RUNNING);
         
         if(files.containsKey("region"))
-            new CSVImport_Region(new LocalDB(new DBConfig()), directorio+"/"+files.get("region"),
+            new CSVImport_Region(this.db, directorio+"/"+files.get("region"),
                 "regiones").procesarArchivo();
         if(files.containsKey("centro"))
-            new CSVImport_Centro(new LocalDB(new DBConfig()), directorio+"/"+files.get("centro"),
+            new CSVImport_Centro(this.db, directorio+"/"+files.get("centro"),
                 "centro").procesarArchivo();
         if(files.containsKey("zonaventas"))
-            new CSVImport_ZonaVentas(new LocalDB(new DBConfig()), directorio+"/"+files.get("zonaventas"),
+            new CSVImport_ZonaVentas(this.db, directorio+"/"+files.get("zonaventas"),
                 "zonaventas").procesarArchivo();
         if(files.containsKey("sector"))
-            new CSVImport_Sector(new LocalDB(new DBConfig()), directorio+"/"+files.get("sector"),
+            new CSVImport_Sector(this.db, directorio+"/"+files.get("sector"),
                 "sector").procesarArchivo();
         if(files.containsKey("n2"))
-            new CSVImport_N2(new LocalDB(new DBConfig()), directorio+"/"+files.get("n2"),
+            new CSVImport_N2(this.db, directorio+"/"+files.get("n2"),
                 "n2").procesarArchivo();
         if(files.containsKey("n3"))
-            new CSVImport_N3(new LocalDB(new DBConfig()), directorio+"/"+files.get("n3"),
+            new CSVImport_N3(this.db, directorio+"/"+files.get("n3"),
                 "n3").procesarArchivo();
         if(files.containsKey("n4"))
-            new CSVImport_N4(new LocalDB(new DBConfig()), directorio+"/"+files.get("n4"),
+            new CSVImport_N4(this.db, directorio+"/"+files.get("n4"),
                 "n4").procesarArchivo();
         if(files.containsKey("tipocliente"))
-            new CSVImport_TipoCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("tipocliente"),
+            new CSVImport_TipoCliente(this.db, directorio+"/"+files.get("tipocliente"),
                 "tipocliente").procesarArchivo();
         if(files.containsKey("categoriacliente"))
-            new CSVImport_CategoriaCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("categoriacliente"),
+            new CSVImport_CategoriaCliente(this.db, directorio+"/"+files.get("categoriacliente"),
                 "categoriacliente").procesarArchivo();
         if(files.containsKey("subcategoriacliente"))
-            new CSVImport_SubcategoriaCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("subcategoriacliente"),
+            new CSVImport_SubcategoriaCliente(this.db, directorio+"/"+files.get("subcategoriacliente"),
                 "subcategoriacliente").procesarArchivo();
         if(files.containsKey("marca"))
-            new CSVImport_Marca(new LocalDB(new DBConfig()), directorio+"/"+files.get("marca"),
+            new CSVImport_Marca(this.db, directorio+"/"+files.get("marca"),
                 "marca").procesarArchivo();
         if(files.containsKey("agrupado"))
-            new CSVImport_Agrupado(new LocalDB(new DBConfig()), directorio+"/"+files.get("agrupado"),
+            new CSVImport_Agrupado(this.db, directorio+"/"+files.get("agrupado"),
                 "agrupado").procesarArchivo();
         if(files.containsKey("tipoenvasado"))
-            new CSVImport_TipoEnvasado(new LocalDB(new DBConfig()), directorio+"/"+files.get("tipoenvasado"),
+            new CSVImport_TipoEnvasado(this.db, directorio+"/"+files.get("tipoenvasado"),
                 "tipoenvasado").procesarArchivo();
         if(files.containsKey("estadorefrigerado"))
-            new CSVImport_EstadoRefrigerado(new LocalDB(new DBConfig()), directorio+"/"+files.get("estadorefrigerado"),
+            new CSVImport_EstadoRefrigerado(this.db, directorio+"/"+files.get("estadorefrigerado"),
                 "estadorefrigerado").procesarArchivo();
         if(files.containsKey("oficinaventas"))
-            new CSVImport_OficinaVentas(new LocalDB(new DBConfig()), directorio+"/"+files.get("oficinaventas"),
+            new CSVImport_OficinaVentas(this.db, directorio+"/"+files.get("oficinaventas"),
                 "oficinaventas").procesarArchivo();
         if(files.containsKey("material"))
-            new CSVImport_Material(new LocalDB(new DBConfig()), directorio+"/"+files.get("material"),
+            new CSVImport_Material(this.db, directorio+"/"+files.get("material"),
                 "material").procesarArchivo();
         if(files.containsKey("cliente"))
-            new CSVImport_Cliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("cliente"),
+            new CSVImport_Cliente(this.db, directorio+"/"+files.get("cliente"),
                 "cliente").procesarArchivo();
         if(files.containsKey("clientelocal"))
-            new CSVImport_ClienteLocal(new LocalDB(new DBConfig()), directorio+"/"+files.get("clientelocal"),
+            new CSVImport_ClienteLocal(this.db, directorio+"/"+files.get("clientelocal"),
                 "clientelocal").procesarArchivo();
         if(files.containsKey("pedido"))
-            new CSVImport_Pedido(new LocalDB(new DBConfig()), directorio+"/"+files.get("pedido"),
+            new CSVImport_Pedido(this.db, directorio+"/"+files.get("pedido"),
                 "pedido").procesarArchivo();
         if(files.containsKey("pedido_material"))
-            new CSVImport_PedidoMaterial(new LocalDB(new DBConfig()), directorio+"/"+files.get("pedido_material"),
+            new CSVImport_PedidoMaterial(this.db, directorio+"/"+files.get("pedido_material"),
                 "pedido_material").procesarArchivo();
         if(files.containsKey("stock"))
-            new CSVImport_Stock(new LocalDB(new DBConfig()), directorio+"/"+files.get("stock"),
+            new CSVImport_Stock(this.db, directorio+"/"+files.get("stock"),
                 "stock").procesarArchivo();
         if(files.containsKey("despacho"))
-            new CSVImport_Despacho(new LocalDB(new DBConfig()), directorio+"/"+files.get("despacho"),
+            new CSVImport_Despacho(this.db, directorio+"/"+files.get("despacho"),
                 "despacho").procesarArchivo();
         if(files.containsKey("despacho_material"))
-            new CSVImport_DespachoMaterial(new LocalDB(new DBConfig()), directorio+"/"+files.get("despacho_material"),
+            new CSVImport_DespachoMaterial(this.db, directorio+"/"+files.get("despacho_material"),
                 "despacho_material").procesarArchivo();
         if(files.containsKey("faltante"))
-            new CSVImport_Faltante(new LocalDB(new DBConfig()), directorio+"/"+files.get("faltante"),
+            new CSVImport_Faltante(this.db, directorio+"/"+files.get("faltante"),
                 "faltante").procesarArchivo();
         if(files.containsKey("ns_cliente"))
-            new CSVImport_NSCliente(new LocalDB(new DBConfig()), directorio+"/"+files.get("ns_cliente"),
+            new CSVImport_NSCliente(this.db, directorio+"/"+files.get("ns_cliente"),
                 "ns_cliente").procesarArchivo();
         
         return true;

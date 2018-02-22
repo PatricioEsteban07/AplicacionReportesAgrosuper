@@ -68,9 +68,8 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
             }
             if(ctRow==0)
             {
-                CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.ERROR, "Error del Sistema", 
-                    "Hubo un problema al ejecutar el procedimiento en la base de datos.");
-                System.out.println("OJO SE CAE DESDE RECURSODB-SP");
+                CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.INFORMATION, "Información del Sistema", 
+                    "No existe información asociada al período seleccionado para el reporte.");
                 return null;
             }
             close();

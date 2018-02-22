@@ -31,7 +31,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
@@ -411,6 +413,12 @@ public class MainController implements Initializable
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR, "Debe seleccionar un rango de fechas para generar tal reporte.");
             return false;
         }
+        
+        Alert alertAux=CommandNames.generaMensaje("Generación de reporte en proceso", 
+                Alert.AlertType.NONE, null,"Estamos generando su reporte, esta operación puede demorar dependiendo del "
+                        + "detalle y cantidad de datos seleccionados...",false);
+        alertAux.show();
+        
         actualizarEstadoProceso(CommandNames.ESTADO_INFO, CommandNames.MSG_INFO_GEN_REPORTE);
         /*
             compactar filtros
@@ -420,17 +428,23 @@ public class MainController implements Initializable
         if (columnasTabla == null)
         {
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
+            alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            alertAux.close();
             return false;
         }
         if (!generarReporte(this.reporteBase, columnasTabla))
         {
             actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
+            alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            alertAux.close();
             return false;
         }
         this.generarReporteBase(this.opcion);
         buttonVaciarFiltro();
         this.inicializarFiltros();
         actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, CommandNames.MSG_SUCCESS_GEN_REPORTE);
+        alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        alertAux.close();
         return true;
     }
 
@@ -451,9 +465,6 @@ public class MainController implements Initializable
         System.out.println("obteniendo reporte...");
         if (!reporte.generarReporte())
         {
-            CommandNames.generaMensaje("Error del Sistema", AlertType.ERROR, "Error al generar reporte",
-                    "Hubo un problema para la generación del reporte. Como sugerencia verifique los datos de conexión"
-                    + " a la Base de Datos y/o la integridad de éste e intente mas tarde.");
             System.out.println("ERROR: generar reporte MainController :C");
             return false;
         }

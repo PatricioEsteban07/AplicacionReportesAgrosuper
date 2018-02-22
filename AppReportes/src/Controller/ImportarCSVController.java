@@ -9,19 +9,28 @@ import Model.CommandNames;
 import Model.LocalDB;
 import Model.PobladorDB.CSVImport.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -79,6 +88,7 @@ public class ImportarCSVController implements Initializable
         setFileSeleccionado(null, null);
         validarFormulario();
     }
+    
 
     private void setFileSeleccionado(String dirAux, String fileName)
     {
@@ -94,7 +104,7 @@ public class ImportarCSVController implements Initializable
         }
     }
 
-    private void setEstadoOperacion(String info)
+    public boolean setEstadoOperacion(String info)
     {
         //STATUS_DEFAULT
         String texto = "Seleccione un archivo CSV y la tabla a la cuál importar los datos.";
@@ -120,6 +130,8 @@ public class ImportarCSVController implements Initializable
         }
         this.pane_status.setStyle(style);
         this.text_status.setText(texto);
+        this.pane_status.applyCss();
+        return true;
     }
 
     public void inicializarTablasDestino()
@@ -169,7 +181,6 @@ public class ImportarCSVController implements Initializable
         });
         this.choiceBox_TablasDestino.setPrefWidth(300);
         this.gp.add(this.choiceBox_TablasDestino, 3, 1);
-
     }
 
     private void setSelectionTable(int value)
@@ -192,9 +203,9 @@ public class ImportarCSVController implements Initializable
                 this.csvImport = new CSVImport_ClienteLocal(this.db, "", "");
                 break;
             case 5://clubCliente
-            //    this.csvImport = new CSVImport_ClubCliente(this.db, "", "");
-                    System.out.println("OJO, OPCION NO IMPLEMENTADA");
-                    this.csvImport=null;
+                //    this.csvImport = new CSVImport_ClubCliente(this.db, "", "");
+                System.out.println("OJO, OPCION NO IMPLEMENTADA");
+                this.csvImport = null;
                 break;
             case 6://despacho
                 this.csvImport = new CSVImport_Despacho(this.db, "", "");
@@ -206,7 +217,7 @@ public class ImportarCSVController implements Initializable
                 this.csvImport = new CSVImport_EstadoRefrigerado(this.db, "", "");
                 break;
             case 9://faltante
-                this.csvImport=new CSVImport_Faltante(this.db,"","");
+                this.csvImport = new CSVImport_Faltante(this.db, "", "");
                 break;
             case 10://marca
                 this.csvImport = new CSVImport_Marca(this.db, "", "");
@@ -224,7 +235,7 @@ public class ImportarCSVController implements Initializable
                 this.csvImport = new CSVImport_N4(this.db, "", "");
                 break;
             case 15://ns cliente
-                  this.csvImport=new CSVImport_NSCliente(this.db,"","");
+                this.csvImport = new CSVImport_NSCliente(this.db, "", "");
                 break;
             case 16://oficinaVentas
                 this.csvImport = new CSVImport_OficinaVentas(this.db, "", "");
@@ -284,12 +295,12 @@ public class ImportarCSVController implements Initializable
         this.button_Import.setDisable(false);
         return true;
     }
-    
+
     public void limpiarTablero()
     {
-        this.csvImport=null;
-        this.fileDir=null;
-        this.fileName=null;
+        this.csvImport = null;
+        this.fileDir = null;
+        this.fileName = null;
         this.choiceBox_TablasDestino.getSelectionModel().select(-1);
         this.textField_fileDir.setText(CSV_NON_SELECTED);
         this.button_Import.setDisable(true);
@@ -297,29 +308,34 @@ public class ImportarCSVController implements Initializable
 
     @FXML
     public void importarCSV()
-    {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Aviso de confirmación");
-        alert.setHeaderText("¿Está seguro de la acción a realizar?");
-        alert.setContentText("Considere verificar el archivo CSV seleccionado y la tabla tal que, los datos del archivo coincidan con los campos a completar en "
+    {                
+        Alert alert=CommandNames.generaMensaje("Aviso de confirmación", Alert.AlertType.CONFIRMATION, "¿Está seguro de la acción a realizar?", 
+                "Considere verificar el archivo CSV seleccionado y la tabla tal que, los datos del archivo coincidan con los campos a completar en "
                 + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple por lo cuál si no está seguro de su"
-                + "selección, verifique y vuelva a intentarlo.");
+                + "selección, verifique y vuelva a intentarlo.",false);
         alert.showAndWait().ifPresent(response ->
         {
             if (response == ButtonType.OK)
             {
                 System.out.println("paso en buena");
                 setEstadoOperacion(STATUS_RUNNING);
-                this.csvImport.fileName=this.fileName;
-                this.csvImport.fileDir=this.fileDir.replaceAll("\\\\", "/");
-                if(this.csvImport.procesarArchivo())
-                {
+                
+                this.csvImport.fileName = this.fileName;
+                this.csvImport.fileDir = this.fileDir.replaceAll("\\\\", "/");
+               
+                Alert alertAux=CommandNames.generaMensaje("Importación en proceso", 
+                        Alert.AlertType.NONE, null,"Importando archivo CSV en tabla, espere un momento...",false);
+                
+                alertAux.show();
+                        
+                if(csvImport.procesarArchivo())
                     setEstadoOperacion(STATUS_SUCCESS);
-                }
                 else
-                {
                     setEstadoOperacion(STATUS_ERROR);
-                }
+
+                alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                alertAux.close();
+                
                 limpiarTablero();
                 //validar datos
                 //no cerrar la ventana
@@ -336,7 +352,7 @@ public class ImportarCSVController implements Initializable
         fileChooser.setTitle("Selección de archivo CSV para importación de datos");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(null);
-
+        
         if (selectedFile != null)
         {
             setFileSeleccionado(selectedFile.getPath(), selectedFile.getName());

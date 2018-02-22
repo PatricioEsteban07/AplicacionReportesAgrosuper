@@ -179,7 +179,6 @@ public class CSVImport
             this.close();
             System.out.println("Result: "+res);
             System.out.println("-----------------");
-            
             return true;
         }
         catch (ClassNotFoundException | SQLException ex)
