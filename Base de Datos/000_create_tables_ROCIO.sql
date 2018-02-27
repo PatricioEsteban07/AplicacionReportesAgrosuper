@@ -174,6 +174,8 @@
   comuna VARCHAR(24) NOT NULL,
   cliente_id VARCHAR(16) DEFAULT NULL,
   subCategoriaCliente_id VARCHAR(4) NOT NULL,
+  tipoClub VARCHAR(16) DEFAULT NULL,
+  tipoCallCenter VARCHAR(16) DEFAULT NULL,
 
   PRIMARY KEY (id), 
   
@@ -307,3 +309,34 @@
   FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
   FOREIGN KEY (agrupado_id) REFERENCES agrupado(id)
   );
+  
+  CREATE TABLE IF NOT EXISTS facturaVentas(
+  id VARCHAR(16) UNIQUE NOT NULL,
+  clienteLocal_id VARCHAR(16) NOT NULL,
+  tipoCliente_id VARCHAR(4) NOT NULL,
+  subcategoriaCliente_id VARCHAR(4) NOT NULL,
+  fecha DATE NOT NULL,
+  oficina_id VARCHAR(8) NOT NULL,
+  agcnc VARCHAR(32) NOT NULL,
+
+  PRIMARY KEY (id,fecha),
+  
+  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
+  FOREIGN KEY (tipoCliente_id) REFERENCES tipoCliente(id),
+  FOREIGN KEY (subcategoriaCliente_id) REFERENCES subcategoriaCliente(id),
+  FOREIGN KEY (oficina_id) REFERENCES oficinaventas(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS facturaVentas_material(
+  factura_id VARCHAR(16) NOT NULL,
+  fecha DATE NOT NULL,
+  material_id VARCHAR(16) NOT NULL,
+  venta_Kg FLOAT NOT NULL,
+  venta_Neta INT NOT NULL,
+
+  PRIMARY KEY (factura_id,fecha,material_id),
+  
+  FOREIGN KEY (factura_id) REFERENCES facturaVentas(id),
+  FOREIGN KEY (material_id) REFERENCES material(id)
+  );
+  

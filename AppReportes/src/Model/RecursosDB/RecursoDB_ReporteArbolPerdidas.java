@@ -34,14 +34,9 @@ public class RecursoDB_ReporteArbolPerdidas extends RecursoDB
         {
             System.out.println("FI: "+fechaInicio+" / FF: "+fechaFin);
             connect();
-            // Step-2: identify the stored procedure (viene en procedure, 
-            //cuidar que venga en formato "{ call simpleproc(?) }")
-            // Step-3: prepare the callable statement
             CallableStatement cs = this.conn.prepareCall(this.query);
             cs.setString(1, fechaInicio);
             cs.setString(2, fechaFin);
-            // Step-4: register output parameters ...
-            // Step-5: execute the stored procedures: proc3
             if(!cs.execute())
             {
                 CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.ERROR, "Error del Sistema", 
@@ -82,7 +77,7 @@ public class RecursoDB_ReporteArbolPerdidas extends RecursoDB
         {
             CommandNames.generaMensaje("Información de Aplicación", Alert.AlertType.ERROR, "Error del Sistema", 
                 "Hubo un problema al ejecutar el procedimiento en la base de datos. El error es el siguiente: "+ex);
-            Logger.getLogger(RecursoDB_ReporteDisponibilidad.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RecursoDB_ReporteArbolPerdidas.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }

@@ -303,6 +303,12 @@ public class ImportarCSVMultipleController implements Initializable
         if(files.containsKey("ns_cliente"))
             new CSVImport_NSCliente(this.db, directorio+"/"+files.get("ns_cliente"),
                 "ns_cliente").procesarArchivo();
+        if(files.containsKey("facturaVentas"))
+            new CSVImport_FacturaVenta(this.db, directorio+"/"+files.get("facturaVentas"),
+                "facturaVentas").procesarArchivo();
+        if(files.containsKey("facturaVentas_material"))
+            new CSVImport_FacturaVentaMaterial(this.db, directorio+"/"+files.get("facturaVentas_material"),
+                "facturaVentas_material").procesarArchivo();
         
         return true;
     }

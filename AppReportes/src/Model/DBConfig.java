@@ -40,6 +40,4 @@ public class DBConfig
         return "jdbc:mysql://"+this.host+":"+this.port+"/"+this.dbName;
     }
     
-    
-    
 }

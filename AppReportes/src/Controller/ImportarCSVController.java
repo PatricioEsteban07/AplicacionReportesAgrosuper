@@ -146,6 +146,8 @@ public class ImportarCSVController implements Initializable
         nombreTablas.add("Despacho");
         nombreTablas.add("Despacho-Material");
         nombreTablas.add("Estado Refrigerado");
+        nombreTablas.add("FacturaVenta");
+        nombreTablas.add("FacturaVentas-Material");
         nombreTablas.add("Faltante");
         nombreTablas.add("Marca");
         nombreTablas.add("Material");
@@ -216,55 +218,61 @@ public class ImportarCSVController implements Initializable
             case 8://estadoRefrigerado
                 this.csvImport = new CSVImport_EstadoRefrigerado(this.db, "", "");
                 break;
-            case 9://faltante
+            case 9://facturaVenta
+                this.csvImport = new CSVImport_FacturaVenta(this.db, "", "");
+                break;
+            case 10://facturaVenta-material
+                this.csvImport = new CSVImport_FacturaVentaMaterial(this.db, "", "");
+                break;
+            case 11://faltante
                 this.csvImport = new CSVImport_Faltante(this.db, "", "");
                 break;
-            case 10://marca
+            case 12://marca
                 this.csvImport = new CSVImport_Marca(this.db, "", "");
                 break;
-            case 11://material
+            case 13://material
                 this.csvImport = new CSVImport_Material(this.db, "", "");
                 break;
-            case 12://n2
+            case 14://n2
                 this.csvImport = new CSVImport_N2(this.db, "", "");
                 break;
-            case 13://n3
+            case 15://n3
                 this.csvImport = new CSVImport_N3(this.db, "", "");
                 break;
-            case 14://n4
+            case 16://n4
                 this.csvImport = new CSVImport_N4(this.db, "", "");
                 break;
-            case 15://ns cliente
+            case 17://ns cliente
                 this.csvImport = new CSVImport_NSCliente(this.db, "", "");
                 break;
-            case 16://oficinaVentas
+            case 18://oficinaVentas
                 this.csvImport = new CSVImport_OficinaVentas(this.db, "", "");
                 break;
-            case 17://pedido
+            case 19://pedido
                 this.csvImport = new CSVImport_Pedido(this.db, "", "");
                 break;
-            case 18://pedido-material
+            case 20://pedido-material
                 this.csvImport = new CSVImport_PedidoMaterial(this.db, "", "");
                 break;
-            case 19://region
+            case 21://region
                 this.csvImport = new CSVImport_Region(this.db, "", "");
                 break;
-            case 20://sector
+            case 22://sector
                 this.csvImport = new CSVImport_Sector(this.db, "", "");
                 break;
-            case 21://stock
+            case 23://stock
                 this.csvImport = new CSVImport_Stock(this.db, "", "");
                 break;
-            case 22://subcategoriaCliente
+            case 24://subcategoriaCliente
                 this.csvImport = new CSVImport_SubcategoriaCliente(this.db, "", "");
                 break;
-            case 23://tipo cliente
+            case 25://tipo cliente
                 this.csvImport = new CSVImport_TipoCliente(this.db, "", "");
                 break;
-            case 24://tipoEnvasado
+            case 26://tipoEnvasado
                 this.csvImport = new CSVImport_TipoEnvasado(this.db, "", "");
                 break;
-            case 25://zonaVentas
+            case 27://zonaVentas
                 this.csvImport = new CSVImport_ZonaVentas(this.db, "", "");
                 break;
             default://no reconocido o -1

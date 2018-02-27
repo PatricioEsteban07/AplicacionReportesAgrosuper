@@ -5,12 +5,10 @@
  */
 package Model;
 
-import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  *
@@ -59,6 +57,8 @@ public final class CommandNames
         alert.setTitle(titulo);
         alert.setHeaderText(mensaje);
         alert.setContentText(detail);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("/img/Agrosuper.png"));
         alert.showAndWait();
     }
     
@@ -68,6 +68,8 @@ public final class CommandNames
         alert.setTitle(titulo);
         alert.setHeaderText(mensaje);
         alert.setContentText(detail);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("/img/Agrosuper.png"));
         return alert;
     }
     

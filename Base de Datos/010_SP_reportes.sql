@@ -1,5 +1,7 @@
 Delimiter $$
 
+/* REPORTE 1 */
+
 DROP PROCEDURE IF EXISTS sp_generate_reporte_disponibilidad $$
 
 CREATE PROCEDURE sp_generate_reporte_disponibilidad (
@@ -33,7 +35,7 @@ BEGIN
         AND pedido.id = pedido_material.pedido_id 
 		AND pedido_material.material_id = material.id
 	GROUP BY 
-		material.agrupado_id, pedido.fechaEntrega, pedido.centro_id
+		pedido.centro_id, pedido.fechaEntrega, material.agrupado_id
 	);
 
 	INSERT INTO tableBase (centro_id,sector_id,agrupado_id,fecha,pedido_Cj,pedido_Kg,pedido_neto,disponible_Cj,
@@ -45,8 +47,8 @@ BEGIN
 		material.agrupado_id,
 		despacho.fecha,
 		0, 0, 0, 0, 0,
-		TRUNCATE(SUM(despacho_material.despachoCj),1), 
-		TRUNCATE(SUM(despacho_material.despachoKg),3)
+		ROUND(SUM(despacho_material.despachoCj),1), 
+		ROUND(SUM(despacho_material.despachoKg),3)
 	FROM
 		despacho, despacho_material, material
 	WHERE 
@@ -54,7 +56,7 @@ BEGIN
 		AND despacho.id = despacho_material.despacho_id
 		AND despacho_material.material_id = material.id
 	GROUP BY
-		material.agrupado_id, despacho.fecha, despacho.centro_id
+		despacho.centro_id, despacho.fecha, material.agrupado_id
 	);
 
 	INSERT INTO tableBase (centro_id,sector_id,agrupado_id,fecha,pedido_Cj,pedido_Kg,pedido_neto,disponible_Cj,
@@ -66,15 +68,15 @@ BEGIN
 		material.agrupado_id,
 		stock.fecha, 
 		0, 0, 0, 
-		TRUNCATE(SUM(((IF(stock.stock<0,0,stock.stock))+stock.salidas)/material.pesoCaja),1),
-		TRUNCATE(SUM((IF(stock.stock<0,0,stock.stock))+stock.salidas), 3), 0, 0
+		ROUND(SUM(((IF(stock.stock<0,0,stock.stock))+stock.salidas)/material.pesoCaja),1),
+		ROUND(SUM((IF(stock.stock<0,0,stock.stock))+stock.salidas), 3), 0, 0
 	FROM 
 		stock, material
 	WHERE 
     (stock.fecha BETWEEN fechaInicio AND fechaFin)
 		AND stock.material_id = material.id
 	GROUP BY
-		material.agrupado_id, stock.fecha, stock.centro_id
+		stock.centro_id, stock.fecha, material.agrupado_id
 	);
 
 	CREATE TEMPORARY TABLE IF NOT EXISTS tb AS
@@ -99,7 +101,7 @@ BEGIN
 		AND tableBase.sector_id = sector.id 
 		AND tableBase.agrupado_id = agrupado.id
 	GROUP BY 
-		agrupado_id, centro_id, fecha
+		centro_id, fecha, agrupado_id
 	);
 
 	CREATE TEMPORARY TABLE IF NOT EXISTS tablaDisponibilidad AS
@@ -111,22 +113,22 @@ BEGIN
 		tb.agrupado_id, 
 		tb.agrupado_nombre,	
 		tb.fecha, 
-		TRUNCATE(tb.pedido_Cj,1) AS pedido_Cj, 
-		TRUNCATE(tb.despacho_Cj,1) AS despacho_Cj, 
-		TRUNCATE(tb.disponible_Cj,1) AS disponible_Cj, 
-		TRUNCATE(tb.pedido_Kg,3) AS pedido_Kg, 
-		TRUNCATE(tb.pedido_neto,0) AS pedido_neto, 
-		TRUNCATE(tb.disponible_Kg,3) AS disponible_Kg, 
-		TRUNCATE(IF(tb.disponible_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.disponible_Cj,0),1) AS faltante_Cj,
-		TRUNCATE(IF(tb.disponible_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.disponible_Kg,0),3) AS faltante_Kg,
+		ROUND(tb.pedido_Cj,1) AS pedido_Cj, 
+		ROUND(tb.despacho_Cj,1) AS despacho_Cj, 
+		ROUND(tb.disponible_Cj,1) AS disponible_Cj,
+		ROUND(tb.pedido_Kg,3) AS pedido_Kg, 
+		ROUND(tb.pedido_neto,0) AS pedido_neto, 
+		ROUND(tb.disponible_Kg,3) AS disponible_Kg, 
+		ROUND(IF(tb.disponible_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.disponible_Cj,0),1) AS faltante_Cj,
+		ROUND(IF(tb.disponible_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.disponible_Kg,0),3) AS faltante_Kg,
 		WEEK(tb.fecha,3) AS semana,
-		TRUNCATE(IF(tb.disponible_Cj>tb.pedido_Cj,tb.disponible_Cj-tb.pedido_Cj,0),1) AS sobrante_Cj,
-		TRUNCATE(IF(tb.disponible_Kg>tb.pedido_Kg,tb.disponible_Kg-tb.pedido_Kg,0),3) AS sobrante_Kg,
-		TRUNCATE(IF(tb.despacho_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.despacho_Cj,0),1) AS faltanteDespacho_Cj,
-		TRUNCATE(LEAST(IF(tb.despacho_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.despacho_Cj,0),
+		ROUND(IF(tb.disponible_Cj>tb.pedido_Cj,tb.disponible_Cj-tb.pedido_Cj,0),1) AS sobrante_Cj,
+		ROUND(IF(tb.disponible_Kg>tb.pedido_Kg,tb.disponible_Kg-tb.pedido_Kg,0),3) AS sobrante_Kg,
+		ROUND(IF(tb.despacho_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.despacho_Cj,0),1) AS faltanteDespacho_Cj,
+		ROUND(LEAST(IF(tb.despacho_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.despacho_Cj,0),
 		IF(tb.disponible_Cj<tb.pedido_Cj,tb.pedido_Cj-tb.disponible_Cj,0)),1) AS faltanteAjustado_Cj,
-		TRUNCATE(IF(tb.despacho_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.despacho_Kg,0),3) AS faltanteDespacho_Kg,
-		TRUNCATE(LEAST(IF(tb.despacho_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.despacho_Kg,0),
+		ROUND(IF(tb.despacho_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.despacho_Kg,0),3) AS faltanteDespacho_Kg,
+		ROUND(LEAST(IF(tb.despacho_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.despacho_Kg,0),
 		IF(tb.disponible_Kg<tb.pedido_Kg,tb.pedido_Kg-tb.disponible_Kg,0)),3) AS faltanteAjustado_Kg,
 		WEEKDAY(tb.fecha)+1 AS diaSemana,
 		YEAR(tb.fecha) AS año
@@ -148,6 +150,8 @@ BEGIN
 	SELECT * FROM tablaDisponibilidad;
 END
 $$
+
+/* REPORTE 2 */
 
 DROP PROCEDURE IF EXISTS sp_generate_reporte_arbol_perdidas $$
 
@@ -259,7 +263,7 @@ BEGIN
 		AND clienteLocal.cliente_id = cliente.id
 		AND cliente.tipoCliente_id = tipoCliente.id
 	GROUP BY 
-		MONTH(faltante.fecha), WEEK(faltante.fecha,3), material.agrupado_id, faltante.centro_id
+        YEAR(faltante.fecha), WEEK(faltante.fecha,3), faltante.centro_id, material.agrupado_id, tipoCliente.nombre
 	);		
 	
 	INSERT INTO tabla_arbol_perdidas (mes,semana,sector_nombre,tipoCliente,centro_id,centro_nombre,agrupado_id,agrupado_nombre,
@@ -277,20 +281,20 @@ BEGIN
 		ns_cliente.agrupado_id,
 		agrupado.nombre,
         n2.nombre,
-        ns_cliente.pedidoKg,
-        ns_cliente.facturaKg,
-        ns_cliente.demandaKg,
-        ns_cliente.nsKg,
-        ns_cliente.faltanteKg,
-        ns_cliente.sobrefacturaKg,
-        ns_cliente.ppNeto,
-        ns_cliente.faltanteNeto,
-        ns_cliente.pedidoCj,
-        ns_cliente.facturaCj,
-        ns_cliente.demandaCj,
-        ns_cliente.nsCj,
-        ns_cliente.sobrefacturaCj,
-        ns_cliente.faltanteCj,
+        SUM(ns_cliente.pedidoKg),
+        SUM(ns_cliente.facturaKg),
+        SUM(ns_cliente.demandaKg),
+        SUM(ns_cliente.nsKg),
+        SUM(ns_cliente.faltanteKg),
+        SUM(ns_cliente.sobrefacturaKg),
+        SUM(ns_cliente.ppNeto),
+        SUM(ns_cliente.faltanteNeto),
+        SUM(ns_cliente.pedidoCj),
+        SUM(ns_cliente.facturaCj),
+        SUM(ns_cliente.demandaCj),
+        SUM(ns_cliente.nsCj),
+        SUM(ns_cliente.sobrefacturaCj),
+        SUM(ns_cliente.faltanteCj),
         0,0,0,0,0,0,0,
         YEAR(ns_cliente.fecha),
 		CONCAT(WEEK(ns_cliente.fecha,3), '-', YEAR(ns_cliente.fecha))
@@ -305,6 +309,8 @@ BEGIN
 		AND ns_cliente.clienteLocal_id = clienteLocal.id 
 		AND clienteLocal.cliente_id = cliente.id
 		AND cliente.tipoCliente_id = tipoCliente.id
+	GROUP BY 
+        YEAR(ns_cliente.fecha), WEEK(ns_cliente.fecha,3), ns_cliente.centro_id, ns_cliente.agrupado_id, tipoCliente.nombre
 	);		
     
 END 
@@ -318,12 +324,171 @@ CREATE PROCEDURE sp_reporte_arbol_perdidas (
 )
 BEGIN
 	CALL sp_generate_reporte_arbol_perdidas(fechaInicio,fechaFin);
+    
 	SELECT * FROM tabla_arbol_perdidas;
+    /*
+    SELECT centro_id, SUM(Factura_Faltante_Kg), SUM(Factura_Faltante_Cj) FROM tabla_arbol_perdidas 
+    WHERE semanaAño = (CONCAT(WEEK(fechaInicio,3), '-', YEAR(fechaInicio))) GROUP BY centro_id;
+    */
 END
 $$
 
-/*
-CALL sp_reporte_disponibilidad('2018-01-30','2018-01-30');
-CALL sp_reporte_arbol_perdidas('2018-01-30','2018-01-30');
-*/
+/* REPORTE 3 */
 
+DROP PROCEDURE IF EXISTS sp_generate_reporte_fuga_fs $$
+
+CREATE PROCEDURE sp_generate_reporte_fuga_fs (
+  IN fechaInicio VARCHAR(10), 
+  IN fechaFin VARCHAR(10)
+)
+BEGIN                        
+	DROP TEMPORARY TABLE IF EXISTS tabla_fuga_fs;
+	DROP TEMPORARY TABLE IF EXISTS tableAuxFuga;
+     
+     
+    CREATE TEMPORARY TABLE IF NOT EXISTS tabla_fuga_fs(
+		clienteLocal_id VARCHAR(16),
+		clienteLocal_nombre VARCHAR(64),
+		comuna VARCHAR(24),
+		direccion VARCHAR(32),
+		cadena VARCHAR(32),
+		categoriaCliente VARCHAR(32),
+		subcategoriaCliente VARCHAR(32),
+		sucursal VARCHAR(32),/*OficinaVentas*/
+		zonaVenta VARCHAR(16),
+		supervisor VARCHAR(32),
+		preventa VARCHAR(32),
+		kam VARCHAR(32),
+		centralizado VARCHAR(16),
+		agcnc VARCHAR(32),
+		año INT,
+		mes INT,
+		ejecutivo VARCHAR(32),
+		diaLlamado VARCHAR(32),
+		tipoClub VARCHAR(32),
+		categoriaClub VARCHAR(16),
+		segmentoClub VARCHAR(32),
+		canje VARCHAR(32),
+		clienteFugado INT,
+		clienteHistorico INT,
+		clienteNuevo INT,
+		clienteVigente INT,
+		clienteRecuperado INT,
+		clienteFugaNeto INT,
+		clienteCrecimientoNeto INT,
+		clienteRecuperadoKg INT,
+		clienteFugadoKg INT,
+		clienteCrecimientoKg INT,
+		brechaFuga_neto INT,
+		brechaCrecimiento_neto INT,
+		brecha_neto INT,
+		brechaFuga_Kg FLOAT,
+		brechaCrecimiento_Kg FLOAT,
+		brecha_Kg FLOAT,
+		venta_clienteFugado INT,
+		venta_clienteHistorico INT,
+		venta_clientesNuevo INT,
+		venta_clientesVigente INT,
+		fugados_Kg FLOAT,
+		historico_Kg FLOAT,
+		nuevos_Kg FLOAT,
+		vigentes_Kg FLOAT,
+		tipoCall VARCHAR(16),
+		kamjr VARCHAR(32),
+		jefeVentas VARCHAR(32)
+	  );
+      
+    
+    INSERT INTO tabla_fuga_fs
+    (clienteLocal_id, clienteLocal_nombre, comuna, direccion, cadena, categoriaCliente, subcategoriaCliente, sucursal,
+		zonaVenta, supervisor, preventa, kam, centralizado, agcnc, año, mes, ejecutivo, diaLlamado, tipoClub, 
+        categoriaClub, segmentoClub, canje, clienteFugado, clienteHistorico, clienteNuevo, clienteVigente, 
+        clienteRecuperado, clienteFugaNeto, clienteCrecimientoNeto, clienteRecuperadoKg, clienteFugadoKg, 
+        clienteCrecimientoKg, brechaFuga_neto, brechaCrecimiento_neto, brecha_neto, brechaFuga_Kg, brechaCrecimiento_Kg,
+        brecha_Kg, venta_clienteFugado, venta_clienteHistorico, venta_clientesNuevo, venta_clientesVigente, fugados_Kg,
+        historico_Kg, nuevos_Kg, vigentes_Kg, tipoCall, kamjr, jefeVentas)
+    (    
+	SELECT 
+		facturaventas.clienteLocal_id,
+        clienteLocal.nombre,
+		clienteLocal.comuna,
+        clienteLocal.direccion,
+        "",
+        categoriaCliente.nombre,
+        subcategoriaCliente.nombre,
+        oficinaventas.nombre,
+        zonaVentas.nombre,
+        "",/* superv */
+        "",/* preventas */
+        "",/* kam */
+        "",/* centralizado */
+        facturaventas.agcnc,
+        0,/* año */
+        0,/* mes */
+        "",/* ejecutivo */
+        "",/* diaLlamado */
+        "",/* tipoClub */
+        "",/* catClub */
+        "",/* segmClub */
+        "",/* canje */
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        "",/* tipocall */
+        "",/* kamjr */
+        "" /* jefeVentas */
+	FROM 
+		facturaVentas, clienteLocal, categoriaCliente, subcategoriaCliente, zonaVentas, oficinaVentas
+	WHERE
+		(facturaventas.fecha BETWEEN fechaInicio AND fechaFin)
+        AND facturaVentas.clienteLocal_id = clienteLocal.id
+		AND clienteLocal.subCategoriaCliente_id = subcategoriacliente.id 
+        AND subcategoriacliente.categoriaCliente_id = categoriacliente.id
+        AND facturaventas.oficina_id = oficinaVentas.id
+        AND oficinaventas.zonaVentas_id = zonaVentas.id
+	GROUP BY
+		clienteLocal.id
+	);		
+    
+	CREATE TEMPORARY TABLE IF NOT EXISTS tableAuxFuga AS
+	(
+		SELECT 
+			tabla_fuga_fs.clienteLocal_id, 
+            tabla_fuga_fs.clienteLocal_nombre, 
+            tabla_fuga_fs.comuna, 
+            tabla_fuga_fs.direccion, 
+            tabla_fuga_fs.cadena, 
+            tabla_fuga_fs.categoriaCliente, 
+            tabla_fuga_fs.subcategoriaCliente, 
+            tabla_fuga_fs.sucursal,
+			tabla_fuga_fs.zonaVenta,
+            if((SELECT COUNT(facturaventas.id) FROM facturaventas WHERE
+            facturaventas.clienteLocal_id = tabla_fuga_fs.clienteLocal_id AND 
+            (facturaventas.fecha BETWEEN '2012-01-01' AND fechaInicio) LIMIT 1)!=0,1,0) AS esHistorico
+		FROM 
+			tabla_fuga_fs, facturaVentas
+	);		
+    
+    
+END 
+$$
+
+DROP PROCEDURE IF EXISTS sp_reporte_fuga_fs $$
+
+CREATE PROCEDURE sp_reporte_fuga_fs (
+  IN fechaInicio VARCHAR(10), 
+  IN fechaFin VARCHAR(10)
+)
+BEGIN
+	CALL sp_generate_reporte_fuga_fs(fechaInicio,fechaFin);
+    
+	/*SELECT * FROM tabla_fuga_fs;*/
+	SELECT * FROM tableAuxFuga;
+END
+$$
+
+
+/*
+CALL sp_reporte_disponibilidad('2018-02-12','2018-02-18');
+CALL sp_reporte_arbol_perdidas('2018-02-12','2018-02-18');
+CALL sp_reporte_fuga_fs('2018-02-12','2018-02-18');
+*/

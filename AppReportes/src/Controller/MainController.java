@@ -14,6 +14,7 @@ import Model.Recurso;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ArbolPerdidas;
 import Model.Reportes.Reporte_Disponibilidad;
+import Model.Reportes.Reporte_FugaFS;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -149,6 +151,10 @@ public class MainController implements Initializable
                 case 1://reporte árbol pérdidas
                     this.reporteBase = new Reporte_ArbolPerdidas(this.db);
                     this.text_areaReporte.setText("Área Servicios");
+                    break;
+                case 2://reporte árbol pérdidas
+                    this.reporteBase = new Reporte_FugaFS(this.db);
+                    this.text_areaReporte.setText("Área Ventas");
                     break;
             }
             this.opcion = opcion;
@@ -460,6 +466,15 @@ public class MainController implements Initializable
         generarReporteBase(1);
     }
 
+    @FXML
+    public void buttonReporteFugaFS() throws InterruptedException
+    {
+        System.out.println("REPORTE FUGA FS - EN CONSTRUCCION");
+        CommandNames.generaMensaje("Aviso de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes",
+                "Reporte en construcción...");
+        //generarReporteBase(2);
+    }
+
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
     {
         System.out.println("obteniendo reporte...");
@@ -495,6 +510,7 @@ public class MainController implements Initializable
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle(title);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/Agrosuper.png")));
         stage.initModality(Modality.APPLICATION_MODAL);
         FiltroPeriodoController controller = loader.getController();
         controller.setFiltro(reporteBase.filtros.get("Filtro_Fecha"));
@@ -551,6 +567,7 @@ public class MainController implements Initializable
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle(title);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/Agrosuper.png")));
         stage.initModality(Modality.APPLICATION_MODAL);
         ImportarCSVController controller = loader.getController();
         //setea valores base
@@ -585,6 +602,7 @@ public class MainController implements Initializable
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle(title);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/Agrosuper.png")));
         stage.initModality(Modality.APPLICATION_MODAL);
         ImportarCSVMultipleController controller = loader.getController();
         //setea valores base
@@ -619,6 +637,7 @@ public class MainController implements Initializable
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle(title);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/Agrosuper.png")));
         stage.initModality(Modality.APPLICATION_MODAL);
         configDBInfoController controller = loader.getController();
         //setea valores base
@@ -629,7 +648,6 @@ public class MainController implements Initializable
         stage.showAndWait();
     }
     
-
     @FXML
     private void closeApp()
     {
