@@ -4,19 +4,12 @@
  * and open the template in the editor.
  */
 package Controller;
-
-import static Controller.ImportarCSVController.STATUS_ERROR;
-import static Controller.ImportarCSVController.STATUS_RUNNING;
-import static Controller.ImportarCSVController.STATUS_SUCCESS;
 import Model.CommandNames;
-import Model.DBConfig;
 import Model.LocalDB;
 import Model.PobladorDB.CSVImport.*;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -121,9 +114,7 @@ public class ImportarCSVMultipleController implements Initializable
 
     @FXML
     public void importarCSV()
-    {
-        
-                 
+    {                 
         Alert alert=CommandNames.generaMensaje("Aviso de confirmación", Alert.AlertType.CONFIRMATION, "¿Está seguro de la acción a realizar?", 
                 "Considere verificar el archivo CSV seleccionado y la tabla tal que, los datos del archivo coincidan con los campos a completar en "
                 + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple por lo cuál si no está seguro de su"
@@ -291,6 +282,9 @@ public class ImportarCSVMultipleController implements Initializable
         if(files.containsKey("stock"))
             new CSVImport_Stock(this.db, directorio+"/"+files.get("stock"),
                 "stock").procesarArchivo();
+        if(files.containsKey("despacho_faltante"))
+            new CSVImport_DespachoFaltante(this.db, directorio+"/"+files.get("despacho_faltante"),
+                "despacho_faltante").procesarArchivo();
         if(files.containsKey("despacho"))
             new CSVImport_Despacho(this.db, directorio+"/"+files.get("despacho"),
                 "despacho").procesarArchivo();
