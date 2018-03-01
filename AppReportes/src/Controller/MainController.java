@@ -9,12 +9,13 @@ import Controller.filtroPeriodo.FiltroPeriodoController;
 import Model.CommandNames;
 import Model.DBConfig;
 import Model.Filtros.Filtro;
+import Model.Filtros.Filtro_Fecha;
 import Model.LocalDB;
-import Model.Recurso;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ArbolPerdidas;
 import Model.Reportes.Reporte_Disponibilidad;
 import Model.Reportes.Reporte_FugaFS;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,18 +32,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -56,52 +57,43 @@ import org.controlsfx.control.CheckComboBox;
  */
 public class MainController implements Initializable
 {
-
-    @FXML
-    private TitledPane titledPane_areaEstrategica;
-    @FXML
-    private TitledPane titledPane_areaVentas;
-    @FXML
-    private TitledPane titledPane_areaServicios;
-    @FXML
-    private AnchorPane panelGrafico;
-    @FXML
-    private AnchorPane panelTabla;
-    @FXML
-    private Accordion accordion_Listado;
     @FXML
     private Pane panel_estadoSistema;
     @FXML
     private Text text_estadoSistema;
     @FXML
-    private Text text_nombreReporte;
-    @FXML
-    private Text text_areaReporte;
-    @FXML
-    private Text text_filtroReporte;
-    @FXML
-    private GridPane gridPane_Filtros;
-    @FXML
-    private GridPane gridPane_Filtros2;
-    @FXML
-    private GridPane gridPane_otrosFiltros;
-    @FXML
     private ChoiceBox choiceBox_periodo;
+    @FXML
+    private AnchorPane pane_Disponibilidad;
+    @FXML
+    private AnchorPane pane_ArbolPerdidas;
+    @FXML
+    private AnchorPane pane_FugaFS;
+    @FXML
+    private TextField textField_archivoDestino;
+    
+    @FXML
+    private VBox vBox_paso1;
+    @FXML
+    private VBox vBox_paso2;
+    @FXML
+    private VBox vBox_paso3;
+    @FXML
+    private Button button_generarReporte;    
+    @FXML
+    private HBox hBoxEstado_paso1;
+    @FXML
+    private HBox hBoxEstado_paso2;
+    @FXML
+    private HBox hBoxEstado_paso3;
+    
 
     private CheckComboBox checkComboBox_fechaSemana;
     private CheckComboBox checkComboBox_fechaMes;
     private CheckComboBox checkComboBox_fechaAnio;
-    private CheckComboBox checkComboBox_zonas;
-    private CheckComboBox checkComboBox_canales;
-    private CheckComboBox checkComboBox_sucursales;
-    private CheckComboBox checkComboBox_clientes;
 
-    @FXML
-    private TableView<Recurso> ReportesTableView;
-    
-    private FileChooser fileChooser;
-
-    private int opcion;
+    private int pasoActual;
+    private int reporteSeleccionado;
     private Reporte reporteBase;
     private LocalDB db;
 
@@ -111,68 +103,39 @@ public class MainController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        this.db = new LocalDB(new DBConfig());    
-        this.accordion_Listado.setExpandedPane(titledPane_areaEstrategica);
-
-        try
-        {
-            this.generarReporteBase(0);
-        }
-        catch (InterruptedException ex)
-        {
-            CommandNames.generaMensaje("Error del Sistema", AlertType.ERROR, "Prolemas para seleccionar reporte",
-                "Hubo un problema para generar la instancia necesaria para la selección del reporte. El error es el siguiente: "+ex);
-        }
+        this.db = new LocalDB(new DBConfig());
+        this.reporteBase=null;
         inicializarPeriodo();
-        inicializarFiltros();
-        try
-        {
-            this.buttonReporteDisponibilidad();
-        }
-        catch (InterruptedException ex)
-        {
-            CommandNames.generaMensaje("Error del Sistema", AlertType.ERROR, "Prolemas para seleccionar reporte",
-                "Hubo un problema para generar la instancia necesaria para la selección del reporte. El error es el siguiente: "+ex);
-        }
+        actualizarEstadoPasos(1);
         this.db.probarDBConection();
     }
 
     public boolean generarReporteBase(int opcion) throws InterruptedException
     {
-        this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, "Generando elementos de configuración de reporte base para procesamiento...");
-        try
+        switch (opcion)
         {
-            switch (opcion)
-            {
-                case 0://reporte disponibilidad
-                    this.reporteBase = new Reporte_Disponibilidad(this.db);
-                    this.text_areaReporte.setText("Área Servicios");
-                    break;
-                case 1://reporte árbol pérdidas
-                    this.reporteBase = new Reporte_ArbolPerdidas(this.db);
-                    this.text_areaReporte.setText("Área Servicios");
-                    break;
-                case 2://reporte árbol pérdidas
-                    this.reporteBase = new Reporte_FugaFS(this.db);
-                    this.text_areaReporte.setText("Área Ventas");
-                    break;
-            }
-            this.opcion = opcion;
-            this.text_nombreReporte.setText(this.reporteBase.nombre);
-            this.text_filtroReporte.setText("pendiente...");
-            buttonVaciarFiltro();
-            this.actualizarEstadoProceso(CommandNames.ESTADO_INFO, this.reporteBase.nombre + " seleccionado para trabajar.");
-            return true;
+            case 0://reporte disponibilidad
+                this.reporteBase = new Reporte_Disponibilidad(this.db);
+                this.pane_Disponibilidad.setStyle("-fx-background-color: orange;");
+                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
+                this.pane_FugaFS.setStyle("-fx-background-color: white;");
+                break;
+            case 1://reporte árbol pérdidas
+                this.reporteBase = new Reporte_ArbolPerdidas(this.db);
+                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
+                this.pane_ArbolPerdidas.setStyle("-fx-background-color: orange;");
+                this.pane_FugaFS.setStyle("-fx-background-color: white;");
+                break;
+            case 2://reporte fugas FS
+                this.reporteBase = new Reporte_FugaFS(this.db);
+                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
+                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
+                this.pane_FugaFS.setStyle("-fx-background-color: orange;");
+                break;
         }
-        catch (InterruptedException e)
-        {
-            CommandNames.generaMensaje("Error de Sistema", AlertType.ERROR, "Problemas con reporte base", "Hubo un problema al momento de preparar"
-                    + " las opciones para la generación de un reporte. Seleccione el reporte a generar nuevamente y vuelva a intentarlo.");
-            System.out.println("ERROR: no se geenra reporte base como corresponde :c");
-        }
-        this.actualizarEstadoProceso(CommandNames.ESTADO_ERROR, "Ups, hubo un problema para generar los elementos base para tu reporte. "
-                + "Intente nuevamente o reinicie el sistema.");
-        return false;
+        this.reporteSeleccionado = opcion;
+        actualizarEstadoPasos(2);
+        return true;
     }
 
     public void inicializarPeriodo()
@@ -184,13 +147,17 @@ public class MainController implements Initializable
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
             {
-                setFiltroPeriodo(newValue.intValue());
+                if(newValue.intValue()!=-1)
+                {
+                    setFiltroPeriodo(newValue.intValue());
+                }
+
             }
         });
     }
 
     @FXML
-    public void buttonVaciarFiltro()
+    public void buttonVaciarFiltroFecha()
     {
         Iterator it = this.reporteBase.filtros.entrySet().iterator();
         while (it.hasNext())
@@ -200,106 +167,7 @@ public class MainController implements Initializable
         }
         this.reporteBase.generarFiltrosBase();
         this.choiceBox_periodo.getSelectionModel().clearSelection();
-        inicializarFiltros();
-    }
-
-    public void inicializarFiltros()
-    {
-        /*
-        ObservableList<String> listadoAux = FXCollections.observableArrayList();
-        
-        if(this.reporteBase.filtros.containsKey("Filtro_Zona"))
-        {
-            listadoAux.addAll(((Filtro_Zona)(this.reporteBase.filtros.get("Filtro_Zona"))).zonas);
-            this.checkComboBox_zonas = new CheckComboBox<String>(listadoAux);
-            this.checkComboBox_zonas.setPrefWidth(300);
-            this.gridPane_Filtros2.add(checkComboBox_zonas, 3, 1);
-
-            this.checkComboBox_zonas.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-                public void onChanged(ListChangeListener.Change<? extends String> c) {
-                    System.out.println(checkComboBox_zonas.getCheckModel().getCheckedItems());
-
-                    ArrayList<String> aux=new ArrayList<>();
-                    for(int i =0 ; i < checkComboBox_zonas.getCheckModel().getCheckedItems().size(); i++)
-                    {
-                        aux.add(checkComboBox_zonas.getCheckModel().getCheckedItems().get(i).toString());   
-                    }
-                    ((Filtro_Zona)(reporteBase.filtros.get("Filtro_Zona"))).setZonasSeleccionadas(aux);
-                   // generarEtiqueta(reporteBase.filtros.get("Filtro_Zona"),checkComboBox_zonas);
-                }
-            });
-        }
-
-        if(this.reporteBase.filtros.containsKey("Filtro_Canal"))
-        {
-            listadoAux = FXCollections.observableArrayList();
-            listadoAux.addAll(((Filtro_Canal)(this.reporteBase.filtros.get("Filtro_Canal"))).canales);
-            this.checkComboBox_canales = new CheckComboBox<String>(listadoAux);
-            this.checkComboBox_canales.setPrefWidth(300);
-            this.gridPane_Filtros2.add(checkComboBox_canales, 3, 2);
-            
-            this.checkComboBox_canales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-                public void onChanged(ListChangeListener.Change<? extends String> c) {
-                    System.out.println(checkComboBox_canales.getCheckModel().getCheckedItems());
-
-                    ArrayList<String> aux=new ArrayList<>();
-                    for(int i =0 ; i < checkComboBox_canales.getCheckModel().getCheckedItems().size(); i++)
-                    {
-                        aux.add(checkComboBox_canales.getCheckModel().getCheckedItems().get(i).toString());   
-                    }
-                    ((Filtro_Canal)(reporteBase.filtros.get("Filtro_Canal"))).setCanalesSeleccionados(aux);
-                    generarEtiqueta(reporteBase.filtros.get("Filtro_Canal"),checkComboBox_canales);
-                }
-            });
-        }
-        
-        if(this.reporteBase.filtros.containsKey("Filtro_Sucursal"))
-        {
-            listadoAux = FXCollections.observableArrayList();
-            listadoAux.addAll(((Filtro_Sucursal)(this.reporteBase.filtros.get("Filtro_Sucursal"))).sucursales);
-            this.checkComboBox_sucursales = new CheckComboBox<String>(listadoAux);
-            this.checkComboBox_sucursales.setPrefWidth(300);
-            this.gridPane_Filtros2.add(checkComboBox_sucursales, 7, 0);
-
-            this.checkComboBox_sucursales.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-                public void onChanged(ListChangeListener.Change<? extends String> c) {
-                    System.out.println(checkComboBox_sucursales.getCheckModel().getCheckedItems());
-
-                    ArrayList<String> aux=new ArrayList<>();
-                    for(int i =0 ; i < checkComboBox_sucursales.getCheckModel().getCheckedItems().size(); i++)
-                    {
-                        aux.add(checkComboBox_sucursales.getCheckModel().getCheckedItems().get(i).toString());   
-                    }
-                    ((Filtro_Sucursal)(reporteBase.filtros.get("Filtro_Sucursal"))).setSucursalesSeleccionadas(aux);
-                    generarEtiqueta(reporteBase.filtros.get("Filtro_Sucursal"),checkComboBox_sucursales);
-                }
-            });
-        }
-        
-        if(this.reporteBase.filtros.containsKey("Filtro_Cliente"))
-        {
-            listadoAux = FXCollections.observableArrayList();
-            listadoAux.addAll(((Filtro_Cliente)(this.reporteBase.filtros.get("Filtro_Cliente"))).clientes);
-            this.checkComboBox_clientes = new CheckComboBox<String>(listadoAux);
-            this.checkComboBox_clientes.setPrefWidth(300);
-            this.gridPane_Filtros2.add(checkComboBox_clientes, 7, 1);
-
-            this.checkComboBox_clientes.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
-                public void onChanged(ListChangeListener.Change<? extends String> c) {
-                    System.out.println(checkComboBox_clientes.getCheckModel().getCheckedItems());
-
-                    ArrayList<String> aux=new ArrayList<>();
-                    for(int i =0 ; i < checkComboBox_clientes.getCheckModel().getCheckedItems().size(); i++)
-                    {
-                        aux.add(checkComboBox_clientes.getCheckModel().getCheckedItems().get(i).toString());   
-                    }
-                    ((Filtro_Cliente)(reporteBase.filtros.get("Filtro_Cliente"))).setClientesSeleccionados(aux);
-                    generarEtiqueta(reporteBase.filtros.get("Filtro_Cliente"),checkComboBox_clientes);
-                }
-            });
-        }
-         */
-        this.text_filtroReporte.setText("Sin filtros aplicados");
+        actualizarEstadoPasos(2);
     }
 
     public void inicializarFechas()
@@ -312,7 +180,6 @@ public class MainController implements Initializable
         this.checkComboBox_fechaSemana = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_fechaSemana.setPrefWidth(300);
         this.checkComboBox_fechaSemana.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_Filtros.add(checkComboBox_fechaSemana, 1, 1);
         listadoAux = FXCollections.observableArrayList();
         for (int i = 1; i < 13; i++)
         {
@@ -321,7 +188,6 @@ public class MainController implements Initializable
         this.checkComboBox_fechaMes = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_fechaMes.setPrefWidth(300);
         this.checkComboBox_fechaMes.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_Filtros.add(checkComboBox_fechaMes, 3, 0);
         listadoAux = FXCollections.observableArrayList();
         for (int i = 2015; i < 2031; i++)
         {
@@ -330,11 +196,11 @@ public class MainController implements Initializable
         this.checkComboBox_fechaAnio = new CheckComboBox<String>(listadoAux);
         this.checkComboBox_fechaAnio.setPrefWidth(300);
         this.checkComboBox_fechaAnio.setStyle("-fx-padding: 0 10 0 0");
-        this.gridPane_Filtros.add(checkComboBox_fechaAnio, 3, 1);
     }
 
     public void setFiltroPeriodo(int opcion)
     {
+        int opcionAux=this.reporteBase.filtros.get("Filtro_Fecha").getOpcion();
         switch (opcion)
         {
             case 0://año
@@ -356,7 +222,10 @@ public class MainController implements Initializable
                 break;
         }
         generarEtiqueta(this.reporteBase.filtros.get("Filtro_Fecha"), this.choiceBox_periodo);
-        this.text_filtroReporte.setText(this.reporteBase.filtros.get("Filtro_Fecha").generarEtiquetaInfo());
+        if(opcionAux!=this.reporteBase.filtros.get("Filtro_Fecha").getOpcion())
+        {
+            actualizarEstadoPasos(3);
+        }
     }
 
     @FXML
@@ -365,49 +234,91 @@ public class MainController implements Initializable
         CommandNames.generaMensaje("Información de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes",
                 "Aplicación en proceso de desarrollo :)");
     }
-
-    @FXML
-    public void changeActiveTitled()
+    
+    public boolean actualizarEstadoPasos(int op)
     {
-        this.titledPane_areaEstrategica.setExpanded(false);
-        this.titledPane_areaVentas.setExpanded(false);
-        this.titledPane_areaServicios.setExpanded(false);
-        if (this.titledPane_areaEstrategica.isFocused())
+        if(op>this.pasoActual+1)
         {
-            this.titledPane_areaEstrategica.setExpanded(true);
+            System.out.println("ERROR! ESTA PEGANDO UN SALTO EN LOS PASOS QUE NO DEBERÍA!");
+            return false;
         }
-        else if (this.titledPane_areaVentas.isFocused())
+        this.pasoActual=op;
+        String style_success="-fx-background-color: lightgreen;";
+        String style_actual="-fx-background-color: limegreen;";
+        String style_block="-fx-background-color: gray;";
+        switch(this.pasoActual)
         {
-            this.titledPane_areaVentas.setExpanded(true);
+            case 1:
+                //eliminar selecion reporte / dejar en null variable
+                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
+                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
+                this.pane_FugaFS.setStyle("-fx-background-color: white;");
+                //bloquear p2 / bloquear p3 / bloquear button reporte
+                this.vBox_paso1.setDisable(false);
+                this.vBox_paso2.setDisable(true);
+                this.vBox_paso3.setDisable(true);
+                this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
+                this.hBoxEstado_paso1.setStyle(style_actual);
+                this.hBoxEstado_paso2.setStyle(style_block);
+                this.hBoxEstado_paso3.setStyle(style_block);
+                this.button_generarReporte.setDisable(true);
+                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 1: Seleccione el reporte que necesite generar.");
+                break;
+            case 2:
+                //liberar p2 / bloquear p3 / bloquear button reporte
+                this.vBox_paso1.setDisable(false);
+                this.vBox_paso2.setDisable(false);
+                this.vBox_paso3.setDisable(true);
+                this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
+                this.hBoxEstado_paso1.setStyle(style_success);
+                this.hBoxEstado_paso2.setStyle(style_actual);
+                this.hBoxEstado_paso3.setStyle(style_block);
+                this.button_generarReporte.setDisable(true);
+                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 2: Seleccione los parámetros del "
+                        + "filtro de acuerdo a las necesidades del reporte a generar.");
+                break;
+            case 3:
+                //liberar p3 / bloquear button reporte
+                this.vBox_paso1.setDisable(false);
+                this.vBox_paso2.setDisable(false);
+                this.vBox_paso3.setDisable(false);
+                this.hBoxEstado_paso1.setStyle(style_success);
+                this.hBoxEstado_paso2.setStyle(style_success);
+                this.hBoxEstado_paso3.setStyle(style_actual);
+                this.button_generarReporte.setDisable(false);
+                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 3: Ahora puede generar su reporte. "
+                        + "Puede modificar la dirección de creación de éste.");
+                break;
         }
-        else if (this.titledPane_areaServicios.isFocused())
-        {
-            this.titledPane_areaServicios.setExpanded(true);
-        }
+        setArchivoSeleccionado(null);
+        return true;
     }
-
-    public boolean actualizarEstadoProceso(String estado, String mensaje) throws InterruptedException
+    
+    public boolean actualizarEstadoProceso(String estado, String mensaje)
     {
-        String style;
+        String style, textStyle;
         switch (estado)
         {
             case CommandNames.ESTADO_SUCCESS:
-                // CommandNames.generaMensaje("Mensaje del Sistema", Alert.AlertType.INFORMATION, "Operación Exitosa", mensaje);
-                style = "-fx-background-color: lightgreen;";
+                style = "-fx-background-color: white;";
+                textStyle = "-fx-text-inner-color: black;";
                 break;
             case CommandNames.ESTADO_INFO:
-                style = "-fx-background-color: yellow;";
+                style = "-fx-background-color: white;";
+                textStyle = "-fx-text-inner-color: black;";
                 break;
             case CommandNames.ESTADO_ERROR:
-                // CommandNames.generaMensaje("Mensaje del Sistema", Alert.AlertType.ERROR, "Error del sistema", mensaje);
-                style = "-fx-background-color: orange;";
+                style = "-fx-background-color: white;";
+                textStyle = "-fx-text-inner-color: black;";
                 break;
             default:
                 style = "-fx-background-color: white;";
+                textStyle = "-fx-text-inner-color: black;";
                 break;
         }
         this.panel_estadoSistema.setStyle(style);
-        this.text_estadoSistema.setText(estado + ": " + mensaje);
+        this.text_estadoSistema.setText(mensaje);
+        this.text_estadoSistema.setStyle(textStyle);
         return true;
     }
 
@@ -416,41 +327,30 @@ public class MainController implements Initializable
     {
         if (this.choiceBox_periodo.getSelectionModel().getSelectedIndex() == -1)
         {
-            actualizarEstadoProceso(CommandNames.ESTADO_ERROR, "Debe seleccionar un rango de fechas para generar tal reporte.");
+            System.out.println("OJO, NO DEBERIA PASAR POR ACA!");
             return false;
         }
-        
         Alert alertAux=CommandNames.generaMensaje("Generación de reporte en proceso", 
-                Alert.AlertType.NONE, null,"Estamos generando su reporte, esta operación puede demorar dependiendo del "
-                        + "detalle y cantidad de datos seleccionados...",false);
+            Alert.AlertType.NONE, null,"Estamos generando su reporte, esta operación puede demorar dependiendo del "
+                    + "detalle y cantidad de datos seleccionados...",false);
         alertAux.show();
         
-        actualizarEstadoProceso(CommandNames.ESTADO_INFO, CommandNames.MSG_INFO_GEN_REPORTE);
-        /*
-            compactar filtros
-            generar recursos en base a filtros
-         */
         ArrayList<String> columnasTabla = this.reporteBase.columnasExcel;
         if (columnasTabla == null)
         {
-            actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
             alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
             alertAux.close();
             return false;
         }
         if (!generarReporte(this.reporteBase, columnasTabla))
         {
-            actualizarEstadoProceso(CommandNames.ESTADO_ERROR, CommandNames.MSG_ERROR_GEN_REPORTE);
             alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
             alertAux.close();
             return false;
         }
-        this.generarReporteBase(this.opcion);
-        buttonVaciarFiltro();
-        this.inicializarFiltros();
-        actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, CommandNames.MSG_SUCCESS_GEN_REPORTE);
         alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
         alertAux.close();
+        actualizarEstadoPasos(1);
         return true;
     }
 
@@ -474,18 +374,60 @@ public class MainController implements Initializable
                 "Reporte en construcción...");
         //generarReporteBase(2);
     }
+    
+    @FXML
+    public void buttonSeleccionarDestino()
+    {
+        //validar datos
+        //no cerrar la ventana
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Selección de archivo CSV para importación de datos");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo Microsoft Office Excel", "*.xlsx"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        
+        if (selectedFile != null)
+        {
+            setArchivoSeleccionado(selectedFile.getPath());
+        }
+        else
+        {
+            setArchivoSeleccionado(null);
+        }
+        validarSeleccionArchivo();
+    }
 
+    private void setArchivoSeleccionado(String dirAux)
+    {
+        if (dirAux == null)
+        {
+            this.textField_archivoDestino.setText(System.getProperty("user.home")+"/Desktop/"+"resultado.xlsx");
+        }
+        else
+        {
+            this.textField_archivoDestino.setText(dirAux);
+        }
+    }
+    
+    public boolean validarSeleccionArchivo()
+    {
+        if (this.textField_archivoDestino.getText().equals(System.getProperty("user.home")+"/Desktop/"+"resultado.xlsx"))
+        {
+            this.button_generarReporte.setDisable(true);
+            return false;
+        }
+        this.button_generarReporte.setDisable(false);
+        return true;
+    }
+    
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
     {
         System.out.println("obteniendo reporte...");
+        
         if (!reporte.generarReporte())
         {
             System.out.println("ERROR: generar reporte MainController :C");
             return false;
         }
-        //generar tabla con reporte
-        //this.ReportesTableView=new TableView<>();
-        //this.reporteBase.desplegarInfoExcelApp(this.ReportesTableView, panelTabla);
         return true;
     }
 
@@ -515,8 +457,6 @@ public class MainController implements Initializable
         FiltroPeriodoController controller = loader.getController();
         controller.setFiltro(reporteBase.filtros.get("Filtro_Fecha"));
         stage.setResizable(false);
-        //stage.initOwner();
-        //stage.getIcons().add(new Image("img/icon.png"));
         stage.showAndWait();
     }
 
