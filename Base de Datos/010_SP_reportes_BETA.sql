@@ -17,7 +17,7 @@ BEGIN
 	CREATE TEMPORARY TABLE IF NOT EXISTS tableBase AS
 	(
 	SELECT 
-		pedido.centro_id AS centro_id,
+		(if(pedido.centro_id='T011' OR pedido.centro_id='T018','T005',pedido.centro_id)) AS centro_id,
 		material.sector_id AS sector_id,
 		material.agrupado_id AS agrupado_id, 
 		pedido.fechaEntrega AS fecha,
@@ -42,7 +42,7 @@ BEGIN
 	disponible_Kg,despacho_Cj,despacho_Kg)
 	(
 	SELECT 
-		despacho_faltante.centro_id,
+		(if(despacho_faltante.centro_id='T011' OR despacho_faltante.centro_id='T018','T005',despacho_faltante.centro_id)),
 		material.sector_id,
 		material.agrupado_id,
 		despacho_faltante.fecha,
@@ -81,18 +81,20 @@ BEGIN
 	CREATE TEMPORARY TABLE IF NOT EXISTS tb AS
 	(
 	SELECT 
-		centro_id,
+		tableBase.centro_id,
 		centro.nombre AS centro_nombre,
-		sector_id, sector.nombre AS sector_nombre, 
-		agrupado_id,
+		tableBase.sector_id, 
+        sector.nombre AS sector_nombre, 
+		tableBase.agrupado_id,
 		agrupado.nombre AS agrupado_nombre,
-		fecha, SUM(pedido_Cj) AS pedido_Cj,
-		SUM(pedido_Kg) AS pedido_Kg, 
-		SUM(pedido_neto) AS pedido_neto, 
-		SUM(disponible_Cj) AS disponible_Cj, 
-		SUM(disponible_Kg) AS disponible_Kg, 
-		SUM(despacho_Cj) AS despacho_Cj, 
-		SUM(despacho_Kg) AS despacho_Kg
+		tableBase.fecha, 
+        SUM(tableBase.pedido_Cj) AS pedido_Cj,
+		SUM(tableBase.pedido_Kg) AS pedido_Kg, 
+		SUM(tableBase.pedido_neto) AS pedido_neto, 
+		SUM(tableBase.disponible_Cj) AS disponible_Cj, 
+		SUM(tableBase.disponible_Kg) AS disponible_Kg, 
+		SUM(tableBase.despacho_Cj) AS despacho_Cj, 
+		SUM(tableBase.despacho_Kg) AS despacho_Kg
 	FROM 
 		tableBase, agrupado, centro, sector
 	WHERE 
@@ -100,7 +102,7 @@ BEGIN
 		AND tableBase.sector_id = sector.id 
 		AND tableBase.agrupado_id = agrupado.id
 	GROUP BY 
-		centro_id, fecha, agrupado_id
+		tableBase.centro_id, tableBase.fecha, tableBase.agrupado_id
 	);
 
 	CREATE TEMPORARY TABLE IF NOT EXISTS tablaDisponibilidad AS
@@ -108,7 +110,8 @@ BEGIN
 	SELECT 
 		tb.centro_id, 
 		REPLACE(tb.centro_nombre,"Sucursal ","") AS centro_nombre, 
-		tb.sector_id, tb.sector_nombre, 
+		tb.sector_id, 
+        tb.sector_nombre, 
 		tb.agrupado_id, 
 		tb.agrupado_nombre,	
 		tb.fecha, 
@@ -484,7 +487,6 @@ BEGIN
 	SELECT * FROM tableAuxFuga;
 END
 $$
-
 
 /*
 CALL sp_reporte_disponibilidad('2018-02-12','2018-02-18');

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Model;
+import Model.ProcesadoresExcel.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,14 +44,16 @@ public class Main extends Application {
     public static void main(String[] args){
         launch(args);      
         
-        //new ProcesadorExcel_ReporteFugaFS(System.getProperty("user.home")+"/Desktop/"+"llamadosCC.xls")
-         //       .obtieneDatosXLS("Datos", 1, 1);
-         /*
-            new CSVImport_DespachoFaltante(new LocalDB(new DBConfig()), System.getProperty("user.home")+"/Desktop/"+"despacho_faltante.csv",
-                "despacho_faltante").procesarArchivo();
+        /*
+        new CSVImport_DespachoFaltante(new LocalDB(new DBConfig()), System.getProperty("user.home")+"/Desktop/"+"despacho_faltante.csv",
+            "despacho_faltante").procesarArchivo();  
         new ProcesadorExcel_MaestroMateriales(System.getProperty("user.home")+"/Desktop/"+"Maestro Materiales Full.xlsx")
                 .obtieneDatosXLSX("HojaEstatica");
-        System.exit(0);
+        new ProcesadorExcel_ReporteFugaFS_Club(System.getProperty("user.home")+"/Desktop/"+"DatosClub.xlsx")
+                .obtieneDatosXLSX("Datos Clientes");
+        new ProcesadorExcel_ReporteFugaFS_LlamadoCC(System.getProperty("user.home")+"/Desktop/"+"llamadosCC.xls")
+                .obtieneDatosXLS("Datos", 1, 1);
+         System.exit(0);
         */
     }
     
