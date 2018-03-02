@@ -27,8 +27,6 @@ public abstract class Filtro
         return opcion;
     }
     
-    public abstract String generarWhere(HashMap<String,String> data);
-    
     public abstract boolean vaciarFiltro();
     
     public abstract boolean setOpcion(int value);

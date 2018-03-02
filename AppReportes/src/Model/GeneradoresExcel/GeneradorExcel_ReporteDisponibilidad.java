@@ -112,7 +112,9 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
                 return false;
             }
             GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
-            file.close();
+            file.close();            
+            archivoXLS = new File(rutaArchivo);
+            archivoXLS.delete();
             return true;
         }
         catch (IOException ex)

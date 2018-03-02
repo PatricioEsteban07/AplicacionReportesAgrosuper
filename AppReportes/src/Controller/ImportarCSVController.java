@@ -5,9 +5,36 @@
  */
 package Controller;
 
+import Model.CSVImport.CSVImport_Cliente;
+import Model.CSVImport.CSVImport_Region;
+import Model.CSVImport.CSVImport_N2;
+import Model.CSVImport.CSVImport_ZonaVentas;
+import Model.CSVImport.CSVImport_N3;
+import Model.CSVImport.CSVImport_Sector;
+import Model.CSVImport.CSVImport_Marca;
+import Model.CSVImport.CSVImport_CategoriaCliente;
+import Model.CSVImport.CSVImport_PedidoMaterial;
+import Model.CSVImport.CSVImport_Pedido;
+import Model.CSVImport.CSVImport_TipoEnvasado;
+import Model.CSVImport.CSVImport_Despacho;
+import Model.CSVImport.CSVImport;
+import Model.CSVImport.CSVImport_SubcategoriaCliente;
+import Model.CSVImport.CSVImport_N4;
+import Model.CSVImport.CSVImport_Stock;
+import Model.CSVImport.CSVImport_Faltante;
+import Model.CSVImport.CSVImport_Material;
+import Model.CSVImport.CSVImport_NSCliente;
+import Model.CSVImport.CSVImport_TipoCliente;
+import Model.CSVImport.CSVImport_EstadoRefrigerado;
+import Model.CSVImport.CSVImport_DespachoMaterial;
+import Model.CSVImport.CSVImport_Agrupado;
+import Model.CSVImport.CSVImport_OficinaVentas;
+import Model.CSVImport.CSVImport_Centro;
+import Model.CSVImport.CSVImport_FacturaVentaMaterial;
+import Model.CSVImport.CSVImport_ClienteLocal;
+import Model.CSVImport.CSVImport_FacturaVenta;
 import Model.CommandNames;
 import Model.LocalDB;
-import Model.PobladorDB.CSVImport.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -99,20 +126,20 @@ public class ImportarCSVController implements Initializable
     {
         //STATUS_DEFAULT
         String texto = "Seleccione un archivo CSV y la tabla a la cuál importar los datos.";
-        String style = "-fx-background-color: lightblue;";
+        String style = "-fx-background-color: white;";
         switch (info)
         {
             case STATUS_READY:
                 texto = "Archivo y tabla seleccionada para importación.";
-                style = "-fx-background-color: yellow;";
+                style = "-fx-background-color: cornflowerblue;";
                 break;
             case STATUS_SUCCESS:
                 texto = "Carga de archivo CSV realizado exitosamente.";
-                style = "-fx-background-color: lightgreen;";
+                style = "-fx-background-color: white;";
                 break;
             case STATUS_RUNNING:
                 texto = "Ejecutando importación de archivo CSV...";
-                style = "-fx-background-color: lightblue;";
+                style = "-fx-background-color: cornflowerblue;";
                 break;
             case STATUS_ERROR:
                 texto = "No se ha cargado el archivo CSV debido a un error con el archivo.";

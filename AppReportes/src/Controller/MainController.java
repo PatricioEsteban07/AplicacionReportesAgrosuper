@@ -9,7 +9,6 @@ import Controller.filtroPeriodo.FiltroPeriodoController;
 import Model.CommandNames;
 import Model.DBConfig;
 import Model.Filtros.Filtro;
-import Model.Filtros.Filtro_Fecha;
 import Model.LocalDB;
 import Model.Reportes.Reporte;
 import Model.Reportes.Reporte_ArbolPerdidas;
@@ -45,7 +44,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -105,6 +104,7 @@ public class MainController implements Initializable
     {
         this.db = new LocalDB(new DBConfig());
         this.reporteBase=null;
+        this.reporteSeleccionado=-1;
         inicializarPeriodo();
         actualizarEstadoPasos(1);
         this.db.probarDBConection();
@@ -112,27 +112,28 @@ public class MainController implements Initializable
 
     public boolean generarReporteBase(int opcion) throws InterruptedException
     {
+        if(this.reporteSeleccionado==opcion)
+        {
+            this.reporteSeleccionado=-1;
+            actualizarEstadoPasos(1);
+            return false;
+        }
+        ArrayList<String> paneStyles = new ArrayList<>();
         switch (opcion)
         {
             case 0://reporte disponibilidad
                 this.reporteBase = new Reporte_Disponibilidad(this.db);
-                this.pane_Disponibilidad.setStyle("-fx-background-color: orange;");
-                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
-                this.pane_FugaFS.setStyle("-fx-background-color: white;");
                 break;
             case 1://reporte árbol pérdidas
                 this.reporteBase = new Reporte_ArbolPerdidas(this.db);
-                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
-                this.pane_ArbolPerdidas.setStyle("-fx-background-color: orange;");
-                this.pane_FugaFS.setStyle("-fx-background-color: white;");
                 break;
             case 2://reporte fugas FS
                 this.reporteBase = new Reporte_FugaFS(this.db);
-                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
-                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
-                this.pane_FugaFS.setStyle("-fx-background-color: orange;");
                 break;
         }
+        this.pane_Disponibilidad.setStyle((opcion==0) ? "-fx-background-color: orange;" : "");
+        this.pane_ArbolPerdidas.setStyle((opcion==1) ? "-fx-background-color: orange;" : "");
+        this.pane_FugaFS.setStyle((opcion==2) ? "-fx-background-color: orange;" : "");
         this.reporteSeleccionado = opcion;
         actualizarEstadoPasos(2);
         return true;
@@ -232,7 +233,8 @@ public class MainController implements Initializable
     public void infoApp()
     {
         CommandNames.generaMensaje("Información de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes",
-                "Aplicación en proceso de desarrollo :)");
+                "Aplicación en proceso de desarrollo :). \n El código fuente de dicha aplicación está disponible "
+                        + "en manos de área de Gestión Ventas de Agrosuper.");
     }
     
     public boolean actualizarEstadoPasos(int op)
@@ -243,82 +245,49 @@ public class MainController implements Initializable
             return false;
         }
         this.pasoActual=op;
-        String style_success="-fx-background-color: lightgreen;";
-        String style_actual="-fx-background-color: limegreen;";
+        String style_success="-fx-background-color: cornflowerblue;";
+        String style_actual="-fx-background-color: blue;";
         String style_block="-fx-background-color: gray;";
         switch(this.pasoActual)
         {
             case 1:
                 //eliminar selecion reporte / dejar en null variable
-                this.pane_Disponibilidad.setStyle("-fx-background-color: white;");
-                this.pane_ArbolPerdidas.setStyle("-fx-background-color: white;");
-                this.pane_FugaFS.setStyle("-fx-background-color: white;");
+                this.pane_Disponibilidad.setStyle("");
+                this.pane_ArbolPerdidas.setStyle("");
+                this.pane_FugaFS.setStyle("");
                 //bloquear p2 / bloquear p3 / bloquear button reporte
-                this.vBox_paso1.setDisable(false);
-                this.vBox_paso2.setDisable(true);
-                this.vBox_paso3.setDisable(true);
                 this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
-                this.hBoxEstado_paso1.setStyle(style_actual);
-                this.hBoxEstado_paso2.setStyle(style_block);
-                this.hBoxEstado_paso3.setStyle(style_block);
-                this.button_generarReporte.setDisable(true);
-                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 1: Seleccione el reporte que necesite generar.");
+                actualizarEstadoProceso("Paso 1: Seleccione el reporte que necesite generar.");
                 break;
             case 2:
                 //liberar p2 / bloquear p3 / bloquear button reporte
-                this.vBox_paso1.setDisable(false);
-                this.vBox_paso2.setDisable(false);
-                this.vBox_paso3.setDisable(true);
                 this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
-                this.hBoxEstado_paso1.setStyle(style_success);
-                this.hBoxEstado_paso2.setStyle(style_actual);
-                this.hBoxEstado_paso3.setStyle(style_block);
-                this.button_generarReporte.setDisable(true);
-                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 2: Seleccione los parámetros del "
+                actualizarEstadoProceso("Paso 2: Seleccione los parámetros del "
                         + "filtro de acuerdo a las necesidades del reporte a generar.");
                 break;
             case 3:
                 //liberar p3 / bloquear button reporte
-                this.vBox_paso1.setDisable(false);
-                this.vBox_paso2.setDisable(false);
-                this.vBox_paso3.setDisable(false);
-                this.hBoxEstado_paso1.setStyle(style_success);
-                this.hBoxEstado_paso2.setStyle(style_success);
-                this.hBoxEstado_paso3.setStyle(style_actual);
-                this.button_generarReporte.setDisable(false);
-                actualizarEstadoProceso(CommandNames.ESTADO_SUCCESS, "Paso 3: Ahora puede generar su reporte. "
+                actualizarEstadoProceso("Paso 3: Ahora puede generar su reporte. "
                         + "Puede modificar la dirección de creación de éste.");
                 break;
         }
+        
+        this.vBox_paso1.setDisable((this.pasoActual>=1) ? false : true);
+        this.vBox_paso2.setDisable((this.pasoActual>=2) ? false : true);
+        this.vBox_paso3.setDisable((this.pasoActual>=3) ? false : true);
+        this.hBoxEstado_paso1.setStyle((this.pasoActual==1) ? style_actual : ((this.pasoActual<1) ? style_block : style_success));
+        this.hBoxEstado_paso2.setStyle((this.pasoActual==2) ? style_actual : ((this.pasoActual<2) ? style_block : style_success));
+        this.hBoxEstado_paso3.setStyle((this.pasoActual==3) ? style_actual : ((this.pasoActual<3) ? style_block : style_success));
+        this.button_generarReporte.setDisable((this.pasoActual==3) ? false : true);
         setArchivoSeleccionado(null);
         return true;
     }
     
-    public boolean actualizarEstadoProceso(String estado, String mensaje)
+    public boolean actualizarEstadoProceso(String mensaje)
     {
         String style, textStyle;
-        switch (estado)
-        {
-            case CommandNames.ESTADO_SUCCESS:
-                style = "-fx-background-color: white;";
-                textStyle = "-fx-text-inner-color: black;";
-                break;
-            case CommandNames.ESTADO_INFO:
-                style = "-fx-background-color: white;";
-                textStyle = "-fx-text-inner-color: black;";
-                break;
-            case CommandNames.ESTADO_ERROR:
-                style = "-fx-background-color: white;";
-                textStyle = "-fx-text-inner-color: black;";
-                break;
-            default:
-                style = "-fx-background-color: white;";
-                textStyle = "-fx-text-inner-color: black;";
-                break;
-        }
-        this.panel_estadoSistema.setStyle(style);
+        this.panel_estadoSistema.setStyle("-fx-background-color: white;");
         this.text_estadoSistema.setText(mensaje);
-        this.text_estadoSistema.setStyle(textStyle);
         return true;
     }
 
@@ -380,14 +349,13 @@ public class MainController implements Initializable
     {
         //validar datos
         //no cerrar la ventana
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Selección de archivo CSV para importación de datos");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo Microsoft Office Excel", "*.xlsx"));
-        File selectedFile = fileChooser.showOpenDialog(null);
-        
-        if (selectedFile != null)
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Selección de carpeta para guardar reporte");
+        File selectedDir = dirChooser.showDialog(null);
+
+        if (selectedDir != null)
         {
-            setArchivoSeleccionado(selectedFile.getPath());
+            setArchivoSeleccionado(selectedDir.getPath());
         }
         else
         {
@@ -400,7 +368,7 @@ public class MainController implements Initializable
     {
         if (dirAux == null)
         {
-            this.textField_archivoDestino.setText(System.getProperty("user.home")+"/Desktop/"+"resultado.xlsx");
+            this.textField_archivoDestino.setText(System.getProperty("user.home")+"/Desktop/");
         }
         else
         {
@@ -410,7 +378,7 @@ public class MainController implements Initializable
     
     public boolean validarSeleccionArchivo()
     {
-        if (this.textField_archivoDestino.getText().equals(System.getProperty("user.home")+"/Desktop/"+"resultado.xlsx"))
+        if (this.textField_archivoDestino.getText().equals(System.getProperty("user.home")+"/Desktop/"))
         {
             this.button_generarReporte.setDisable(true);
             return false;
@@ -513,8 +481,6 @@ public class MainController implements Initializable
         //setea valores base
         controller.setDB(db);
         stage.setResizable(false);
-        //stage.initOwner();
-        //stage.getIcons().add(new Image("img/icon.png"));
         stage.showAndWait();
     }
     
@@ -548,8 +514,6 @@ public class MainController implements Initializable
         //setea valores base
         controller.setDB(db);
         stage.setResizable(false);
-        //stage.initOwner();
-        //stage.getIcons().add(new Image("img/icon.png"));
         stage.showAndWait();
     }
     
@@ -583,8 +547,6 @@ public class MainController implements Initializable
         //setea valores base
         controller.completaInfo(db);
         stage.setResizable(false);
-        //stage.initOwner();
-        //stage.getIcons().add(new Image("img/icon.png"));
         stage.showAndWait();
     }
     

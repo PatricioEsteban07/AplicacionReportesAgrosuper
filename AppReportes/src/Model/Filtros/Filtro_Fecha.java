@@ -146,49 +146,6 @@ public class Filtro_Fecha extends Filtro
         this.fechaFin=fechaFin;
         return true;
     }
-    
-    @Override
-    public String generarWhere(HashMap<String,String> data)
-    {
-        String query="";
-        switch(this.opcion)
-        {
-            case 1://(1 año)-> 1 año
-                query=query+" ("+data.get("Año")+" = "+this.fechaInicio.getYear()+") ";
-                break;
-            case 2://(rango año) -> muchos años
-                    //REVISAR CASOS BORDE !!!
-                query=query+" ("+data.get("AñoInicio")+" >= "+this.fechaInicio.getYear()+" AND "
-                        +data.get("AñoFin")+" <= "+this.fechaFin.getYear()+") ";
-                break;
-            case 3://(1 año, 1 mes)
-                query=query+" ("+data.get("Año")+" = "+this.fechaInicio.getYear()+" AND "
-                        +data.get("Mes")+" = "+this.fechaInicio.getMonth()+") ";
-                break;
-            case 4://(rango año, rango meses)
-                    //REVISAR CASOS BORDE !!!
-                query=query+" ( DATE("+data.get("Fecha")+") BETWEEN '"+this.fechaInicio.getYear()+"-"
-                    +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
-                    +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
-                break;
-            case 5://5(1 año, 1 semana)
-                query=" (WEEK('"+data.get("Semana")+"', 1) = "+this.semanaInicio+")";
-                break;
-            case 6://(1 año, range semanas)
-                break;
-            case 7://(fecha concreta)
-                query=query+" ("+data.get("Fecha")+" = "+this.fechaInicio.getYear()+"-"
-                        +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+") ";
-                break;
-            case 8://(rango fecha)
-                    //REVISAR CASOS BORDE !!!
-                query=query+" ( DATE("+data.get("Fecha")+") BETWEEN '"+this.fechaInicio.getYear()+"-"
-                    +this.fechaInicio.getMonth()+"-"+this.fechaInicio.getDate()+"' AND "+this.fechaFin.getYear()+"-"
-                    +this.fechaFin.getMonth()+"-"+this.fechaFin.getDate()+") ";
-                break;
-        }
-        return query;
-    }
 
     @Override
     public boolean vaciarFiltro()

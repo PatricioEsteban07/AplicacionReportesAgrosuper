@@ -69,13 +69,7 @@ public class Reporte_Disponibilidad extends Reporte
     public boolean generarFiltrosBaseCustom()
     {    
         //crear todos los filtros vacios
-        //filtro no utilizado, Filtro_Cliente, Filtro_Sucursal
         generarFiltrosBase();
-        this.filtros.remove("Filtro_Cliente");
-        this.filtros.remove("Filtro_Sucursal");
-        this.filtros.remove("Filtro_Canal");
-        this.filtros.remove("Filtro_Zona");
-        this.filtros.remove("Filtro_CargoRRHH");
         return true;
     }
 

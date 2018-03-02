@@ -137,7 +137,9 @@ public class GeneradorExcel_ReporteFugaFS extends GeneradorExcel
                 return false;
             }
             GeneradorExcel_ReporteFugaFS.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
-            file.close();
+            file.close();            
+            archivoXLS = new File(rutaArchivo);
+            archivoXLS.delete();
             return true;
         }
         catch (IOException ex)

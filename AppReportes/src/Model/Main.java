@@ -36,6 +36,7 @@ public class Main extends Application {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/Agrosuper.png")));
         this.updateTitle();
         stage.show();
+        stage.setResizable(false);
     }
 
     /**

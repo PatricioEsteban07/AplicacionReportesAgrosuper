@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 package Controller;
+import Model.CSVImport.*;
 import Model.CommandNames;
 import Model.LocalDB;
-import Model.PobladorDB.CSVImport.*;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -68,20 +68,20 @@ public class ImportarCSVMultipleController implements Initializable
     {
         //STATUS_DEFAULT
         String texto = "Seleccione el directorio que contiene los archivos CSV para la importación de datos.";
-        String style = "-fx-background-color: lightblue;";
+        String style = "-fx-background-color: white;";
         switch (info)
         {
             case STATUS_READY:
                 texto = "Directorio seleccionado para importación múltiple.";
-                style = "-fx-background-color: yellow;";
+                style = "-fx-background-color: cornflowerblue;";
                 break;
             case STATUS_SUCCESS:
                 texto = "Carga múltiple de archivos CSV realizado exitosamente.";
-                style = "-fx-background-color: lightgreen;";
+                style = "-fx-background-color: white;";
                 break;
             case STATUS_RUNNING:
                 texto = "Ejecutando importación múltiple de archivos CSV...";
-                style = "-fx-background-color: lightblue;";
+                style = "-fx-background-color: cornflowerblue;";
                 break;
             case STATUS_ERROR:
                 texto = "Hubo un problema en la carga simultánea de archivos CSV.";
