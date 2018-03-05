@@ -53,7 +53,7 @@ public class Main extends Application {
         new ProcesadorExcel_ReporteFugaFS_Club(System.getProperty("user.home")+"/Desktop/"+"DatosClub.xlsx")
                 .obtieneDatosXLSX("Datos Clientes");
         new ProcesadorExcel_ReporteFugaFS_LlamadoCC(System.getProperty("user.home")+"/Desktop/"+"llamadosCC.xls")
-                .obtieneDatosXLS("Datos", 1, 1);
+                .obtieneDatosXLS("Datos");
          System.exit(0);
         */
     }

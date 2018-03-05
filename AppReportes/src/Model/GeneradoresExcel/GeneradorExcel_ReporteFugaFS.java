@@ -36,7 +36,7 @@ public class GeneradorExcel_ReporteFugaFS extends GeneradorExcel
     }
 
     @Override
-    public boolean generarArchivo(HashMap<String, RecursoDB> resources)
+    public boolean generarArchivo(HashMap<String, RecursoDB> resources, String fileDir)
     {
         FileOutputStream file = null;
         try
@@ -136,7 +136,7 @@ public class GeneradorExcel_ReporteFugaFS extends GeneradorExcel
                 archivoXLS.delete();
                 return false;
             }
-            GeneradorExcel_ReporteFugaFS.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
+            GeneradorExcel_ReporteFugaFS.copyFile(archivoXLS, new File(fileDir + "/" + this.nombreTabla + ".xlsx"));
             file.close();            
             archivoXLS = new File(rutaArchivo);
             archivoXLS.delete();

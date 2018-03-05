@@ -46,7 +46,7 @@ public class Reporte_ArbolPerdidas extends Reporte
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteArbolPerdidas(completarColumnasTabla()));
         try
         {
-            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
+            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos,this.getFileDir()))
             {        
                 CommandNames.generaMensaje("Error de Sistema", Alert.AlertType.ERROR, "Error generando Reporte",
                     "Hubo problemas para generar el reporte.");

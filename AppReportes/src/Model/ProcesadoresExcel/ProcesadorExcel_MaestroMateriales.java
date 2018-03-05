@@ -9,12 +9,8 @@ import com.monitorjbl.xlsx.StreamingReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -27,12 +23,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
 {
 
-    public ProcesadorExcel_MaestroMateriales(String fileDir)
+    public ProcesadorExcel_MaestroMateriales(String fileDir, String nombreHoja)
     {
-        super(fileDir);
+        super(fileDir,"HojaEstatica");
     }
 
-    public boolean obtieneDatosXLSX(String nombreHoja)
+    @Override
+    public boolean obtieneDatosXLS()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean obtieneDatosXLSX()
     {
         FileInputStream file = null;
         File f = this.abrirArchivo(this.fileDir);
@@ -264,30 +267,14 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
             tempAgrupadoFile.delete();
             
             workbook.close();
+            file.close();
         }
-        catch (FileNotFoundException ex)
+        catch (Exception ex)
         {
-            System.out.println("Archivo no encontrado!: "+ex);
-            Logger.getLogger(ProcesadorExcel_MaestroMateriales.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("problema para obetener datos excel: "+ex);
+            return false;
         }
-        catch (IOException ex)
-        {
-            System.out.println("problema io!: "+ex);
-            Logger.getLogger(ProcesadorExcel_MaestroMateriales.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally
-        {
-            try
-            {
-                file.close();
-            }
-            catch (IOException ex)
-            {
-                System.out.println("problema io!: "+ex);
-                Logger.getLogger(ProcesadorExcel_MaestroMateriales.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return false;
+        return true;
     }
 
 }

@@ -25,6 +25,7 @@ public abstract class Reporte
 {
     public LocalDB db;
     public String nombre;
+    private String fileDir;
     public HashMap<String, GeneradorExcel> generadorExcel;
     public HashMap<String, RecursoDB> recursos;
     public HashMap<String, Filtro> filtros;
@@ -34,6 +35,7 @@ public abstract class Reporte
     {
         this.db = db;
         this.nombre = nombre;
+        this.fileDir= System.getProperty("user.home") + "/Desktop/";
         this.generadorExcel = new HashMap<>();
         this.recursos = new HashMap<>();
         this.filtros = new HashMap<>();
@@ -47,6 +49,16 @@ public abstract class Reporte
         this.filtros = new HashMap<>();
         this.filtros.put("Filtro_Fecha", new Filtro_Fecha());
         return true;
+    }
+    
+    public void setFileDir(String fd)
+    {
+        this.fileDir = fd;
+    }
+    
+    public String getFileDir()
+    {
+        return this.fileDir;
     }
 
     public abstract boolean generarExcel();

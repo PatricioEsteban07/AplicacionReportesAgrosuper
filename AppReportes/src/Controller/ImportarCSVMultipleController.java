@@ -202,6 +202,7 @@ public class ImportarCSVMultipleController implements Initializable
         HashMap<String,String> files=new HashMap<>();
         for (int i = 0; aux!=null && i < aux.length; i++)
         {
+            System.out.println("posible: "+aux[i].substring(aux[i].length()-4));
             if(aux[i].contains(".csv"))
             {
                 System.out.println("F:"+directorio+"/"+aux[i]);
@@ -215,10 +216,8 @@ public class ImportarCSVMultipleController implements Initializable
             return false;
         }
         System.out.println("keys: "+files.keySet());
-        //comenzar "importación"
         
-        setEstadoOperacion(STATUS_RUNNING);
-        
+        /*
         if(files.containsKey("region"))
             new CSVImport_Region(this.db, directorio+"/"+files.get("region"),
                 "regiones").procesarArchivo();
@@ -285,15 +284,6 @@ public class ImportarCSVMultipleController implements Initializable
         if(files.containsKey("despacho_faltante"))
             new CSVImport_DespachoFaltante(this.db, directorio+"/"+files.get("despacho_faltante"),
                 "despacho_faltante").procesarArchivo();
-        if(files.containsKey("despacho"))
-            new CSVImport_Despacho(this.db, directorio+"/"+files.get("despacho"),
-                "despacho").procesarArchivo();
-        if(files.containsKey("despacho_material"))
-            new CSVImport_DespachoMaterial(this.db, directorio+"/"+files.get("despacho_material"),
-                "despacho_material").procesarArchivo();
-        if(files.containsKey("faltante"))
-            new CSVImport_Faltante(this.db, directorio+"/"+files.get("faltante"),
-                "faltante").procesarArchivo();
         if(files.containsKey("ns_cliente"))
             new CSVImport_NSCliente(this.db, directorio+"/"+files.get("ns_cliente"),
                 "ns_cliente").procesarArchivo();
@@ -303,7 +293,7 @@ public class ImportarCSVMultipleController implements Initializable
         if(files.containsKey("facturaVentas_material"))
             new CSVImport_FacturaVentaMaterial(this.db, directorio+"/"+files.get("facturaVentas_material"),
                 "facturaVentas_material").procesarArchivo();
-        
+        */
         return true;
     }
 }

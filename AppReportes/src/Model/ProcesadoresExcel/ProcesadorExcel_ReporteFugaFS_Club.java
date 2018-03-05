@@ -27,12 +27,20 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ProcesadorExcel_ReporteFugaFS_Club extends ProcesadorExcel
 {
 
-    public ProcesadorExcel_ReporteFugaFS_Club(String fileDir)
+    public ProcesadorExcel_ReporteFugaFS_Club(String fileDir, String nombreHoja)
     {
-        super(fileDir);
+        super(fileDir,"Datos Clientes");
     }
 
-    public boolean obtieneDatosXLSX(String nombreHoja)
+
+    @Override
+    public boolean obtieneDatosXLS()
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean obtieneDatosXLSX()
     {
         FileInputStream file = null;
         File f = this.abrirArchivo(this.fileDir);
@@ -105,30 +113,14 @@ public class ProcesadorExcel_ReporteFugaFS_Club extends ProcesadorExcel
             tempFile.delete();
 
             workbook.close();
+            file.close();
         }
-        catch (FileNotFoundException ex)
+        catch (Exception ex)
         {
-            System.out.println("Archivo no encontrado!: "+ex);
-            Logger.getLogger(ProcesadorExcel_ReporteFugaFS_Club.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("problema para obetener datos excel: "+ex);
+            return false;
         }
-        catch (IOException ex)
-        {
-            System.out.println("problema io!: "+ex);
-            Logger.getLogger(ProcesadorExcel_ReporteFugaFS_Club.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally
-        {
-            try
-            {
-                file.close();
-            }
-            catch (IOException ex)
-            {
-                System.out.println("problema io!: "+ex);
-                Logger.getLogger(ProcesadorExcel_ReporteFugaFS_Club.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return false;
+        return true;
     }
 
 }

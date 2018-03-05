@@ -46,7 +46,7 @@ public class Reporte_Disponibilidad extends Reporte
         this.generadorExcel.put(this.nombre, new GeneradorExcel_ReporteDisponibilidad(completarColumnasTabla()));
         try
         {
-            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos))
+            if(!this.generadorExcel.get(this.nombre).generarArchivo(this.recursos,this.getFileDir()))
             {        
                 System.out.println("ERROR: problema generando archivos excel Reporte Disponibilidad");
                 return false;

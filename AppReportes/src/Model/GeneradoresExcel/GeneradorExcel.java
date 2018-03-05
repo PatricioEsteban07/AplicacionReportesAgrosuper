@@ -89,6 +89,6 @@ public abstract class GeneradorExcel
         }
     }
     
-    public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException;
+    public abstract boolean generarArchivo(HashMap<String,RecursoDB> resources, String fileDir) throws FileNotFoundException, IOException;
     
 }

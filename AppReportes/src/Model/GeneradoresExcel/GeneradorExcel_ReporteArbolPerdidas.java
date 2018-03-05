@@ -40,7 +40,7 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
     }
 
     @Override
-    public boolean generarArchivo(HashMap<String,RecursoDB> resources) throws FileNotFoundException, IOException
+    public boolean generarArchivo(HashMap<String,RecursoDB> resources, String fileDir) throws FileNotFoundException, IOException
     {
         FileOutputStream file = null;
         try
@@ -123,7 +123,7 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
                 archivoXLS.delete();
                 return false;
             }
-            GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
+            GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(fileDir + "/" + this.nombreTabla + ".xlsx"));
             file.close();
             archivoXLS = new File(rutaArchivo);
             archivoXLS.delete();

@@ -29,13 +29,23 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ProcesadorExcel_ReporteFugaFS_LlamadoCC extends ProcesadorExcel
 {
 
-    public ProcesadorExcel_ReporteFugaFS_LlamadoCC(String fileDir)
+    public ProcesadorExcel_ReporteFugaFS_LlamadoCC(String fileDir, String nombreHoja)
     {
-        super(fileDir);
+        super(fileDir,"Datos");
     }
 
-    public boolean obtieneDatosXLS(String nombreHoja, int rowTitulos, int colInicio)
+
+    @Override
+    public boolean obtieneDatosXLSX()
     {
+        return false;
+    }
+    
+    @Override
+    public boolean obtieneDatosXLS()
+    {
+        int rowTitulos=1;
+        int colInicio=1;
         FileInputStream file = null;
         File f = this.abrirArchivo(this.fileDir);
         if(f==null)
@@ -126,29 +136,13 @@ public class ProcesadorExcel_ReporteFugaFS_LlamadoCC extends ProcesadorExcel
             tempFile.renameTo(new File(fileDestino));
             tempFile.delete();
             workbook.close();
+            file.close();
         }
-        catch (FileNotFoundException ex)
+        catch (Exception ex)
         {
-            System.out.println("Archivo no encontrado!: "+ex);
-            Logger.getLogger(ProcesadorExcel_ReporteFugaFS_LlamadoCC.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("problema para obetener datos excel: "+ex);
+            return false;
         }
-        catch (IOException ex)
-        {
-            System.out.println("problema io!: "+ex);
-            Logger.getLogger(ProcesadorExcel_ReporteFugaFS_LlamadoCC.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally
-        {
-            try
-            {
-                file.close();
-            }
-            catch (IOException ex)
-            {
-                System.out.println("problema io!: "+ex);
-                Logger.getLogger(ProcesadorExcel_ReporteFugaFS_LlamadoCC.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return false;
+        return true;
     }
 }

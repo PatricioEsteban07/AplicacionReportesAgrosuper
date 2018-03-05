@@ -15,27 +15,21 @@ import org.apache.poi.ss.usermodel.Sheet;
  *
  * @author Patricio
  */
-public class ProcesadorExcel
+public abstract class ProcesadorExcel
 {
-
     public static final String EXCEL_XLS = "XLS";
     public static final String EXCEL_XLSX = "XLSX";
 
     public String fileDir;
+    public String nombreHoja;
     public String tipo;
 
-    public ProcesadorExcel(String fileDir)
+    public ProcesadorExcel(String fileDir, String nombreHoja)
     {
         this.fileDir = fileDir;
-        this.tipo = this.fileDir.toUpperCase().substring(this.fileDir.length() - 4)
-                .replace(".", "");
+        this.nombreHoja=nombreHoja;
+        this.tipo = this.fileDir.toUpperCase().substring(this.fileDir.length() - 4).replace(".", "");
     }
-
-    
-    
-    
-    
-    
     
     public int buscaColumna(Sheet hoja, String tituloColumna, int rowTitulos, int colInicio)
     {
@@ -69,5 +63,21 @@ public class ProcesadorExcel
         }
         return archivoExcel;
     }
-
+    
+    public boolean generarCSV()
+    {
+        switch(this.tipo)
+        {
+            case EXCEL_XLSX:
+                return obtieneDatosXLSX();
+            case EXCEL_XLS:
+                return obtieneDatosXLS();
+        }
+        System.out.println("ojo, tipo no reconocido");
+        return false;
+    }
+    
+    public abstract boolean obtieneDatosXLSX();
+    public abstract boolean obtieneDatosXLS();
+    
 }

@@ -242,30 +242,6 @@
   FOREIGN KEY (material_id) REFERENCES material(id)
   );
   
-  CREATE TABLE IF NOT EXISTS despacho(
-  id VARCHAR(16) NOT NULL,
-  centro_id VARCHAR(8) NOT NULL,
-  fecha DATE NOT NULL,
-  clienteLocal_id VARCHAR(16) NOT NULL,
-
-  PRIMARY KEY (id),
-  
-  FOREIGN KEY (centro_id) REFERENCES centro(id),
-  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id)
-  );
-  
-  CREATE TABLE IF NOT EXISTS despacho_material(
-  despacho_id VARCHAR(16) NOT NULL,
-  material_id VARCHAR(8) NOT NULL,
-  despachoCj FLOAT DEFAULT 0,
-  despachoKg FLOAT DEFAULT 0,
-
-  PRIMARY KEY (despacho_id,material_id),
-  
-  FOREIGN KEY (despacho_id) REFERENCES despacho(id),
-  FOREIGN KEY (material_id) REFERENCES material(id)
-  );
-  
   CREATE TABLE IF NOT EXISTS despacho_faltante(
   centro_id VARCHAR(8) NOT NULL,
   fecha DATE NOT NULL,
@@ -273,21 +249,6 @@
   material_id VARCHAR(8) NOT NULL,
   despachoKg FLOAT DEFAULT 0,
   despachoCj FLOAT DEFAULT 0,
-  faltanteKg FLOAT DEFAULT 0,
-  faltanteCj FLOAT DEFAULT 0,
-
-  PRIMARY KEY (centro_id,fecha,clienteLocal_id,material_id),
-  
-  FOREIGN KEY (centro_id) REFERENCES centro(id),
-  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
-  FOREIGN KEY (material_id) REFERENCES material(id)
-  );
-  
-  CREATE TABLE IF NOT EXISTS faltante(
-  centro_id VARCHAR(8) NOT NULL,
-  fecha DATE NOT NULL,
-  clienteLocal_id VARCHAR(16) NOT NULL,
-  material_id VARCHAR(8) NOT NULL,
   faltanteKg FLOAT DEFAULT 0,
   faltanteCj FLOAT DEFAULT 0,
 

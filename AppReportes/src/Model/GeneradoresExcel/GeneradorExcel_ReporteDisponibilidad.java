@@ -36,7 +36,7 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
     }
 
     @Override
-    public boolean generarArchivo(HashMap<String, RecursoDB> resources)
+    public boolean generarArchivo(HashMap<String, RecursoDB> resources, String fileDir)
     {
         FileOutputStream file = null;
         try
@@ -111,7 +111,7 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
                 archivoXLS.delete();
                 return false;
             }
-            GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(System.getProperty("user.home") + "/Desktop/" + this.nombreTabla + ".xlsx"));
+            GeneradorExcel_ReporteDisponibilidad.copyFile(archivoXLS, new File(fileDir + "/" + this.nombreTabla + ".xlsx"));
             file.close();            
             archivoXLS = new File(rutaArchivo);
             archivoXLS.delete();
@@ -128,7 +128,6 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
     private void setCellContent(SXSSFRow row, int i, String content, CellType cellType)
     {
         SXSSFCell cAux=row.createCell(i);
-       // System.out.println("Style:"+cAux.getCellStyle().getDataFormat());
         cAux.setCellType(cellType);    
         cAux.setCellValue(content);
     }

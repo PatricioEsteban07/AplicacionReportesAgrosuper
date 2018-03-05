@@ -152,7 +152,6 @@ public class MainController implements Initializable
                 {
                     setFiltroPeriodo(newValue.intValue());
                 }
-
             }
         });
     }
@@ -257,6 +256,7 @@ public class MainController implements Initializable
                 this.pane_FugaFS.setStyle("");
                 //bloquear p2 / bloquear p3 / bloquear button reporte
                 this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
+                this.reporteSeleccionado=-1;
                 actualizarEstadoProceso("Paso 1: Seleccione el reporte que necesite generar.");
                 break;
             case 2:
@@ -272,20 +272,19 @@ public class MainController implements Initializable
                 break;
         }
         
-        this.vBox_paso1.setDisable((this.pasoActual>=1) ? false : true);
-        this.vBox_paso2.setDisable((this.pasoActual>=2) ? false : true);
-        this.vBox_paso3.setDisable((this.pasoActual>=3) ? false : true);
+        this.vBox_paso1.setDisable((this.pasoActual < 1));
+        this.vBox_paso2.setDisable((this.pasoActual < 2));
+        this.vBox_paso3.setDisable((this.pasoActual < 3));
         this.hBoxEstado_paso1.setStyle((this.pasoActual==1) ? style_actual : ((this.pasoActual<1) ? style_block : style_success));
         this.hBoxEstado_paso2.setStyle((this.pasoActual==2) ? style_actual : ((this.pasoActual<2) ? style_block : style_success));
         this.hBoxEstado_paso3.setStyle((this.pasoActual==3) ? style_actual : ((this.pasoActual<3) ? style_block : style_success));
-        this.button_generarReporte.setDisable((this.pasoActual==3) ? false : true);
+        this.button_generarReporte.setDisable((this.pasoActual != 3));
         setArchivoSeleccionado(null);
         return true;
     }
     
     public boolean actualizarEstadoProceso(String mensaje)
     {
-        String style, textStyle;
         this.panel_estadoSistema.setStyle("-fx-background-color: white;");
         this.text_estadoSistema.setText(mensaje);
         return true;
@@ -352,7 +351,6 @@ public class MainController implements Initializable
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Selección de carpeta para guardar reporte");
         File selectedDir = dirChooser.showDialog(null);
-
         if (selectedDir != null)
         {
             setArchivoSeleccionado(selectedDir.getPath());
@@ -361,7 +359,7 @@ public class MainController implements Initializable
         {
             setArchivoSeleccionado(null);
         }
-        validarSeleccionArchivo();
+        this.reporteBase.setFileDir(this.textField_archivoDestino.getText());
     }
 
     private void setArchivoSeleccionado(String dirAux)
@@ -374,17 +372,6 @@ public class MainController implements Initializable
         {
             this.textField_archivoDestino.setText(dirAux);
         }
-    }
-    
-    public boolean validarSeleccionArchivo()
-    {
-        if (this.textField_archivoDestino.getText().equals(System.getProperty("user.home")+"/Desktop/"))
-        {
-            this.button_generarReporte.setDisable(true);
-            return false;
-        }
-        this.button_generarReporte.setDisable(false);
-        return true;
     }
     
     public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
