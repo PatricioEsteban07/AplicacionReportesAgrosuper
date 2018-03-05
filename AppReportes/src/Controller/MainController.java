@@ -86,7 +86,6 @@ public class MainController implements Initializable
     @FXML
     private HBox hBoxEstado_paso3;
     
-
     private CheckComboBox checkComboBox_fechaSemana;
     private CheckComboBox checkComboBox_fechaMes;
     private CheckComboBox checkComboBox_fechaAnio;
@@ -106,8 +105,7 @@ public class MainController implements Initializable
         this.reporteBase=null;
         this.reporteSeleccionado=-1;
         inicializarPeriodo();
-        actualizarEstadoPasos(1);
-        this.db.probarDBConection();
+        actualizarEstadoPasos(this.db.probarDBConection() ? 1 : 0);
     }
 
     public boolean generarReporteBase(int opcion) throws InterruptedException
@@ -244,11 +242,20 @@ public class MainController implements Initializable
             return false;
         }
         this.pasoActual=op;
+        String style_alert="-fx-background-color: red;";
         String style_success="-fx-background-color: cornflowerblue;";
         String style_actual="-fx-background-color: blue;";
         String style_block="-fx-background-color: gray;";
         switch(this.pasoActual)
         {
+            case 0://deshabilitar todo por no conexión a DB
+                this.pane_Disponibilidad.setStyle("");
+                this.pane_ArbolPerdidas.setStyle("");
+                this.pane_FugaFS.setStyle("");
+                this.choiceBox_periodo.getSelectionModel().select(-1);//solo cuando opcion < 3
+                this.reporteSeleccionado=-1;
+                actualizarEstadoProceso("AVISO: No es posible una conexión a la Base de Datos. Verifique información para la conexión.");
+                break;
             case 1:
                 //eliminar selecion reporte / dejar en null variable
                 this.pane_Disponibilidad.setStyle("");
@@ -275,9 +282,9 @@ public class MainController implements Initializable
         this.vBox_paso1.setDisable((this.pasoActual < 1));
         this.vBox_paso2.setDisable((this.pasoActual < 2));
         this.vBox_paso3.setDisable((this.pasoActual < 3));
-        this.hBoxEstado_paso1.setStyle((this.pasoActual==1) ? style_actual : ((this.pasoActual<1) ? style_block : style_success));
-        this.hBoxEstado_paso2.setStyle((this.pasoActual==2) ? style_actual : ((this.pasoActual<2) ? style_block : style_success));
-        this.hBoxEstado_paso3.setStyle((this.pasoActual==3) ? style_actual : ((this.pasoActual<3) ? style_block : style_success));
+        this.hBoxEstado_paso1.setStyle((this.pasoActual==0) ? style_alert : ((this.pasoActual==1) ? style_actual : ((this.pasoActual<1) ? style_block : style_success)));
+        this.hBoxEstado_paso2.setStyle((this.pasoActual==0) ? style_alert : ((this.pasoActual==2) ? style_actual : ((this.pasoActual<2) ? style_block : style_success)));
+        this.hBoxEstado_paso3.setStyle((this.pasoActual==0) ? style_alert : ((this.pasoActual==3) ? style_actual : ((this.pasoActual<3) ? style_block : style_success)));
         this.button_generarReporte.setDisable((this.pasoActual != 3));
         setArchivoSeleccionado(null);
         return true;
@@ -293,27 +300,29 @@ public class MainController implements Initializable
     @FXML
     public boolean buttonGenerarReporte() throws InterruptedException
     {
+        if(this.pasoActual==0)
+        {
+            CommandNames.generaMensaje("Acceso Denegado", AlertType.ERROR, "No tiene permisos para accesar a esta opción",
+                    "Reconfigure la conexión a la base de datos y luego intente acceder a esta opción.");
+            this.actualizarEstadoPasos(0);
+            return false;
+        }
         if (this.choiceBox_periodo.getSelectionModel().getSelectedIndex() == -1)
         {
             System.out.println("OJO, NO DEBERIA PASAR POR ACA!");
             return false;
         }
         Alert alertAux=CommandNames.generaMensaje("Generación de reporte en proceso", 
-            Alert.AlertType.NONE, null,"Estamos generando su reporte, esta operación puede demorar dependiendo del "
-                    + "detalle y cantidad de datos seleccionados...",false);
+        Alert.AlertType.NONE, null,"Estamos generando su reporte, esta operación puede demorar dependiendo del "
+            + "detalle y cantidad de datos seleccionados...",false);
         alertAux.show();
         
         ArrayList<String> columnasTabla = this.reporteBase.columnasExcel;
-        if (columnasTabla == null)
+        if (columnasTabla == null || !generarReporte(this.reporteBase, columnasTabla))
         {
             alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
             alertAux.close();
-            return false;
-        }
-        if (!generarReporte(this.reporteBase, columnasTabla))
-        {
-            alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
-            alertAux.close();
+            actualizarEstadoPasos(1);
             return false;
         }
         alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
@@ -441,6 +450,12 @@ public class MainController implements Initializable
     @FXML
     public void poblarDB()
     {
+        if(this.pasoActual==0)
+        {
+            CommandNames.generaMensaje("Acceso Denegado", AlertType.ERROR, "No tiene permisos para accesar a esta opción",
+                    "Reconfigure la conexión a la base de datos y luego intente acceder a esta opción.");
+            return;
+        }
         String resource = "/Views/ImportarCSV.fxml";
         String title = "Importar datos a Base de Datos";
         Parent root = cargarModal(resource, title);
@@ -467,6 +482,7 @@ public class MainController implements Initializable
         ImportarCSVController controller = loader.getController();
         //setea valores base
         controller.setDB(db);
+        controller.setParent(this);
         stage.setResizable(false);
         stage.showAndWait();
     }
@@ -474,6 +490,12 @@ public class MainController implements Initializable
     @FXML
     public void poblarDBMultiple()
     {
+        if(this.pasoActual==0)
+        {
+            CommandNames.generaMensaje("Acceso Denegado", AlertType.ERROR, "No tiene permisos para accesar a esta opción",
+                    "Reconfigure la conexión a la base de datos y luego intente acceder a esta opción.");
+            return;
+        }
         String resource = "/Views/ImportarCSVMultiple.fxml";
         String title = "Importación múltiple de datos a Base de Datos";
         Parent root = cargarModal(resource, title);
@@ -500,6 +522,7 @@ public class MainController implements Initializable
         ImportarCSVMultipleController controller = loader.getController();
         //setea valores base
         controller.setDB(db);
+        controller.setParent(this);
         stage.setResizable(false);
         stage.showAndWait();
     }
@@ -533,6 +556,7 @@ public class MainController implements Initializable
         configDBInfoController controller = loader.getController();
         //setea valores base
         controller.completaInfo(db);
+        controller.setParent(this);
         stage.setResizable(false);
         stage.showAndWait();
     }

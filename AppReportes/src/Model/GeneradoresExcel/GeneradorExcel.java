@@ -40,28 +40,6 @@ public abstract class GeneradorExcel
 
         return font;
     }
-    /*
-    protected HSSFCellStyle createStyle(HSSFWorkbook workbook, HSSFFont font, short cellAlign, short cellColor, boolean cellBorder, short cellBorderColor) 
-    {
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        style.setAlignment(cellAlign);
-        style.setFillForegroundColor(cellColor);
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        if (cellBorder) {
-            style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-            style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-            style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-            style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-
-            style.setTopBorderColor(cellBorderColor);
-            style.setLeftBorderColor(cellBorderColor);
-            style.setRightBorderColor(cellBorderColor);
-            style.setBottomBorderColor(cellBorderColor);
-        }
-        return style;
-    }
-    */
     
     public static void copyFile(File sourceFile, File destFile) throws IOException 
     {

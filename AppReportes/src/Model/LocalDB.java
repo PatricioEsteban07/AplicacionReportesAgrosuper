@@ -97,7 +97,7 @@ public class LocalDB
     public boolean probarDBConection()
     {
         Alert alertAux=CommandNames.generaMensaje("Conectando a la Base de datos", 
-                Alert.AlertType.NONE, null,"Estamos intentando una conexión a la base de datos de acuerdo a la información ingresada...",false);
+            Alert.AlertType.NONE, null,"Estamos intentando una conexión a la base de datos de acuerdo a la información ingresada...",false);
         alertAux.show();
         try
         {

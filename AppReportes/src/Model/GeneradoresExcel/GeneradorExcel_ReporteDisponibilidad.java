@@ -43,9 +43,7 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         {
             HashMap<String, BaseReporteDisponibilidad> filas = new HashMap<>();
             //generación de archivo excel base
-            // System.out.println("El directorio temporal del sistema es "+System.getProperty("java.io.tmpdir"));
             String rutaArchivo = System.getProperty("java.io.tmpdir") + "/" + this.nombreTabla + ".xlsx";
-            // String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+this.nombreTabla+".xlsx";
             File archivoXLS = new File(rutaArchivo);
             //Se crea el libro de excel usando el objeto de tipo Workbook
             SXSSFWorkbook libro = new SXSSFWorkbook();

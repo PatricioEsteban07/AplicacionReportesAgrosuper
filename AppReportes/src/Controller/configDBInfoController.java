@@ -43,10 +43,14 @@ public class configDBInfoController implements Initializable
     private PasswordField passField_pass;
 
     public LocalDB db;
+    private URL location;
+    
+    private MainController parent;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        this.location=location;
     }
 
     public void completaInfo(LocalDB db)
@@ -74,11 +78,12 @@ public class configDBInfoController implements Initializable
             if(new LocalDB(new DBConfig(host, port, name, user, pass)).probarDBConection())
             {
                 //copiar datos
-                this.db.dbConfig.dbName=name;
-                this.db.dbConfig.host=host;
-                this.db.dbConfig.port=port;
-                this.db.dbConfig.user=user;
-                this.db.dbConfig.pass=pass;
+                if(this.db.dbConfig.actualizarDatos(host,port,name,user,pass))
+                    parent.actualizarEstadoPasos(1);
+                else
+                {
+                    System.out.println("ALGO PASO, REVISAR d:");
+                }
                 this.buttonCancelar();
             }
         }
@@ -155,6 +160,10 @@ public class configDBInfoController implements Initializable
             resultado = false;
         }
         return resultado;
+    }
+    
+    public void setParent(MainController parent) {
+        this.parent = parent ;
     }
 
 }

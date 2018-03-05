@@ -65,6 +65,7 @@ public class ImportarCSVController implements Initializable
     private String fileDir;
     private String fileName;
     private CSVImport csvImport;
+    private MainController parent;
 
     /**
      * Initializes the controller class.
@@ -364,5 +365,9 @@ public class ImportarCSVController implements Initializable
     public void setDB(LocalDB db)
     {
         this.db = db;
+    }
+    
+    public void setParent(MainController parent) {
+        this.parent = parent ;
     }
 }

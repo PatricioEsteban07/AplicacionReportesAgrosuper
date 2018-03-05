@@ -51,6 +51,7 @@ public class ImportarCSVMultipleController implements Initializable
 
     private LocalDB db;
     private String directorio;
+    private MainController parent;
 
     /**
      * Initializes the controller class.
@@ -117,8 +118,9 @@ public class ImportarCSVMultipleController implements Initializable
     {                 
         Alert alert=CommandNames.generaMensaje("Aviso de confirmación", Alert.AlertType.CONFIRMATION, "¿Está seguro de la acción a realizar?", 
                 "Considere verificar el archivo CSV seleccionado y la tabla tal que, los datos del archivo coincidan con los campos a completar en "
-                + "la tabla seleccionada de la Base de Datos. Se realizará una verificación simple por lo cuál si no está seguro de su"
-                + "selección, verifique y vuelva a intentarlo.",false);
+                + "la tabla seleccionada de la Base de Datos. En caso que falten archivos CSV el sistema omitirá su carga de información, "
+                + "sin embargo esto podría provocar que otras tablas no carguen su información debido a la falta de códigos. Se realizará una "
+                + "verificación simple por lo cuál si no está seguro de su selección, verifique y vuelva a intentarlo. ",false);
         alert.showAndWait().ifPresent(response ->
         {
             if (response == ButtonType.OK)
@@ -202,8 +204,7 @@ public class ImportarCSVMultipleController implements Initializable
         HashMap<String,String> files=new HashMap<>();
         for (int i = 0; aux!=null && i < aux.length; i++)
         {
-            System.out.println("posible: "+aux[i].substring(aux[i].length()-4));
-            if(aux[i].contains(".csv"))
+            if(aux[i].substring(aux[i].length()-4).toLowerCase().equals(".csv"))
             {
                 System.out.println("F:"+directorio+"/"+aux[i]);
                 files.put(aux[i].replace(".csv", ""),aux[i]);
@@ -217,7 +218,6 @@ public class ImportarCSVMultipleController implements Initializable
         }
         System.out.println("keys: "+files.keySet());
         
-        /*
         if(files.containsKey("region"))
             new CSVImport_Region(this.db, directorio+"/"+files.get("region"),
                 "regiones").procesarArchivo();
@@ -293,7 +293,11 @@ public class ImportarCSVMultipleController implements Initializable
         if(files.containsKey("facturaVentas_material"))
             new CSVImport_FacturaVentaMaterial(this.db, directorio+"/"+files.get("facturaVentas_material"),
                 "facturaVentas_material").procesarArchivo();
-        */
+        
         return true;
+    }
+    
+    public void setParent(MainController parent) {
+        this.parent = parent ;
     }
 }

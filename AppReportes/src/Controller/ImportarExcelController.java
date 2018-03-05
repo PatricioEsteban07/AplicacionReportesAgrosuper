@@ -68,6 +68,7 @@ public class ImportarExcelController implements Initializable
     private String fileName;
     private CSVImport csvImport;
     private ProcesadorExcel excelProcesador;
+    private MainController parent;
 
     /**
      * Initializes the controller class.
@@ -395,5 +396,9 @@ public class ImportarExcelController implements Initializable
     public void setDB(LocalDB db)
     {
         this.db = db;
+    }
+    
+    public void setParent(MainController parent) {
+        this.parent = parent ;
     }
 }
