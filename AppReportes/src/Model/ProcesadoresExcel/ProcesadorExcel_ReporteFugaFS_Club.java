@@ -32,7 +32,6 @@ public class ProcesadorExcel_ReporteFugaFS_Club extends ProcesadorExcel
         super(fileDir,"Datos Clientes");
     }
 
-
     @Override
     public boolean obtieneDatosXLS()
     {
@@ -49,7 +48,6 @@ public class ProcesadorExcel_ReporteFugaFS_Club extends ProcesadorExcel
             return false;
         }
         try{
-            
             // leer archivo excel
             file = new FileInputStream(f);
             Workbook workbook = StreamingReader.builder()
@@ -115,7 +113,7 @@ public class ProcesadorExcel_ReporteFugaFS_Club extends ProcesadorExcel
             workbook.close();
             file.close();
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             System.out.println("problema para obetener datos excel: "+ex);
             return false;

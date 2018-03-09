@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 
 /**
- *
+ * Clase que trabaja con la base de datos para generar el reporte Disponibilidad.
  * @author Patricio
  */
 public class RecursoDB_ReporteDisponibilidad extends RecursoDB
@@ -28,13 +28,21 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
         super("Reporte Disponibilidad","{call sp_reporte_disponibilidad(?,?) }",db);
     }
     
+    /**
+     * Método que se encarga de llamar al método prepareCall() para ejecutar el procedimiento almacenado de la base de datos 
+     * para el reporte en específico. El resultado de trata y se guarda en un listado en el orden que se necesita. Finalmente 
+     * este mpetodo retorna el listado de elementos correspondiente al resultado del procedimiento almacenado.
+     * @param fechaInicio contiene la fecha inicio para el llamado al procedimiento almacenado en la base de datos.
+     * @param fechaFin contiene la fecha término para el llamado al procedimiento almacenado en la base de datos.
+     * @return un listado de elementos resultante del llamado del procedimiento almacenado, o null en otro caso.
+     */
     public ArrayList<String> procedimientoAlmacenado(String fechaInicio, String fechaFin)
     {
         try
         {
             System.out.println("FI: "+fechaInicio+" / FF: "+fechaFin);
-            connect();
-            CallableStatement cs = this.conn.prepareCall(this.query);
+            this.db.connect();
+            CallableStatement cs = this.db.conn.prepareCall(this.query);
             cs.setString(1, fechaInicio);
             cs.setString(2, fechaFin);
             if(!cs.execute())
@@ -67,7 +75,7 @@ public class RecursoDB_ReporteDisponibilidad extends RecursoDB
                     "No existe información asociada al período seleccionado para el reporte.");
                 return null;
             }
-            close();
+            this.db.close();
             return resultados;
         }
         catch (SQLException | ClassNotFoundException ex)

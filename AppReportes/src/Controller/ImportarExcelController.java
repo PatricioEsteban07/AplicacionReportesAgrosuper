@@ -31,8 +31,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * [CLASE EN OCNSTRUCCION] FXML Controller class: 
+ * Controlador encargado de la vista para realizar tratamiento de archivos Excel, generación de archivos CSV de éste y 
+ * la posterior carga de datos a la base de datos (En construcción).
  * @author Patricio
  */
 public class ImportarExcelController implements Initializable
@@ -85,7 +86,12 @@ public class ImportarExcelController implements Initializable
         validarFormulario();
     }
     
-
+    /**
+     * Método para modificar variables que contienen la ubicación del archivo Excel seleccionado, 
+     * o NULL en caso que no se haya definido.
+     * @param dirAux contiene la dirección del archivo Excel seleccionado
+     * @param fileName contiene el nombre del archivo Excel seleccionado
+     */
     private void setFileSeleccionado(String dirAux, String fileName)
     {
         if (dirAux == null)
@@ -100,6 +106,14 @@ public class ImportarExcelController implements Initializable
         }
     }
 
+    /**
+     * [METODO EN CONSTRUCCION] Método para actualizar el mensaje de estado del sistema en el proceso de 
+     * procesamiento de un archivo Excel y carga de datos a la base de datos.
+     * @param info contiene una cadena de texto que, dependiendo de su contenido, actualiza el mensaje de estado de 
+     * la ventana asociada: STATUS_READY para definir que se puede iniciar la importación, STSTUS_SUCCESS para definir que 
+     * la importación fué exitosa, STATUS_RUNNING para definir que el proceso de importación está en ejecución, y 
+     * STATUS_ERROR para definir que hubo un problema al momento de realizar la importación y que se ha cancelado.
+     */
     public boolean setEstadoOperacion(String info)
     {
         //STATUS_DEFAULT
@@ -134,37 +148,15 @@ public class ImportarExcelController implements Initializable
         return true;
     }
 
+    /**
+     * [METODO EN CONSTRUCCION] Método para inicializar listado de tablas de la base de datos.
+     */
     public void inicializarTablasDestino()
     {
         ArrayList<String> nombreTablas = new ArrayList<>();
         nombreTablas.add("Agrupado");
         nombreTablas.add("Categoría Cliente");
-        nombreTablas.add("Centro");
-        nombreTablas.add("Cliente");
-        nombreTablas.add("Cliente-Local");
-        nombreTablas.add("Club Cliente");
-        nombreTablas.add("Despacho");
-        nombreTablas.add("Despacho-Material");
-        nombreTablas.add("Estado Refrigerado");
-        nombreTablas.add("FacturaVenta");
-        nombreTablas.add("FacturaVentas-Material");
-        nombreTablas.add("Faltante");
-        nombreTablas.add("Marca");
-        nombreTablas.add("Material");
-        nombreTablas.add("N2");
-        nombreTablas.add("N3");
-        nombreTablas.add("N4");
-        nombreTablas.add("NS Cliente");
-        nombreTablas.add("Oficina de Ventas");
-        nombreTablas.add("Pedido");
-        nombreTablas.add("Pedido-Material");
-        nombreTablas.add("Región");
-        nombreTablas.add("Sector");
-        nombreTablas.add("Stock");
-        nombreTablas.add("Subcategoría Cliente");
-        nombreTablas.add("Tipo de Cliente");
-        nombreTablas.add("Tipo Envasado");
-        nombreTablas.add("Zona de Ventas");
+        nombreTablas.add("clubCliente");
         ObservableList<String> items = FXCollections.observableArrayList();
         items.addAll(nombreTablas);
         this.choiceBox_TablasDestino = new ChoiceBox();
@@ -185,6 +177,11 @@ public class ImportarExcelController implements Initializable
         this.gp.add(this.choiceBox_TablasDestino, 3, 1);
     }
 
+    /**
+     * [METODO EN CONSTRUCCION] Método para actuar en conjunto con el listado de archivos Excel dispuestos a procesar. Cuando se seleccione 
+     * un archivo Excel, la aplicación generará una instancia del objeto ProcesadorExcel acorde a la opción seleciconada 
+     * para el procesamiento e importación de datos.
+     */
     private void setSelectionTable(int value)
     {
         switch (value)
@@ -195,85 +192,10 @@ public class ImportarExcelController implements Initializable
             case 1://categoriaCliente
                 this.csvImport = new CSVImport_CategoriaCliente(this.db, "", "");
                 break;
-            case 2://centro
-                this.csvImport = new CSVImport_Centro(this.db, "", "");
-                break;
-            case 3://cliente
-                this.csvImport = new CSVImport_Cliente(this.db, "", "");
-                break;
-            case 4://cliente-local
-                this.csvImport = new CSVImport_ClienteLocal(this.db, "", "");
-                break;
-            case 5://clubCliente
+            case 2://clubCliente
                 //    this.csvImport = new CSVImport_ClubCliente(this.db, "", "");
                 System.out.println("OJO, OPCION NO IMPLEMENTADA");
                 this.csvImport = null;
-                break;
-            case 6://despacho
-                this.csvImport = new CSVImport_Despacho(this.db, "", "");
-                break;
-            case 7://despacho-material
-                this.csvImport = new CSVImport_DespachoMaterial(this.db, "", "");
-                break;
-            case 8://estadoRefrigerado
-                this.csvImport = new CSVImport_EstadoRefrigerado(this.db, "", "");
-                break;
-            case 9://facturaVenta
-                this.csvImport = new CSVImport_FacturaVenta(this.db, "", "");
-                break;
-            case 10://facturaVenta-material
-                this.csvImport = new CSVImport_FacturaVentaMaterial(this.db, "", "");
-                break;
-            case 11://faltante
-                this.csvImport = new CSVImport_Faltante(this.db, "", "");
-                break;
-            case 12://marca
-                this.csvImport = new CSVImport_Marca(this.db, "", "");
-                break;
-            case 13://material
-                this.csvImport = new CSVImport_Material(this.db, "", "");
-                break;
-            case 14://n2
-                this.csvImport = new CSVImport_N2(this.db, "", "");
-                break;
-            case 15://n3
-                this.csvImport = new CSVImport_N3(this.db, "", "");
-                break;
-            case 16://n4
-                this.csvImport = new CSVImport_N4(this.db, "", "");
-                break;
-            case 17://ns cliente
-                this.csvImport = new CSVImport_NSCliente(this.db, "", "");
-                break;
-            case 18://oficinaVentas
-                this.csvImport = new CSVImport_OficinaVentas(this.db, "", "");
-                break;
-            case 19://pedido
-                this.csvImport = new CSVImport_Pedido(this.db, "", "");
-                break;
-            case 20://pedido-material
-                this.csvImport = new CSVImport_PedidoMaterial(this.db, "", "");
-                break;
-            case 21://region
-                this.csvImport = new CSVImport_Region(this.db, "", "");
-                break;
-            case 22://sector
-                this.csvImport = new CSVImport_Sector(this.db, "", "");
-                break;
-            case 23://stock
-                this.csvImport = new CSVImport_Stock(this.db, "", "");
-                break;
-            case 24://subcategoriaCliente
-                this.csvImport = new CSVImport_SubcategoriaCliente(this.db, "", "");
-                break;
-            case 25://tipo cliente
-                this.csvImport = new CSVImport_TipoCliente(this.db, "", "");
-                break;
-            case 26://tipoEnvasado
-                this.csvImport = new CSVImport_TipoEnvasado(this.db, "", "");
-                break;
-            case 27://zonaVentas
-                this.csvImport = new CSVImport_ZonaVentas(this.db, "", "");
                 break;
             default://no reconocido o -1
                 System.out.println("OPCION NO RECONOCIDA O -1");
@@ -289,6 +211,10 @@ public class ImportarExcelController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método para verificar que se haya seleccionado un archivo Excel.
+     * @return true cuando las condiciones previamente descritas se cumplen, o false en caso contrario.
+     */
     public boolean validarFormulario()
     {
         if (this.textField_fileDir.getText().equals(EXCEL_NON_SELECTED)
@@ -304,6 +230,9 @@ public class ImportarExcelController implements Initializable
         return true;
     }
 
+    /**
+     * Método para vaciar variables que contengan dirección del archivo Excel.
+     */
     public void limpiarTablero()
     {
         this.csvImport = null;
@@ -314,6 +243,12 @@ public class ImportarExcelController implements Initializable
         this.button_Import.setDisable(true);
     }
 
+    
+    /**
+     * [METODO EN CONSTRUCCION] Método que en base a un archivo Excel genera archivos CSV para su posterior carga a la base de datos. 
+     * Se despliega un Alert al usuario para confirmar la acción y si el usuario confirma, se inicia el procesamiento del archivo Excel, 
+     * éste genera archivos CSV los cuáles e cargan a las tablas adecuadas de la base de datos.
+     */
     @FXML
     public void procesarExcel()
     {
@@ -338,6 +273,14 @@ public class ImportarExcelController implements Initializable
     
     }
     
+    /**
+     * [METODO EN CONSTRUCCION] Método que se encarga de iniciar la importación del archivo CSV. Se despliega un Alert al usuario para confirmar la acción. 
+     * Si el usuario confirma, se formatea la dirección del archivo CSV para posteriormente llamar al método procesarArchivo() 
+     * ubicado dentro de la instancia CSVImport para que realice la carga de información a la base de datos en la tabla correspondiente.
+     * Una vez finalizado el proceso se llama al método limpiarTablero() para inicializar la ventana. Dentro de todo este proceso 
+     * se ejecuta el método setEstadoOperación() para actualizar el mensaje de estado en todo momento.
+     * @return true si la importación fué exitosa, o false en caso contrario.
+     */
     public boolean importarCSV()
     {       
         System.out.println("paso en buena");
@@ -364,8 +307,11 @@ public class ImportarExcelController implements Initializable
         return true;
     }
 
+    /**
+     * Método que despliega un FileChooser para seleccionar la ubicación del archivo Excel a tratar.
+     */
     @FXML
-    public void seleccionarArchivoCSV()
+    public void seleccionarArchivoExcel()
     {
         //validar datos
         //no cerrar la ventana
@@ -386,6 +332,9 @@ public class ImportarExcelController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {
@@ -393,11 +342,19 @@ public class ImportarExcelController implements Initializable
         s.close();
     }
 
+    /**
+     * Método que guarda en una variable la instancia de la configuracion de la base de datos del sistema.
+     * @param db contiene la información de la conexión a la base de datos.
+     */
     public void setDB(LocalDB db)
     {
         this.db = db;
     }
     
+    /**
+     * Método que define en una variable el controlador padre de tal ventana
+     * @param parent contiene el controlador de la ventana principal
+     */
     public void setParent(MainController parent) {
         this.parent = parent ;
     }

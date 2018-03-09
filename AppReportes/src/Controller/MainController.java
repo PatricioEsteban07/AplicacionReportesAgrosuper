@@ -50,7 +50,8 @@ import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
 /**
- * FXML Controller class
+ * FXML Controller class:
+ * Controlador de la ventana principal del sistema
  *
  * @author Patricio
  */
@@ -108,6 +109,13 @@ public class MainController implements Initializable
         actualizarEstadoPasos(this.db.probarDBConection() ? 1 : 0);
     }
 
+    /**
+     * Método que, dado el reporte seleccionado por el usuario para ser generado, prepara los objetos base necesarios 
+     * para modificar filtros y llamar a los métodos adecuados para la generación del reporte.
+     * @param opcion recibe la opcion que identifica al tipo de reporte que el usuario solicita generar
+     * @return true en caso que la operación sea exitosa y false en caso que algo ocurra mal.
+     * @exception InterruptedException
+     */
     public boolean generarReporteBase(int opcion) throws InterruptedException
     {
         if(this.reporteSeleccionado==opcion)
@@ -137,6 +145,10 @@ public class MainController implements Initializable
         return true;
     }
 
+    /**
+     * Método para inicializar el filtro de fechas, configurando tramos de fechas válidos y un Listener que responde 
+     * a cambios dentro del elemento.
+     */
     public void inicializarPeriodo()
     {
         this.choiceBox_periodo.setItems(FXCollections.observableArrayList("Año", "Mes", "Semana",
@@ -154,6 +166,9 @@ public class MainController implements Initializable
         });
     }
 
+    /**
+     * Método para vaciar la selección del usuario en el filtro fecha.
+     */
     @FXML
     public void buttonVaciarFiltroFecha()
     {
@@ -168,6 +183,9 @@ public class MainController implements Initializable
         actualizarEstadoPasos(2);
     }
 
+    /**
+     * Método para inicializar los tramos de fechas para los objetos que dependan de tal información.
+     */
     public void inicializarFechas()
     {
         ObservableList<String> listadoAux = FXCollections.observableArrayList();
@@ -196,6 +214,12 @@ public class MainController implements Initializable
         this.checkComboBox_fechaAnio.setStyle("-fx-padding: 0 10 0 0");
     }
 
+    /**
+     * Método que se activa en base al Listener agregado en el objeto del filtro de fechas. Modifica la opción correspondiente 
+     * al tipo de filtro fecha aplicado por el usuario.
+     * @param opcion contiene la opción correspondiente al tipo de filtro fecha aplicado para que el sistema despliegue la 
+     * ventana asociada a tal opción.
+     */
     public void setFiltroPeriodo(int opcion)
     {
         int opcionAux=this.reporteBase.filtros.get("Filtro_Fecha").getOpcion();
@@ -226,14 +250,26 @@ public class MainController implements Initializable
         }
     }
 
+    /**
+     * Método que despliega un Alert con información del sistema.
+     */
     @FXML
     public void infoApp()
     {
         CommandNames.generaMensaje("Información de Aplicación", AlertType.INFORMATION, "Sistema de Generación de Reportes",
-                "Aplicación en proceso de desarrollo :). \n El código fuente de dicha aplicación está disponible "
-                        + "en manos de área de Gestión Ventas de Agrosuper.");
+            "Proyecto de práctica profesional - Aplicación en fase inicial. \n El código fuente de dicha aplicación está disponible "
+            + "en manos de área de Gestión Ventas de Agrosuper. Cualquier uso, reproducción y modificación "
+            + "debe ser aprobada por el área propietaria.");
     }
     
+    /**
+     * Método que actualiza el paso en el cuál el usuario debe completar para continuar con la generación del reporte. 
+     * El sistema necesita de información previa antes de generar un informe, es por esto que el usuario debe realizar ciertos 
+     * pasos para llegar a generar el informe. Este método controla tales pasos. Dependiendo del paso en el que se encuentre, 
+     * el sistema bloqueará opciones y liberará otras. 
+     * @param op contiene la opción que define el estado del proceso de generación de reporte antes de ser generado.
+     * @return true cuando la actualización del paso actual es exitoso, y false si ocurre algo inusual.
+     */
     public boolean actualizarEstadoPasos(int op)
     {
         if(op>this.pasoActual+1)
@@ -290,26 +326,33 @@ public class MainController implements Initializable
         return true;
     }
     
-    public boolean actualizarEstadoProceso(String mensaje)
+    /**
+     * Método que actualiza el panel de estado del sistema.
+     * @param mensaje contiene el enunciado a desplegar como información de estado del sistema.
+     */
+    public void actualizarEstadoProceso(String mensaje)
     {
         this.panel_estadoSistema.setStyle("-fx-background-color: white;");
         this.text_estadoSistema.setText(mensaje);
-        return true;
     }
 
+    /**
+     * Método que genera el reporte en base al filtro previamente definido. Se realiza inicialmente validaciones de sistema 
+     * (saber si el llamado a este método ocurre una vez completados los pasos previos), cuando tal validación pasa se inicia 
+     * el llamado del método generarReporte() y se espera a que finalice. Mientras ocurre este proceso habrá un Alert que 
+     * bloqueará el sistema hasta que la operación finalice tanto exitosamente o falle. En cualquiera de los casos se le notificará 
+     * adecuadamente al usuario con un Alert adicional.
+     * @return true si el reporte ha sido generado sin problemas, y false en caso contrario.
+     * @exception InterruptedException
+     */
     @FXML
     public boolean buttonGenerarReporte() throws InterruptedException
     {
-        if(this.pasoActual==0)
+        if(this.pasoActual==0 || this.choiceBox_periodo.getSelectionModel().getSelectedIndex() == -1)
         {
             CommandNames.generaMensaje("Acceso Denegado", AlertType.ERROR, "No tiene permisos para accesar a esta opción",
                     "Reconfigure la conexión a la base de datos y luego intente acceder a esta opción.");
             this.actualizarEstadoPasos(0);
-            return false;
-        }
-        if (this.choiceBox_periodo.getSelectionModel().getSelectedIndex() == -1)
-        {
-            System.out.println("OJO, NO DEBERIA PASAR POR ACA!");
             return false;
         }
         Alert alertAux=CommandNames.generaMensaje("Generación de reporte en proceso", 
@@ -318,7 +361,7 @@ public class MainController implements Initializable
         alertAux.show();
         
         ArrayList<String> columnasTabla = this.reporteBase.columnasExcel;
-        if (columnasTabla == null || !generarReporte(this.reporteBase, columnasTabla))
+        if (columnasTabla == null || !generarReporte(this.reporteBase))
         {
             alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
             alertAux.close();
@@ -331,18 +374,30 @@ public class MainController implements Initializable
         return true;
     }
 
+    /**
+     * Método que llama al método generarReporteBase() con la opción acorde al reporte Disponibilidad.
+     * @exception InterruptedException
+     */
     @FXML
     public void buttonReporteDisponibilidad() throws InterruptedException
     {
         generarReporteBase(0);
     }
 
+    /**
+     * Método que llama al método generarReporteBase() con la opción acorde al reporte Árbol Pérdidas.
+     * @exception InterruptedException
+     */
     @FXML
     public void buttonReporteArbolPerdidas() throws InterruptedException
     {
         generarReporteBase(1);
     }
 
+    /**
+     * Método que llama al método generarReporteBase() con la opción acorde al reporte Fuga FS.
+     * @exception InterruptedException
+     */
     @FXML
     public void buttonReporteFugaFS() throws InterruptedException
     {
@@ -352,6 +407,10 @@ public class MainController implements Initializable
         //generarReporteBase(2);
     }
     
+    /**
+     * Método que despliega un DirectoryChooser para seleccionar la ubicación en donde se almacenará el reporte 
+     * a generar.
+     */
     @FXML
     public void buttonSeleccionarDestino()
     {
@@ -371,6 +430,10 @@ public class MainController implements Initializable
         this.reporteBase.setFileDir(this.textField_archivoDestino.getText());
     }
 
+    /**
+     * Método que modifica la ubicación destino del reporte a generar.
+     * @param dirAux la nueva dirección destino para el reporte a generar.
+     */
     private void setArchivoSeleccionado(String dirAux)
     {
         if (dirAux == null)
@@ -383,7 +446,13 @@ public class MainController implements Initializable
         }
     }
     
-    public boolean generarReporte(Reporte reporte, ArrayList<String> columnsGeneral) throws InterruptedException
+    /**
+     * Método que llama al método generarReporte() del objeto Reporte adecuado al reporte que el usuario necesite.
+     * @param reporte contiene el objeto Reporte adecuado al que necesite el usuario
+     * @return true si el reporte fué generado de manera exitosa, o false en caso contrario.
+     * @exception InterruptedException
+     */
+    public boolean generarReporte(Reporte reporte) throws InterruptedException
     {
         System.out.println("obteniendo reporte...");
         
@@ -395,6 +464,12 @@ public class MainController implements Initializable
         return true;
     }
 
+    /**
+     * Método que invoca el despliegue de la ventana para configurar el filtro fecha para un reporte.
+     * @param resource contiene el directorio que contiene el archivo FXML que genera la ventana.
+     * @param title contiene el título a definir para la ventana a desplegar.
+     * @exception IOException
+     */
     private void cargarModalFiltroFecha(String resource, String title)
     {
         Parent root = cargarModal(resource, title);
@@ -424,6 +499,12 @@ public class MainController implements Initializable
         stage.showAndWait();
     }
 
+    /**
+     * Método que invoca al despliegue de una ventana a través de un archivo FXML.
+     * @param resource contiene el directorio que contiene el archivo FXML que genera la ventana.
+     * @param title contiene el título a definir para la ventana a desplegar.
+     * @exception IOException
+     */
     private Parent cargarModal(String recurso, String titulo)
     {
         Parent root = null;
@@ -442,11 +523,19 @@ public class MainController implements Initializable
         return root;
     }
 
+    /**
+     * Método que crea una etiqueta de información para un componente en particular.
+     * @param filtroAux contiene el filtro del cuál generar el texto de la etiqueta.
+     * @param component contiene el componente al cuál agregar la etiqueta.
+     */
     private void generarEtiqueta(Filtro filtroAux, javafx.scene.control.Control component)
     {
         component.setTooltip(new Tooltip(filtroAux.generarEtiquetaInfo()));
     }
     
+    /**
+     * Método que invoca el despliegue de la ventana para la importación de un archivo CSV a la base de datos.
+     */
     @FXML
     public void poblarDB()
     {
@@ -487,6 +576,9 @@ public class MainController implements Initializable
         stage.showAndWait();
     }
     
+    /**
+     * Método que invoca el despliegue de la ventana para la importación múltiple de archivos CSV a la base de datos.
+     */
     @FXML
     public void poblarDBMultiple()
     {
@@ -527,6 +619,9 @@ public class MainController implements Initializable
         stage.showAndWait();
     }
     
+    /**
+     * Método que invoca el despliegue de la ventana para la configuración de conexión a la base de datos.
+     */
     @FXML
     private void setConfigDB()
     {
@@ -561,6 +656,9 @@ public class MainController implements Initializable
         stage.showAndWait();
     }
     
+    /**
+     * Método que cierra la aplicación.
+     */
     @FXML
     private void closeApp()
     {

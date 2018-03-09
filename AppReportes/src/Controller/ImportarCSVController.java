@@ -30,9 +30,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador encargado de la vista para realizar importación de datos
+ *  para una tabla de la base de datos.
  * @author Patricio
+ * 
  */
 public class ImportarCSVController implements Initializable
 {
@@ -81,7 +83,12 @@ public class ImportarCSVController implements Initializable
         validarFormulario();
     }
     
-
+    /**
+     * Método para modificar variables que contienen la ubicación del archivo CSV seleccionado, 
+     * o NULL en caso que no se haya definido.
+     * @param dirAux contiene la dirección del archivo CSV seleccionado
+     * @param fileName contiene el nombre del archivo CSV seleccionado
+     */
     private void setFileSeleccionado(String dirAux, String fileName)
     {
         if (dirAux == null)
@@ -96,6 +103,14 @@ public class ImportarCSVController implements Initializable
         }
     }
 
+    /**
+     * Método para actualizar el mensaje de estado del sistema en el proceso de carga de un archivo CSV 
+     * a la base de datos.
+     * @param info contiene una cadena de texto que, dependiendo de su contenido, actualiza el mensaje de estado de 
+     * la ventana asociada: STATUS_READY para definir que se puede iniciar la importación, STSTUS_SUCCESS para definir que 
+     * la importación fué exitosa, STATUS_RUNNING para definir que el proceso de importación está en ejecución, y 
+     * STATUS_ERROR para definir que hubo un problema al momento de realizar la importación y que se ha cancelado.
+     */
     public boolean setEstadoOperacion(String info)
     {
         //STATUS_DEFAULT
@@ -126,6 +141,9 @@ public class ImportarCSVController implements Initializable
         return true;
     }
 
+    /**
+     * Método para inicializar listado de tablas de la base de datos.
+     */
     public void inicializarTablasDestino()
     {
         ArrayList<String> nombreTablas = new ArrayList<>();
@@ -174,6 +192,11 @@ public class ImportarCSVController implements Initializable
         this.gp.add(this.choiceBox_TablasDestino, 3, 1);
     }
 
+    /**
+     * Método para actuar en conjunto con el listado de tablas de la base de datos. Cuando se seleccione 
+     * una tabla, la aplicación generará una instancia del objeto CSVIMport acorde a la tabla seleciconada 
+     * para la importación de datos.
+     */
     private void setSelectionTable(int value)
     {
         switch (this.choiceBox_TablasDestino.getItems().get(value).toString())
@@ -272,6 +295,11 @@ public class ImportarCSVController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método para verificar que se haya seleccionado un archivo CSV y que se haya definido la tabla destino de 
+     * la importación.
+     * @return true cuando las condiciones previamente descritas se cumplen, o false en caso contrario.
+     */
     public boolean validarFormulario()
     {
         if (this.textField_fileDir.getText().equals(CSV_NON_SELECTED)
@@ -287,6 +315,10 @@ public class ImportarCSVController implements Initializable
         return true;
     }
 
+    /**
+     * Método para vaciar variables que contengan direcciones de archivos CSV y modificar la selección de tabla 
+     * a la opción por defecto.
+     */
     public void limpiarTablero()
     {
         this.csvImport = null;
@@ -297,6 +329,13 @@ public class ImportarCSVController implements Initializable
         this.button_Import.setDisable(true);
     }
 
+    /**
+     * Método que se encarga de iniciar la importación del archivo CSV. Se despliega un Alert al usuario para confirmar la acción. 
+     * Si el usuario confirma, se formatea la dirección del archivo CSV para posteriormente llamar al método procesarArchivo() 
+     * ubicado dentro de la instancia CSVImport para que realice la carga de información a la base de datos en la tabla correspondiente.
+     * Una vez finalizado el proceso se llama al método limpiarTablero() para inicializar la ventana. Dentro de todo este proceso 
+     * se ejecuta el método setEstadoOperación() para actualizar el mensaje de estado en todo momento.
+     */
     @FXML
     public void importarCSV()
     {                
@@ -328,12 +367,13 @@ public class ImportarCSVController implements Initializable
                 alertAux.close();
                 
                 limpiarTablero();
-                //validar datos
-                //no cerrar la ventana
             }
         });
     }
 
+    /**
+     * Método que despliega un FileChooser para seleccionar la ubicación del archivo CSV a cargar.
+     */
     @FXML
     public void seleccionarArchivoCSV()
     {
@@ -355,6 +395,9 @@ public class ImportarCSVController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {
@@ -362,11 +405,18 @@ public class ImportarCSVController implements Initializable
         s.close();
     }
 
+    /**
+     * Método que guarda en una variable la instancia de la configuracion de la base de datos del sistema.
+     */
     public void setDB(LocalDB db)
     {
         this.db = db;
     }
     
+    /**
+     * Método que define en una variable el controlador padre de tal ventana
+     * @param parent contiene el controlador de la ventana principal
+     */
     public void setParent(MainController parent) {
         this.parent = parent ;
     }

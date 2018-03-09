@@ -21,8 +21,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador para desplegar una ventana de filtro de fechas de dias.
  * @author Patricio
  */
 public class FiltroPeriodo_DiaController extends FiltroPeriodoController
@@ -73,6 +73,10 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
         this.datePicker_fechaFin.setValue(LocalDate.parse(MIN_DATE, DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
     
+    /**
+     * Método que modifica los valores permitidos por el campo del dia limite para seleccionar: esto de acuerdo a lo 
+     * seleccionado por el año inicial.
+     */
     @FXML
     public void updateOptionCB2()
     {
@@ -88,6 +92,10 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
     
     }
 
+    /**
+     * Método que realiza modificaciones de acuerdo a la opción seleccionada por el usuario: si es por un dia en específico, 
+     * se permite sólo modificar el dia inicial, en caso que sea por rango de dias, se permite modificar dia inicio y término.
+     */
     @FXML
     public void setRadioButtonOption()
     {
@@ -128,10 +136,14 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
         this.datePicker_fechaFin.setValue(LocalDate.parse(MIN_DATE, DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
 
+    /**
+     * Método invocado por un Button. Limpia el filtro fecha del reporte base, lo modifica de acuerdo a las opciones 
+     * ingresadas del usuario y cierra la ventana. Para el caso de rango de dias, si el rango es erróneo (dia inicio mayor a
+     *  dia término) arroja un mensaje y no modifica el filtro ya existente.
+     */
     @FXML
     public void buttonAceptar()
     {
-        //implementar!
         LocalDate inicio = this.datePicker_fechaInicio.getValue();
         LocalDate fin = this.datePicker_fechaFin.getValue();
         switch(this.opcion)
@@ -163,6 +175,9 @@ public class FiltroPeriodo_DiaController extends FiltroPeriodoController
         }
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {

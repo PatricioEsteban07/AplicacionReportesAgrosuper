@@ -14,16 +14,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 
 /**
- *
+ * Clase base para clases de tipo CSVImport, posee métodos que todos utilizan.
  * @author Patricio
  */
 public class CSVImport
@@ -39,6 +35,12 @@ public class CSVImport
     public String tableName;
     public ArrayList<String> types;
     
+    /**
+     * Constructor de la Clase
+     * @param db contiene la instancia de LocalDB que el sistema maneja
+     * @param rowsIgnore dependiendo de la instancia CSVImport, este valor varia, corresponde a las lineas a ignorar 
+     * cuando se procesa el archivo CSV
+     */
     public CSVImport(LocalDB db, int rowsIgnore)
     {
         this.db=db;
@@ -47,7 +49,12 @@ public class CSVImport
         this.cantRowsIgnoradas=rowsIgnore;
         this.types=new ArrayList<>();
     }
-    
+    /**
+     * Método que, dado un String, retorna su contenido eliminando elementos extras (").
+     * @param content
+     * @param caracter
+     * @return el contenido encontrado o null en caso contrario.
+     */
     public String obtenerContenido(String content, char caracter)
     {
         if(content==null || content.equals(""))
@@ -78,6 +85,12 @@ public class CSVImport
         return null;
     }
     
+    /**
+     * Método que se encarga de tomar un archivo CSV, procesarlo para crear otro con datos formateados y que se utiliza para 
+     * finalmente cargarlo a la base de datos correspondiente. Este método realiza una validación simple respecto a la cantidad 
+     * de columnas que debe tener el archivo CSV para la carga.
+     * @return true si todos los pasos se realizaron exitosamente, y false si ocurrió algún error en el proceso.
+     */
     public boolean procesarArchivo()
     {
         try
@@ -93,16 +106,14 @@ public class CSVImport
 
             while ((currentLine = reader.readLine()) != null)
             {
-             //   System.out.println("--------------------");
-             //   System.out.println("D: "+currentLine);
                 if (ct_rows >= this.cantRowsIgnoradas)
                 {
                     String[] datos = currentLine.split(this.separadorCSV+"");
-                    //Imprime datos.
                     if(ct_rows == this.cantRowsIgnoradas && datos.length!=this.types.size())
                     {
-                        System.out.println("OJO: CANT ELEMENTOS CSV NO COINCIDE CON CANT COLUMNAS TABLA! NO SE AGREGARÁN");
-                        System.out.println("datos: "+datos.length+" /col: "+this.types.size());
+                        CommandNames.generaMensaje("Error generando archivo", Alert.AlertType.ERROR,
+                            "Problemas con columnas origen/destino", "Lo lamentamos, hubo un problema con la cantidad de columnas "
+                            + "que posee el archivo CSV a cargar: no coincide con la cantidad de columnas que debería tener.");
                         return false;
                     }
                     if(!currentLine.equals(""))
@@ -110,10 +121,7 @@ public class CSVImport
                         String content="";
                         for (int i = 0; i < types.size(); i++)
                         {
-                            //datos[i]
                             datos[i] = obtenerContenido(datos[i], this.contenedorCamposCSV);
-                            
-                      //      System.out.println("->"+datos[i]);
                             if(!datos[i].equals("#"))
                             {
                                 switch (types.get(i))
@@ -150,40 +158,42 @@ public class CSVImport
                             if(i<types.size()-1)
                                 content=content+";";
                         }
-                        //System.out.println("D: "+content);
                         writer.write(content+"\n");
                     }
                 }
                 ct_rows++;
             }
-            System.out.println("rows: "+ct_rows);
             writer.close();
             reader.close();
             tempFile.renameTo(inputFile);
             String dir = tempFile.getPath().replaceAll("\\\\", "/");
             return this.cargarCsv(dir, this.tableName);
-      //      GeneradorExcel_ReporteDisponibilidad.copyFile(tempFile, new File(System.getProperty("user.home") + "/Desktop/"+fileName+".csv"));   
         }
         catch (IOException ex)
         {
-            System.out.println("Problemas para leer archivo!");
-            Logger.getLogger(CSVImport_Region.class.getName()).log(Level.SEVERE, null, ex);
+            CommandNames.generaMensaje("Error leyendo archivo", Alert.AlertType.ERROR,
+                "Problemas con lectura de archivo CSV", "Lo lamentamos, hubo un problema al momento de realizar "
+                        + "manipulación con el archivo CSV.");
             return false;
         }
     }
-       
+    
+    /**
+     * Método que se encarga de, en base a un archivo CSV, realizar la carga en la tabla respectiva. Dicha carga se realiza con 
+     * un método de SQL: LOAD DATA.
+     * @param fileDir contiene la dirección del archivo CSV a procesar.
+     * @param tableName el nombre de la tabla de la base de datos a cargar.
+     * @return true si la carga fué exitosa, o false en otro caso.
+     */
     public boolean cargarCsv(String fileDir, String tableName)
     {
         String loadQuery="LOAD DATA LOCAL INFILE '"+fileDir+"' INTO TABLE "+tableName+" FIELDS TERMINATED BY '"
                 +this.separadorCSV+"' ENCLOSED BY '"+this.contenedorCamposCSV+"' LINES TERMINATED BY '\\n';";
-        System.out.println("L: "+loadQuery);
         try
         {
             this.connect();
-            int res = this.executeQuery(loadQuery);
+            this.executeQuery(loadQuery);
             this.close();
-            System.out.println("Result: "+res);
-            System.out.println("-----------------");
             return true;
         }
         catch (ClassNotFoundException | SQLException ex)
@@ -193,44 +203,35 @@ public class CSVImport
         }
     }
     
+    /**
+     * Método que se encarga de generar la conexión a la base de datos
+     * @return true si la conexión se ha realizado, o false en caso contrario
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public boolean connect() throws SQLException, ClassNotFoundException
     {
-        if (conn != null)
-        {
-            this.conn.close();
-            this.conn=null;
-        }
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver");
-            this.conn = DriverManager.getConnection(this.db.dbConfig.urlConector(), this.db.dbConfig.user, 
-                    this.db.dbConfig.pass);
-        }
-        catch (SQLException | ClassNotFoundException ex)
-        {
-            CommandNames.generaMensaje("Error del Sistema", Alert.AlertType.ERROR, "Error conexión DB", 
-                    "Hubo un problema al momento de conectar a la base de datos. El error es el siguiente: "+ex);
-            return false;
-        }
-        return true;
+        return this.db.connect();
     }
     
+    /**
+     * Método que ejecuta una consulta a la base de datos.
+     * @param query contiene el String con la consulta a ejecutar.
+     * @return un valor correspondiente al result(mayor a 0 es exitoso), o 0 en caso contrario.
+     * @exception SQLException
+     */
     public int executeQuery(String query) throws SQLException
     {
-        if (conn != null)
-        {
-            Statement stmt = conn.createStatement();
-            int result = stmt.executeUpdate(query);
-            return result;
-        }
-        return 0;
+        return this.db.executeQueryInt(query);
     }
 
+    /**
+     * Método que cierra la conexión a la base de datos.
+     * @throws SQLException
+     */
     public void close() throws SQLException
     {
-        if (this.conn != null)
-            this.conn.close();
-        this.conn=null;
+        this.db.close();
     }
     
 }

@@ -28,9 +28,7 @@
   id VARCHAR(2) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
 
-  PRIMARY KEY (id),
-  
-  UNIQUE INDEX idx_sector_id USING BTREE (id) 
+  PRIMARY KEY (id)
   );
   
   CREATE TABLE IF NOT EXISTS n2(
@@ -40,9 +38,7 @@
 
   PRIMARY KEY (id),
   
-  FOREIGN KEY (sector_id) REFERENCES sector(id),
-  
-  UNIQUE INDEX idx_n2_id USING BTREE (id) 
+  FOREIGN KEY (sector_id) REFERENCES sector(id)
   );
   
   CREATE TABLE IF NOT EXISTS n3(
@@ -52,9 +48,7 @@
 
   PRIMARY KEY (id),
   
-  FOREIGN KEY (n2_id) REFERENCES n2(id),
-  
-  UNIQUE INDEX idx_n3_id USING BTREE (id) 
+  FOREIGN KEY (n2_id) REFERENCES n2(id)
   );
   
   CREATE TABLE IF NOT EXISTS n4(
@@ -64,9 +58,7 @@
 
   PRIMARY KEY (id),
   
-  FOREIGN KEY (n3_id) REFERENCES n3(id),
-  
-  UNIQUE INDEX idx_n4_id USING BTREE (id) 
+  FOREIGN KEY (n3_id) REFERENCES n3(id)
   );
   
   CREATE TABLE IF NOT EXISTS tipoCliente(
@@ -75,23 +67,42 @@
 
   PRIMARY KEY (id)
   );
+  
+  CREATE TABLE IF NOT EXISTS categoriaCliente(
+  id VARCHAR(4) UNIQUE NOT NULL,
+  nombre VARCHAR(32) NOT NULL,
+  tipoCliente_id VARCHAR(4) NOT NULL,
+
+  PRIMARY KEY (id),
+  
+  FOREIGN KEY (tipoCliente_id) REFERENCES tipoCliente(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS subcategoriaCliente(
+  id VARCHAR(4) UNIQUE NOT NULL,
+  nombre VARCHAR(32) NOT NULL,
+  categoriaCliente_id VARCHAR(4) NOT NULL,
+
+  PRIMARY KEY (id),
+  
+  FOREIGN KEY (categoriaCliente_id) REFERENCES categoriaCliente(id)
+  );
 
   CREATE TABLE IF NOT EXISTS marca(
   id VARCHAR(4) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
 
-  PRIMARY KEY (id),
-  
-  UNIQUE INDEX idx_marca_id USING BTREE (id) 
+  PRIMARY KEY (id)
   );
 
   CREATE TABLE IF NOT EXISTS agrupado(
   id VARCHAR(32) UNIQUE NOT NULL,
   nombre VARCHAR(32) NOT NULL,
+  n2_id VARCHAR(6) NOT NULL,
 
   PRIMARY KEY (id),
   
-  UNIQUE INDEX idx_agrupado_id USING BTREE (id) 
+  FOREIGN KEY (n2_id) REFERENCES n2(id)
   );
 
   CREATE TABLE IF NOT EXISTS tipoEnvasado(
@@ -115,9 +126,7 @@
 
   PRIMARY KEY (id),
   
-  FOREIGN KEY (zonaVentas_id) REFERENCES zonaVentas(id),
-  
-  UNIQUE INDEX idx_oficinaVentas_id USING BTREE (id) 
+  FOREIGN KEY (zonaVentas_id) REFERENCES zonaVentas(id)
   );
   
   CREATE TABLE IF NOT EXISTS material(
@@ -131,6 +140,7 @@
   agrupado_id VARCHAR(32) DEFAULT NULL,
   tipoEnvasado_id VARCHAR(2) DEFAULT NULL,
   marca_id VARCHAR(4) DEFAULT NULL,
+  n4_id VARCHAR(12) DEFAULT NULL,
 
   PRIMARY KEY (id),
   
@@ -139,8 +149,7 @@
   FOREIGN KEY (agrupado_id) REFERENCES agrupado(id),
   FOREIGN KEY (sector_id) REFERENCES sector(id),
   FOREIGN KEY (marca_id) REFERENCES marca(id),
-  
-  UNIQUE INDEX idx_material_id USING BTREE (id) 
+  FOREIGN KEY (n4_id) REFERENCES n4(id)
   );
   
   CREATE TABLE IF NOT EXISTS cliente(
@@ -162,12 +171,33 @@
   nombre VARCHAR(64) NOT NULL,
   direccion VARCHAR(32) NOT NULL,
   region_id VARCHAR(8) NOT NULL,
+  comuna VARCHAR(24) NOT NULL,
   cliente_id VARCHAR(16) DEFAULT NULL,
+  subCategoriaCliente_id VARCHAR(4) NOT NULL,
+  tipoClub VARCHAR(16) DEFAULT NULL,
+  tipoCallCenter VARCHAR(16) DEFAULT NULL,
 
   PRIMARY KEY (id), 
   
   FOREIGN KEY (region_id) REFERENCES region(id),
-  FOREIGN KEY (cliente_id) REFERENCES cliente(id)
+  FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+  FOREIGN KEY (subCategoriaCliente_id) REFERENCES subcategoriaCliente(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS clubCliente(
+  cliente_id VARCHAR(16) NOT NULL,
+  categoria VARCHAR(16) DEFAULT "SIN DATO",
+  segmento VARCHAR(32) DEFAULT "SIN DATO",
+  tipoCliente_id VARCHAR(4) NOT NULL,
+  zona_id VARCHAR(4) NOT NULL,
+  sucursal VARCHAR(32) NOT NULL,
+  canje VARCHAR(4) DEFAULT "NO",
+
+  PRIMARY KEY (cliente_id), 
+  
+  FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+  FOREIGN KEY (tipoCliente_id) REFERENCES tipoCliente(id),
+  FOREIGN KEY (zona_id) REFERENCES zonaventas(id)
   );
   
   CREATE TABLE IF NOT EXISTS pedido(
@@ -212,36 +242,14 @@
   FOREIGN KEY (material_id) REFERENCES material(id)
   );
   
-  CREATE TABLE IF NOT EXISTS despacho(
-  id VARCHAR(16) NOT NULL,
+  CREATE TABLE IF NOT EXISTS despacho_faltante(
   centro_id VARCHAR(8) NOT NULL,
   fecha DATE NOT NULL,
   clienteLocal_id VARCHAR(16) NOT NULL,
-
-  PRIMARY KEY (id),
-  
-  FOREIGN KEY (centro_id) REFERENCES centro(id),
-  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id)
-  );
-  
-  CREATE TABLE IF NOT EXISTS despacho_material(
-  despacho_id VARCHAR(16) NOT NULL,
   material_id VARCHAR(8) NOT NULL,
-  despachoCj FLOAT DEFAULT 0,
   despachoKg FLOAT DEFAULT 0,
-
-  PRIMARY KEY (despacho_id,material_id),
-  
-  FOREIGN KEY (despacho_id) REFERENCES despacho(id),
-  FOREIGN KEY (material_id) REFERENCES material(id)
-  );
-  
-  CREATE TABLE IF NOT EXISTS faltante(
-  centro_id VARCHAR(8) NOT NULL,
-  fecha DATE NOT NULL,
-  clienteLocal_id VARCHAR(16) NOT NULL,
-  material_id VARCHAR(8) NOT NULL,
   faltanteKg FLOAT DEFAULT 0,
+  despachoCj FLOAT DEFAULT 0,
   faltanteCj FLOAT DEFAULT 0,
 
   PRIMARY KEY (centro_id,fecha,clienteLocal_id,material_id),
@@ -279,3 +287,26 @@
   FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
   FOREIGN KEY (agrupado_id) REFERENCES agrupado(id)
   );
+  
+  CREATE TABLE IF NOT EXISTS venta_FS(
+  clienteLocal_id VARCHAR(16) NOT NULL,
+  tipoCliente_id VARCHAR(4) NOT NULL,
+  subcategoriaCliente_id VARCHAR(4) NOT NULL,
+  año INT NOT NULL,
+  mes INT NOT NULL,
+  oficina_id VARCHAR(8) NOT NULL,
+  agcnc VARCHAR(32) NOT NULL,
+  sector_id VARCHAR(2) NOT NULL,
+  venta_Kg FLOAT NOT NULL,
+  venta_Neta INT NOT NULL,
+
+  PRIMARY KEY (clienteLocal_id,año,mes,oficina_id,sector_id),
+  
+  FOREIGN KEY (clienteLocal_id) REFERENCES clienteLocal(id),
+  FOREIGN KEY (tipoCliente_id) REFERENCES tipoCliente(id),
+  FOREIGN KEY (subcategoriaCliente_id) REFERENCES subcategoriaCliente(id),
+  FOREIGN KEY (oficina_id) REFERENCES oficinaventas(id),
+  FOREIGN KEY (sector_id) REFERENCES sector(id)
+  );
+  
+  

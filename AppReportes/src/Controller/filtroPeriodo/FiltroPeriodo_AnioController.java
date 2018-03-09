@@ -20,8 +20,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador para desplegar una ventana de filtro de fechas de año.
  * @author Patricio
  */
 public class FiltroPeriodo_AnioController extends FiltroPeriodoController
@@ -69,7 +69,10 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
         this.comboBox_fechaFin.getSelectionModel().select(0);
     }
     
-
+    /**
+     * Método que modifica los valores permitidos por el campo del año limite para seleccionar: esto de acuerdo a lo 
+     * seleccionado por el año inicial.
+     */
     @FXML
     public void updateOptionCB2()
     {
@@ -82,6 +85,10 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
         this.comboBox_fechaFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método que realiza modificaciones de acuerdo a la opción seleccionada por el usuario: si es por un año en específico, 
+     * se permite sólo modificar el año inicial, en caso que sea por rango de años, se permite modificar año inicio y término.
+     */
     @FXML
     public void setRadioButtonOption()
     {
@@ -122,10 +129,14 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
         this.comboBox_fechaFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método invocado por un Button. Limpia el filtro fecha del reporte base, lo modifica de acuerdo a las opciones 
+     * ingresadas del usuario y cierra la ventana. Para el caso de rango de años, si el rango es erróneo (año inicio mayor a
+     *  año término) arroja un mensaje y no modifica el filtro ya existente.
+     */
     @FXML
     public void buttonAceptar()
     {
-        //implementar!
         int inicio = Integer.parseInt(this.comboBox_fechaInicio.getSelectionModel().getSelectedItem().toString());
         int fin = Integer.parseInt(this.comboBox_fechaFin.getSelectionModel().getSelectedItem().toString());
         switch(this.opcion)
@@ -157,6 +168,9 @@ public class FiltroPeriodo_AnioController extends FiltroPeriodoController
         }
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {

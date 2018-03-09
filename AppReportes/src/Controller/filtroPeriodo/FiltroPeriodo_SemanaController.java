@@ -20,8 +20,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador para desplegar una ventana de filtro de fechas de semanas.
  * @author Patricio
  */
 public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
@@ -87,8 +87,11 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
         this.comboBox_semanaInicio.getSelectionModel().select(0);
         this.comboBox_semanaFin.getSelectionModel().select(1);
     }
-    
 
+    /**
+     * Método que modifica los valores permitidos por el campo de semana limite para seleccionar: esto de acuerdo a lo 
+     * seleccionado por el año inicial.
+     */
     @FXML
     public void updateOptionCB2()
     {
@@ -108,6 +111,10 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
         this.comboBox_semanaFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método que realiza modificaciones de acuerdo a la opción seleccionada por el usuario: si es por un semana en específico, 
+     * se permite sólo modificar semana inicial, en caso que sea por rango de semanas, se permite modificar semana inicio y término.
+     */
     @FXML
     public void setRadioButtonOption()
     {
@@ -154,10 +161,14 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
         this.comboBox_semanaFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método invocado por un Button. Limpia el filtro fecha del reporte base, lo modifica de acuerdo a las opciones 
+     * ingresadas del usuario y cierra la ventana. Para el caso de rango de semanas, si el rango es erróneo (semana inicio mayor a
+     *  semana término) arroja un mensaje y no modifica el filtro ya existente.
+     */
     @FXML
     public void buttonAceptar()
     {
-        //implementar!
         int semanaInicio = Integer.parseInt(this.comboBox_semanaInicio.getSelectionModel().getSelectedItem().toString());
         int semanaFin = Integer.parseInt(this.comboBox_semanaFin.getSelectionModel().getSelectedItem().toString());
         int anioInicio = Integer.parseInt(this.comboBox_anioInicio.getSelectionModel().getSelectedItem().toString());
@@ -193,6 +204,9 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
         }
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {
@@ -200,6 +214,10 @@ public class FiltroPeriodo_SemanaController extends FiltroPeriodoController
         s.close();
     }
 
+    /**
+     * Método que se encarga de validar un rango de semanas
+     * @return true si semana inicio es menor a semana final, y false en caso contrario.
+     */
     private boolean validarRango(int semanaInicio, int anioInicio, int semanaFin, int anioFin)
     {
         if(anioInicio<=anioFin)

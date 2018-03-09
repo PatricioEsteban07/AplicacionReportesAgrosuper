@@ -5,22 +5,16 @@
  */
 package Model.ProcesadoresExcel;
 
-import com.monitorjbl.xlsx.StreamingReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
@@ -33,7 +27,6 @@ public class ProcesadorExcel_ReporteFugaFS_LlamadoCC extends ProcesadorExcel
     {
         super(fileDir,"Datos");
     }
-
 
     @Override
     public boolean obtieneDatosXLSX()
@@ -89,7 +82,6 @@ public class ProcesadorExcel_ReporteFugaFS_LlamadoCC extends ProcesadorExcel
                 if (aux == -1)
                 {
                     System.out.println("Hay una columna que no se encuentra. No se puede generar CSV con tal info.");
-                    
                     return false;
                 }
                 indices.add(aux);
@@ -138,7 +130,7 @@ public class ProcesadorExcel_ReporteFugaFS_LlamadoCC extends ProcesadorExcel
             workbook.close();
             file.close();
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             System.out.println("problema para obetener datos excel: "+ex);
             return false;

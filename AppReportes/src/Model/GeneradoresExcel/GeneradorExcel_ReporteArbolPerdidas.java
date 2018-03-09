@@ -9,7 +9,6 @@ import Model.CommandNames;
 import Model.Recurso;
 import Model.RecursosDB.RecursoDB;
 import Model.Reportes.BaseReporteArbolPerdidas;
-import Model.Reportes.BaseReporteDisponibilidad;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -17,9 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.control.Alert;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -27,7 +24,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 
 /**
- *
+ * Clase encargada de la generación de un archivo Excel para el reporte Árbol Pérdidas
  * @author Patricio
  */
 public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
@@ -45,19 +42,12 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
         FileOutputStream file = null;
         try
         {
-            HashMap<String, BaseReporteDisponibilidad> filas = new HashMap<>();
-            //generación de archivo excel base
-            // System.out.println("El directorio temporal del sistema es "+System.getProperty("java.io.tmpdir"));
+            HashMap<String, BaseReporteArbolPerdidas> filas = new HashMap<>();
             String rutaArchivo = System.getProperty("java.io.tmpdir") + "/" + this.nombreTabla + ".xlsx";
-            // String rutaArchivo = System.getProperty("user.home")+"/Desktop/"+this.nombreTabla+".xlsx";
             File archivoXLS = new File(rutaArchivo);
-            //Se crea el libro de excel usando el objeto de tipo Workbook
             SXSSFWorkbook libro = new SXSSFWorkbook();
-            //Se inicializa el flujo de datos con el archivo xls
             file = new FileOutputStream(archivoXLS);
-            //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
             SXSSFSheet hoja = libro.createSheet(this.nombreTabla);
-            //inicialiar fila de nombres de columnas
             SXSSFRow fila = hoja.createRow(0);
             if (this.columnas == null || this.columnas.isEmpty())
             {
@@ -135,14 +125,6 @@ public class GeneradorExcel_ReporteArbolPerdidas extends GeneradorExcel
                     "El error es el siguiente: " + ex);
             return false;
         }
-    }
-
-    private void setCellContent(SXSSFRow row, int i, String content, CellType cellType)
-    {
-        SXSSFCell cAux=row.createCell(i);
-       // System.out.println("Style:"+cAux.getCellStyle().getDataFormat());
-        cAux.setCellType(cellType);    
-        cAux.setCellValue(content);
     }
 
 }

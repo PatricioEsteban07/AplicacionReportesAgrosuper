@@ -23,8 +23,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador encargado de la vista para realizar importación múltiple de datos.
  * @author Patricio
  */
 public class ImportarCSVMultipleController implements Initializable
@@ -65,6 +65,14 @@ public class ImportarCSVMultipleController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método para actualizar el mensaje de estado del sistema en el proceso de carga múltiple de archivos CSV 
+     * a la base de datos.
+     * @param info contiene una cadena de texto que, dependiendo de su contenido, actualiza el mensaje de estado de 
+     * la ventana asociada: STATUS_READY para definir que se puede iniciar la importación, STSTUS_SUCCESS para definir que 
+     * la importación fué exitosa, STATUS_RUNNING para definir que el proceso de importación está en ejecución, y 
+     * STATUS_ERROR para definir que hubo un problema al momento de realizar la importación y que se ha cancelado.
+     */
     private void setEstadoOperacion(String info)
     {
         //STATUS_DEFAULT
@@ -93,6 +101,10 @@ public class ImportarCSVMultipleController implements Initializable
         this.text_status.setText(texto);
     }
 
+    /**
+     * Método para verificar que se haya seleccionado un directorio.
+     * @return true cuando las condiciones previamente descritas se cumplen, o false en caso contrario.
+     */
     public boolean validarFormulario()
     {
         if (this.textField_fileDir.getText().equals(CSV_NON_SELECTED) || this.directorio == null)
@@ -106,6 +118,9 @@ public class ImportarCSVMultipleController implements Initializable
         return true;
     }
     
+    /**
+     * Método para vaciar variables que contengan dirección de carpeta que contiene archivos CSV.
+     */
     public void limpiarTablero()
     {
         this.directorio=null;
@@ -113,6 +128,13 @@ public class ImportarCSVMultipleController implements Initializable
         this.button_Import.setDisable(true);
     }
 
+    /**
+     * Método que se encarga de iniciar la importación múltiple de archivos CSV. Se despliega un Alert al usuario para confirmar la acción. 
+     * Si el usuario confirma, se formatea la dirección del directorio que contiene los archivos CSV para posteriormente llamar al método procesarMultiplesArchivos() 
+     * para que realice la carga de información a la base de datos en las tablas correspondientes, en un orden adecuado.
+     * Una vez finalizado el proceso se llama al método limpiarTablero() para inicializar la ventana. Dentro de todo este proceso 
+     * se ejecuta el método setEstadoOperación() para actualizar el mensaje de estado en todo momento.
+     */
     @FXML
     public void importarCSV()
     {                 
@@ -143,13 +165,15 @@ public class ImportarCSVMultipleController implements Initializable
                 alertAux.getDialogPane().getButtonTypes().add(ButtonType.OK);
                 alertAux.close();
                 limpiarTablero();
-                //validar datos
-                //no cerrar la ventana
             }
         });
-        
     }
     
+    /**
+     * Método para modificar variables que contienen la ubicación del directorio que contiene archivos CSV, 
+     * o NULL en caso que no se haya definido.
+     * @param dirAux contiene la dirección del directorio que contiene archivos CSV
+     */
     private void setDirectorioSeleccionado(String dirAux)
     {
         if (dirAux == null)
@@ -164,6 +188,10 @@ public class ImportarCSVMultipleController implements Initializable
         }
     }
     
+    /**
+     * Método que despliega un DirectoryChooser para seleccionar la ubicación del directorio que contiene los archivos 
+     * CSV a cargar.
+     */
     @FXML
     public void seleccionarDirectorioCSV()
     {
@@ -184,6 +212,9 @@ public class ImportarCSVMultipleController implements Initializable
         validarFormulario();
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {
@@ -191,11 +222,20 @@ public class ImportarCSVMultipleController implements Initializable
         s.close();
     }
 
+    /**
+     * Método que guarda en una variable la instancia de la configuracion de la base de datos del sistema.
+     */
     public void setDB(LocalDB db)
     {
         this.db = db;
     }
     
+    /**
+     * Método para iniciar la importación múltiple de archivos CSV a la base de datos. Se realiza la búsqueda de archivos CSV en el directorio 
+     * previamente seleccionado: en caso que no existan archivos, se notifica con un Alert. Luego de listar todos los archivos 
+     * CSV del directorio, se procede a la carga de información siempre y cuando exista el archivo CSV con el nombre adecuado para cada tabla.
+     * @return true cuando ha finaliado de manera exitosa la importación múltiple de datos, o false en caso contrario.
+     */
     public boolean procesarMultiplesArchivos(String directorio)
     {
         HashMap<String,CSVImport> csvEncontrados = new HashMap<>();
@@ -288,15 +328,19 @@ public class ImportarCSVMultipleController implements Initializable
             new CSVImport_NSCliente(this.db, directorio+"/"+files.get("ns_cliente"),
                 "ns_cliente").procesarArchivo();
         if(files.containsKey("facturaVentas"))
-            new CSVImport_FacturaVenta(this.db, directorio+"/"+files.get("facturaVentas"),
-                "facturaVentas").procesarArchivo();
-        if(files.containsKey("facturaVentas_material"))
-            new CSVImport_FacturaVentaMaterial(this.db, directorio+"/"+files.get("facturaVentas_material"),
-                "facturaVentas_material").procesarArchivo();
+            new CSVImport_FacturaVenta(this.db, directorio+"/"+files.get("facturaventas"),
+                "facturaventas").procesarArchivo();
+        if(files.containsKey("facturaventas_material"))
+            new CSVImport_FacturaVentaMaterial(this.db, directorio+"/"+files.get("facturaventas_material"),
+                "facturaventas_material").procesarArchivo();
         
         return true;
     }
     
+    /**
+     * Método que define en una variable el controlador padre de tal ventana
+     * @param parent contiene el controlador de la ventana principal
+     */
     public void setParent(MainController parent) {
         this.parent = parent ;
     }

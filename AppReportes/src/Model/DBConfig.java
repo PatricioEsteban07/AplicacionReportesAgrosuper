@@ -7,7 +7,6 @@ package Model;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Clase que mantendrá información de la configuración de conexión a la base de datos.
  * @author Patricio
  */
 public class DBConfig
@@ -27,6 +26,9 @@ public class DBConfig
     public String pass;
     private String fileDir = System.getProperty("user.home")+"/agrosuperConfig.txt";
 
+    /**
+     * Inicializa la clase, con parámetros ingresados por el usuario.
+     */
     public DBConfig(String host, String port, String dbName, String user, String pass)
     {
         this.host = host;
@@ -36,21 +38,33 @@ public class DBConfig
         this.pass = pass;
     }
 
+    /**
+     * Inicializa la clase, pero con información por defecto, además de verificar que exista o no un archivo de 
+     * configuración en el Sistema Operativo.
+     */
     public DBConfig()
     {
-        this.host="localhost";
+        this.host="192.168.1.140";
         this.port="3306";
-        this.dbName="db_ejemplo2";
+        this.dbName="db_gestionventas";
         this.user = "gestionVentas";
         this.pass = "gestionVentas";
         persistirInfoDB();
     }
     
+    /**
+     * Método que retorna una URL con el conector MySQL e información de la base de datos a conectar.
+     */
     public String urlConector()
     {
         return "jdbc:mysql://"+this.host+":"+this.port+"/"+this.dbName;
     }
 
+    /**
+     * Método que verifica si existe un archivo de configuración de la base de datos en el Sistema Operativo: 
+     * Si existe se extrae su información y se ingresa en la aplicación, si no existe se genera tal archivo con 
+     * datos que la aplicación provee por defecto.
+     */
     private void persistirInfoDB()
     {
         FileReader lector = null;
@@ -90,16 +104,17 @@ public class DBConfig
             return;
             
         }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(DBConfig.class.getName()).log(Level.SEVERE, null, ex);
-        }
         catch (IOException ex)
         {
             Logger.getLogger(DBConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    /**
+     * Método para actualizar los datos de configuración de conexión a la base de datos. Se preocupa de actualizar los datos 
+     * tanto en la aplicación como en el archivo que el Sistema Operativo almacena.
+     * @return true cuando la operación es exitosa y false en caso contrario.
+     */
     public boolean actualizarDatos(String host, String port, String name, String user, String pass)
     {
         BufferedReader br = null;
@@ -120,11 +135,6 @@ public class DBConfig
             nuevo.close();
             
             return true;
-        }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(DBConfig.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         }
         catch (IOException ex)
         {

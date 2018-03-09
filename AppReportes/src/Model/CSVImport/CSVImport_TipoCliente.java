@@ -8,7 +8,7 @@ package Model.CSVImport;
 import Model.LocalDB;
 
 /**
- *
+ * Clase encargada de la importación de CSV para la tabla Tipo Cliente.
  * @author Patricio
  */
 public class CSVImport_TipoCliente extends CSVImport
@@ -23,6 +23,9 @@ public class CSVImport_TipoCliente extends CSVImport
         completaTypes();
     }
 
+    /**
+     * Método que completa un listado de CSVImport con los tipos de datos de cada columna para la tabla que le corresponde
+     */
     public void completaTypes()
     {
         this.types.add("ID");

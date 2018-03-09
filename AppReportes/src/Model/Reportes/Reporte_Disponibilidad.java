@@ -9,21 +9,14 @@ import Model.CommandNames;
 import Model.Filtros.Filtro_Fecha;
 import Model.GeneradoresExcel.GeneradorExcel_ReporteDisponibilidad;
 import Model.LocalDB;
-import Model.Recurso;
 import Model.RecursosDB.RecursoDB_ReporteDisponibilidad;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 
 /**
- *
+ * Clase encargada de todo el proceso de generación del reporte Disponibilidad.
  * @author Patricio
  */
 public class Reporte_Disponibilidad extends Reporte
@@ -52,7 +45,7 @@ public class Reporte_Disponibilidad extends Reporte
                 return false;
             }        
             CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.INFORMATION, "Reporte generado exitosamente",
-                    "El reporte ha sido generado con el nombre '"+this.nombre+"', el cual está ubicado en el Escritorio. Por recomendación"
+                    "El reporte ha sido generado con el nombre '"+this.nombre+"', el cual está ubicado en '"+this.getFileDir()+"' . Por recomendación"
             + " cambiar el nombre del archivo o ubicarlo en alguna carpeta.");
             return true;
         }
@@ -138,41 +131,6 @@ public class Reporte_Disponibilidad extends Reporte
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean desplegarInfoExcelApp(TableView<Recurso> asdf, AnchorPane panelTabla)
-    {
-        TableView<BaseReporteDisponibilidad> ReportesTableView = new TableView<>();
-        for (int i = 0; i < this.completarColumnasTabla().size(); i++)
-        {
-            TableColumn<BaseReporteDisponibilidad, String> tc = new TableColumn(this.completarColumnasTabla().get(i));
-            tc.setCellValueFactory(new PropertyValueFactory<BaseReporteDisponibilidad,String>(this.completarColumnasTabla().get(i)));
-            ReportesTableView.getColumns().add(tc);
-        }
-        
-        ObservableList<BaseReporteDisponibilidad> list = FXCollections.observableArrayList();
-        //mostrar tabla en app
-        ArrayList<Recurso> elements= this.recursos.get(this.nombre).getAll();
-        for (int i = 0; i < elements.size(); i++)
-        {
-            BaseReporteDisponibilidad aux = (BaseReporteDisponibilidad)elements.get(i);
-            list.add(aux);
-        }
-
-        ReportesTableView.getSelectionModel().setCellSelectionEnabled(true);
-        ReportesTableView.setItems(list);
-        
-        ReportesTableView.setPrefSize(panelTabla.getWidth(), panelTabla.getHeight());
-        
-        panelTabla.setTopAnchor(ReportesTableView, 0.0);
-        panelTabla.setLeftAnchor(ReportesTableView, 0.0);
-        panelTabla.setRightAnchor(ReportesTableView, 0.0);
-
-        panelTabla.getChildren().clear();
-        panelTabla.getChildren().add(ReportesTableView);
-        
-        return false;
     }
     
 }

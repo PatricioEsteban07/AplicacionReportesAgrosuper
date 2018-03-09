@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- *
+ * Clase abstracta para los objetos de tipo ProcesadorExcel
  * @author Patricio
  */
 public abstract class ProcesadorExcel
@@ -31,6 +31,14 @@ public abstract class ProcesadorExcel
         this.tipo = this.fileDir.toUpperCase().substring(this.fileDir.length() - 4).replace(".", "");
     }
     
+    /**
+     * Método para, dado un título de una columna del reporte, buscar su ubicación en una hoja en espcífico.
+     * @param hoja contiene la hoja Excel a buscar lo solicitado.
+     * @param tituloColumna contiene el contenido del título de la celda a buscar.
+     * @param rowTitulos valor numérico que define la fila en donde se almacenan los títulos.
+     * @param colInicio valor numérico que define la columna inicial para la búsqueda.
+     * @return valor mayor o igual a 0 cuando se encuentra la columna asociada al título buscado, y -1 en caso contrario.
+     */
     public int buscaColumna(Sheet hoja, String tituloColumna, int rowTitulos, int colInicio)
     {
         Row row = hoja.getRow(rowTitulos);
@@ -46,13 +54,17 @@ public abstract class ProcesadorExcel
                 {
                     return ctCol;
                 }
-                //System.out.println("C: "+celda.getStringCellValue());
             }
             ctCol++;
         }
         return -1;
     }
 
+    /**
+     * Método para abrir un archivo ubicado en la dirección fileDir.
+     * @param fileDir contiene la dirección del archivo a abrir.
+     * @return un archivo si se encuentra o null en caso contrario.
+     */
     protected File abrirArchivo(String fileDir)
     {
         File archivoExcel = new File(fileDir);
@@ -64,6 +76,11 @@ public abstract class ProcesadorExcel
         return archivoExcel;
     }
     
+    /**
+     * Método encargado de llamar al método de obtención de archivos CSV de acuerdo al tipo de archivo Excel que se 
+     * está procesando (.XLS o .XLSX).
+     * @return true si la generación de archivos CSV fue exitosa, o false en caso contrario.
+     */
     public boolean generarCSV()
     {
         switch(this.tipo)
@@ -77,7 +94,17 @@ public abstract class ProcesadorExcel
         return false;
     }
     
+    /**
+     * Método encargado de llamar al método de obtención de archivos CSV para archivos .XLSX
+     * @return true si la generación de archivos CSV fue exitosa, o false en caso contrario.
+     */
     public abstract boolean obtieneDatosXLSX();
+    
+    
+    /**
+     * Método encargado de llamar al método de obtención de archivos CSV para archivos .XLS
+     * @return true si la generación de archivos CSV fue exitosa, o false en caso contrario.
+     */
     public abstract boolean obtieneDatosXLS();
     
 }

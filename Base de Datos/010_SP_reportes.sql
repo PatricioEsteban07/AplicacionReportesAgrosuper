@@ -17,7 +17,7 @@ BEGIN
 	CREATE TEMPORARY TABLE IF NOT EXISTS tableBase AS
 	(
 	SELECT 
-		pedido.centro_id AS centro_id,
+		(if(pedido.centro_id='T011' OR pedido.centro_id='T018','T005',pedido.centro_id)) AS centro_id,
 		material.sector_id AS sector_id,
 		material.agrupado_id AS agrupado_id, 
 		pedido.fechaEntrega AS fecha,
@@ -42,21 +42,20 @@ BEGIN
 	disponible_Kg,despacho_Cj,despacho_Kg)
 	(
 	SELECT 
-		despacho.centro_id,
+		(if(despacho_faltante.centro_id='T011' OR despacho_faltante.centro_id='T018','T005',despacho_faltante.centro_id)),
 		material.sector_id,
 		material.agrupado_id,
-		despacho.fecha,
+		despacho_faltante.fecha,
 		0, 0, 0, 0, 0,
-		ROUND(SUM(despacho_material.despachoCj),1), 
-		ROUND(SUM(despacho_material.despachoKg),3)
+		ROUND(SUM(despacho_faltante.despachoCj),1), 
+		ROUND(SUM(despacho_faltante.despachoKg),3)
 	FROM
-		despacho, despacho_material, material
+		despacho_faltante, material
 	WHERE 
-		(despacho.fecha BETWEEN fechaInicio AND fechaFin)
-		AND despacho.id = despacho_material.despacho_id
-		AND despacho_material.material_id = material.id
+		(despacho_faltante.fecha BETWEEN fechaInicio AND fechaFin)
+		AND despacho_faltante.material_id = material.id
 	GROUP BY
-		despacho.centro_id, despacho.fecha, material.agrupado_id
+		despacho_faltante.centro_id, despacho_faltante.fecha, material.agrupado_id
 	);
 
 	INSERT INTO tableBase (centro_id,sector_id,agrupado_id,fecha,pedido_Cj,pedido_Kg,pedido_neto,disponible_Cj,
@@ -82,18 +81,20 @@ BEGIN
 	CREATE TEMPORARY TABLE IF NOT EXISTS tb AS
 	(
 	SELECT 
-		centro_id,
+		tableBase.centro_id,
 		centro.nombre AS centro_nombre,
-		sector_id, sector.nombre AS sector_nombre, 
-		agrupado_id,
+		tableBase.sector_id, 
+        sector.nombre AS sector_nombre, 
+		tableBase.agrupado_id,
 		agrupado.nombre AS agrupado_nombre,
-		fecha, SUM(pedido_Cj) AS pedido_Cj,
-		SUM(pedido_Kg) AS pedido_Kg, 
-		SUM(pedido_neto) AS pedido_neto, 
-		SUM(disponible_Cj) AS disponible_Cj, 
-		SUM(disponible_Kg) AS disponible_Kg, 
-		SUM(despacho_Cj) AS despacho_Cj, 
-		SUM(despacho_Kg) AS despacho_Kg
+		tableBase.fecha, 
+        SUM(tableBase.pedido_Cj) AS pedido_Cj,
+		SUM(tableBase.pedido_Kg) AS pedido_Kg, 
+		SUM(tableBase.pedido_neto) AS pedido_neto, 
+		SUM(tableBase.disponible_Cj) AS disponible_Cj, 
+		SUM(tableBase.disponible_Kg) AS disponible_Kg, 
+		SUM(tableBase.despacho_Cj) AS despacho_Cj, 
+		SUM(tableBase.despacho_Kg) AS despacho_Kg
 	FROM 
 		tableBase, agrupado, centro, sector
 	WHERE 
@@ -101,7 +102,7 @@ BEGIN
 		AND tableBase.sector_id = sector.id 
 		AND tableBase.agrupado_id = agrupado.id
 	GROUP BY 
-		centro_id, fecha, agrupado_id
+		tableBase.centro_id, tableBase.fecha, tableBase.agrupado_id
 	);
 
 	CREATE TEMPORARY TABLE IF NOT EXISTS tablaDisponibilidad AS
@@ -109,7 +110,8 @@ BEGIN
 	SELECT 
 		tb.centro_id, 
 		REPLACE(tb.centro_nombre,"Sucursal ","") AS centro_nombre, 
-		tb.sector_id, tb.sector_nombre, 
+		tb.sector_id, 
+        tb.sector_nombre, 
 		tb.agrupado_id, 
 		tb.agrupado_nombre,	
 		tb.fecha, 
@@ -235,35 +237,35 @@ BEGIN
     Disp_Pedido_Kg, Disp_Faltante_Kg, Factura_Faltante_Kg,Factura_Faltante_Cj,Pedido_Neto,Año,semanaAño)
 	(    
 	SELECT 
-		MONTH(faltante.fecha),
-		WEEK(faltante.fecha,3),
+		MONTH(despacho_faltante.fecha),
+		WEEK(despacho_faltante.fecha,3),
         sector.nombre,
 		tipoCliente.nombre,
-		faltante.centro_id,
+		despacho_faltante.centro_id,
 		REPLACE(centro.nombre,"Sucursal ",""),
 		material.agrupado_id,
 		agrupado.nombre,
         n2.nombre,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		SUM(faltante.faltanteKg),
-		SUM(faltante.faltanteCj),
+		SUM(despacho_faltante.faltanteKg),
+		SUM(despacho_faltante.faltanteCj),
 		0,
-        YEAR(faltante.fecha),
-		CONCAT(WEEK(faltante.fecha,3), '-', YEAR(faltante.fecha))
+        YEAR(despacho_faltante.fecha),
+		CONCAT(WEEK(despacho_faltante.fecha,3), '-', YEAR(despacho_faltante.fecha))
 	FROM 
-		faltante, centro, material, sector, agrupado, n2, clienteLocal, cliente, tipoCliente
+		despacho_faltante, centro, material, sector, agrupado, n2, clienteLocal, cliente, tipoCliente
     WHERE 
-		(faltante.fecha BETWEEN fechaInicio AND fechaFin) 
-		AND faltante.centro_id = centro.id 
-		AND faltante.material_id = material.id
+		(despacho_faltante.fecha BETWEEN fechaInicio AND fechaFin) 
+		AND despacho_faltante.centro_id = centro.id 
+		AND despacho_faltante.material_id = material.id
 		AND material.agrupado_id = agrupado.id 
 		AND material.sector_id = sector.id 
 		AND agrupado.n2_id = n2.id 
-		AND faltante.clienteLocal_id = clienteLocal.id 
+		AND despacho_faltante.clienteLocal_id = clienteLocal.id 
 		AND clienteLocal.cliente_id = cliente.id
 		AND cliente.tipoCliente_id = tipoCliente.id
 	GROUP BY 
-        YEAR(faltante.fecha), WEEK(faltante.fecha,3), faltante.centro_id, material.agrupado_id, tipoCliente.nombre
+        YEAR(despacho_faltante.fecha), WEEK(despacho_faltante.fecha,3), despacho_faltante.centro_id, material.agrupado_id, tipoCliente.nombre
 	);		
 	
 	INSERT INTO tabla_arbol_perdidas (mes,semana,sector_nombre,tipoCliente,centro_id,centro_nombre,agrupado_id,agrupado_nombre,
@@ -485,7 +487,6 @@ BEGIN
 	SELECT * FROM tableAuxFuga;
 END
 $$
-
 
 /*
 CALL sp_reporte_disponibilidad('2018-02-12','2018-02-18');

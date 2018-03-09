@@ -10,8 +10,8 @@ import Model.Filtros.Filtro_Fecha;
 import javafx.fxml.Initializable;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador base para desplegar una ventana de filtro de fechas.
  * @author Patricio
  */
 public abstract class FiltroPeriodoController implements Initializable
@@ -27,6 +27,10 @@ public abstract class FiltroPeriodoController implements Initializable
     protected final String MAX_DATE = "01-01-"+MAX_YEAR;
     protected Filtro_Fecha filtro;
 
+    /**
+     * Método que modifica el objeto Filtro_Fecha por otro nuevo.
+     * @param filtro contiene el nuevo filtro a modificar.
+     */
     public void setFiltro(Filtro filtro)
     {
         this.filtro=(Filtro_Fecha)filtro;

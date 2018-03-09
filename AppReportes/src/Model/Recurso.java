@@ -6,22 +6,16 @@
 package Model;
 
 /**
- *
+ * Clase creada para que los Objetos de tipo BaseReportes puedan estar en un ArrayList abstracto.
  * @author Patricio
  */
 public abstract class Recurso
-{
-    public String id;
-
-    public Recurso(String id)
-    {
-        this.id = id;
-    }
-    
+{    
+    /**
+     * Constructor para elementos de tipo BaseReporte
+     */
     public Recurso()
     {
     
     }
-    
-  //  public abstract boolean recuperarDatos();
 }

@@ -8,10 +8,9 @@ package Model.Filtros;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
- *
+ * Clase que se encarga del manejo del filtro de fechas
  * @author Patricio
  */
 public class Filtro_Fecha extends Filtro
@@ -34,107 +33,80 @@ public class Filtro_Fecha extends Filtro
         this.fechaFin=new Date(2015, 0, 1);
     }
 
+    /**
+     * Método que modifica la fecha inicio.
+     * @param fechaInicio la nueva fecha a almacenar.
+     */
     public void setFechaInicio(Date fechaInicio)
     {
         this.fechaInicio = fechaInicio;
     }
 
+    /**
+     * Método que modifica la fecha término.
+     * @param fechaFin la nueva fecha a almacenar.
+     */
     public void setFechaFin(Date fechaFin)
     {
         this.fechaFin = fechaFin;
     }
 
+    /**
+     * Método que modifica el listado de semanas seleccionadas.
+     * @param data el nuevo listado a almacenar.
+     */
     public boolean setSemanas(ArrayList<Integer> data)
     {
         this.semanas=data;
         return true;
     }
     
+    /**
+     * Método que modifica el listado de meses seleccionados.
+     * @param data el nuevo listado a almacenar.
+     * @return 
+     */
     public boolean setMeses(ArrayList<Integer> data)
     {
         this.meses=data;
         return true;
     }
     
+    /**
+     * Método que modifica el listado de años seleccionados.
+     * @param data el nuevo listado a almacenar.
+     * @return 
+     */
     public boolean setAnios(ArrayList<Integer> data)
     {
         this.anios=data;
         return true;
     }
-    
-    public boolean adSemana(int value)
-    {
-        boolean flag=true;
-        for (Integer semana : this.semanas)
-        {
-            if(semana==value)
-                flag=false;
-        }
-        if(flag)
-        {
-            this.semanas.add(value);
-            return true;
-        }
-        return false;
-    }
 
-    public boolean addMes(int value)
-    {
-        boolean flag=true;
-        for (Integer mes : this.meses)
-        {
-            if(mes==value)
-                flag=false;
-        }
-        if(flag)
-        {
-            this.meses.add(value);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addAnio(int value)
-    {
-        boolean flag=true;
-        for (Integer anio : this.anios)
-        {
-            if(anio==value)
-                flag=false;
-        }
-        if(flag)
-        {
-            this.anios.add(value);
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * Método para obetener la fecha inicio seleccionada.
+     * @return la fecha como elmento Date.
+     */
     public Date getFechaInicio()
     {
         return fechaInicio;
     }
 
+    /**
+     * Método para obetener la fecha término seleccionada.
+     * @return la fecha como elmento Date.
+     */
     public Date getFechaFin()
     {
         return fechaFin;
     }
-
-    public ArrayList<Integer> getSemanas()
-    {
-        return semanas;
-    }
-
-    public ArrayList<Integer> getMeses()
-    {
-        return meses;
-    }
-
-    public ArrayList<Integer> getAnios()
-    {
-        return anios;
-    }
     
+    /**
+     * Método que dado dos fechas, valida si son un rango válido y los modifica en el filtro.
+     * @param fechaInicio
+     * @param fechaFin
+     * @return true si el rango es correcto y se han modificado, o false en otro caso.
+     */
     public boolean setRangoFecha(Date fechaInicio, Date fechaFin)
     {
         //validar fecha
@@ -186,16 +158,31 @@ public class Filtro_Fecha extends Filtro
         return false;
     }
     
+    /**
+     * Método estático que transforma un elemento Date a un elemento Calendar.
+     * @param date el elemento Date a transformar.
+     * @return el elemento Calendar resultante.
+     */
     public static Calendar toCalendar(Date date){ 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
       }
     
+    /**
+     * Método estático que transforma un elemento Calendar a un elemento Date.
+     * @param cal el elemento Calendar a transformar.
+     * @return el elemento Date resultante.
+     */
     public static Date toDate(Calendar cal){ 
         return cal.getTime();
       }
     
+    /**
+     * Método que, dada la opción seleccionada por el usuario, inicializa la selección de fechas de acuerdo a lo previamente 
+     * almacenado en la aplicación.
+     * @return true si la inicialización fué exitosa, o false en caso contrario.
+     */
     public boolean prepararFiltro()
     {
         switch(this.opcion)
@@ -268,12 +255,16 @@ public class Filtro_Fecha extends Filtro
         }
         return null;
     }
-
+    
+    /**
+     * [MÉTODO EN CONSTRUCCIÓN] Método que verifica rango de semanas, y si son correctas las modifica en el filtro.
+     * @param semanaInicio contiene la semana inicial.
+     * @param semanaFinal contiene la semana término.
+     */
     //validar que sean correctas
     public void setSemanas(int semanaInicio, int semanaFinal)
     {
         this.semanaInicio=semanaInicio;
         this.semanaFin=semanaFinal;
     }
-    
 }

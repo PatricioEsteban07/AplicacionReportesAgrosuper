@@ -79,7 +79,7 @@
                                     <Insets right="5.0" />
                                  </HBox.margin>
                               </TextField>
-                              <Button fx:id="button_selectFile" mnemonicParsing="false" onAction="#seleccionarArchivoCSV" text="..." />
+                              <Button fx:id="button_selectFile" mnemonicParsing="false" onAction="#seleccionarArchivoExcel" text="..." />
                            </children>
                         </HBox>
                      </children>

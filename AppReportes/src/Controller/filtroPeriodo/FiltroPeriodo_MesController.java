@@ -20,8 +20,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class: 
+ * Controlador para desplegar una ventana de filtro de fechas de meses.
  * @author Patricio
  */
 public class FiltroPeriodo_MesController extends FiltroPeriodoController
@@ -88,7 +88,10 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
         this.comboBox_mesFin.getSelectionModel().select(1);
     }
     
-
+    /**
+     * Método que modifica los valores permitidos por el campo del mes limite para seleccionar: esto de acuerdo a lo 
+     * seleccionado por el año inicial.
+     */
     @FXML
     public void updateOptionCB2()
     {
@@ -108,6 +111,10 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
         this.comboBox_mesFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método que realiza modificaciones de acuerdo a la opción seleccionada por el usuario: si es por un mes en específico, 
+     * se permite sólo modificar el mes inicial, en caso que sea por rango de meses, se permite modificar mes inicio y término.
+     */
     @FXML
     public void setRadioButtonOption()
     {
@@ -154,10 +161,14 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
         this.comboBox_mesFin.getSelectionModel().select(0);
     }
 
+    /**
+     * Método invocado por un Button. Limpia el filtro fecha del reporte base, lo modifica de acuerdo a las opciones 
+     * ingresadas del usuario y cierra la ventana. Para el caso de rango de meses, si el rango es erróneo (mes inicio mayor a
+     *  mes término) arroja un mensaje y no modifica el filtro ya existente.
+     */
     @FXML
     public void buttonAceptar()
     {
-        //implementar!
         int mesInicio = Integer.parseInt(this.comboBox_mesInicio.getSelectionModel().getSelectedItem().toString());
         int mesFin = Integer.parseInt(this.comboBox_mesFin.getSelectionModel().getSelectedItem().toString());
         int anioInicio = Integer.parseInt(this.comboBox_anioInicio.getSelectionModel().getSelectedItem().toString());
@@ -191,6 +202,9 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
         }
     }
 
+    /**
+     * Método que cierra la ventana asociada al controlador.
+     */
     @FXML
     public void buttonCancelar()
     {
@@ -198,6 +212,10 @@ public class FiltroPeriodo_MesController extends FiltroPeriodoController
         s.close();
     }
 
+    /**
+     * Método que se encarga de validar un rango de meses
+     * @return true si mes inicio es menor a mes final, y false en caso contrario.
+     */
     private boolean validarRango(int mesInicio, int anioInicio, int mesFin, int anioFin)
     {
         if(anioInicio<=anioFin)

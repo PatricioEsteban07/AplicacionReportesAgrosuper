@@ -23,7 +23,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 
 /**
- *
+ * Clase encargada de la generación de un archivo Excel para el reporte Disponibilidad
  * @author Patricio
  */
 public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
@@ -42,16 +42,11 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
         try
         {
             HashMap<String, BaseReporteDisponibilidad> filas = new HashMap<>();
-            //generación de archivo excel base
             String rutaArchivo = System.getProperty("java.io.tmpdir") + "/" + this.nombreTabla + ".xlsx";
             File archivoXLS = new File(rutaArchivo);
-            //Se crea el libro de excel usando el objeto de tipo Workbook
             SXSSFWorkbook libro = new SXSSFWorkbook();
-            //Se inicializa el flujo de datos con el archivo xls
             file = new FileOutputStream(archivoXLS);
-            //Utilizamos la clase Sheet para crear una nueva hoja de trabajo dentro del libro que creamos anteriormente
             SXSSFSheet hoja = libro.createSheet(this.nombreTabla);
-            //inicialiar fila de nombres de columnas
             SXSSFRow fila = hoja.createRow(0);
             if (this.columnas == null || this.columnas.isEmpty())
             {
@@ -121,13 +116,6 @@ public class GeneradorExcel_ReporteDisponibilidad extends GeneradorExcel
                     "El error es el siguiente: " + ex);
             return false;
         }
-    }
-
-    private void setCellContent(SXSSFRow row, int i, String content, CellType cellType)
-    {
-        SXSSFCell cAux=row.createCell(i);
-        cAux.setCellType(cellType);    
-        cAux.setCellValue(content);
     }
 
 

@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,7 +45,6 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
             return false;
         }
         try{
-            
             // leer archivo excel
             file = new FileInputStream(f);
             Workbook workbook = StreamingReader.builder()
@@ -71,7 +71,6 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
             titulosMateriales.add("Cod Marca"); indicesMateriales.add(10);
             titulosMateriales.add("N4"); indicesMateriales.add(8);
 
-            
             ArrayList<String> titulosN2 = new ArrayList<>();
             ArrayList<Integer> indicesN2 = new ArrayList<>();
             titulosN2.add("N2"); indicesN2.add(4);
@@ -155,7 +154,6 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
             {
                 if(ctRow>=1)
                 {
-                    
                     String material_id=df.formatCellValue(row.getCell(indicesMateriales.get(0)));
                     String material_nombre=df.formatCellValue(row.getCell(indicesMateriales.get(1)));
                     String[] fechaAux=df.formatCellValue(row.getCell(indicesMateriales.get(2))).split("/");
@@ -213,7 +211,7 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
                 else if(ctRow==0)
                 {
                     //titulos
-                    writerMateriales.write("id;nombre;fecha;peso;sector;duracion;refrig;envas;marca;n4"+"\n");
+                    writerMateriales.write("id;nombre;fecha;peso;sector;duracion;refrig;agrup;envas;marca;n4"+"\n");
                     writerN2.write("id;nombre;sector"+"\n");
                     writerN3.write("id;nombre;n2"+"\n");
                     writerN4.write("id;nombre;n3"+"\n");
@@ -269,7 +267,7 @@ public class ProcesadorExcel_MaestroMateriales extends ProcesadorExcel
             workbook.close();
             file.close();
         }
-        catch (Exception ex)
+        catch (IOException | NumberFormatException ex)
         {
             System.out.println("problema para obetener datos excel: "+ex);
             return false;

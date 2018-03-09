@@ -10,50 +10,32 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Set;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 /**
- *
+ * Clase que mantendrá información de la configuración de conexión a la base de datos, además de métodos para la manipulación 
+ * con la base de datos. Esta clase se instancia una sola vez en todo el sistema.
  * @author Patricio
  */
 public class LocalDB
 {
     public DBConfig dbConfig;
     
-    private Connection conn = null;
+    public Connection conn = null;
 
     public LocalDB(DBConfig config)
     {
         this.dbConfig=config;
     }
     
-    private boolean consultarExistencias(Set<String> dbLocal, String query) throws SQLException, ClassNotFoundException
-    {
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(dbConfig.urlConector(), dbConfig.user, dbConfig.pass);
-        }
-        catch (ClassNotFoundException | SQLException ex)
-        {
-            CommandNames.generaMensaje("Aviso de Reporte", Alert.AlertType.ERROR, "Problema al ejecutar SP en DB",
-                    "Hubo un problema al momento de ejecutar la consulta en la Base de Datos. El error es el siguiente: "+ex);
-            System.out.println("Problemas para consultar existentes: " + ex);
-            close();
-            return false;
-        }
-        connect();
-        ResultSet result = executeQuery(query);
-        while (result != null && result.next())
-        {
-            dbLocal.add(result.getString("id"));
-        }
-        close();
-        return true;
-    }
-    
+    /**
+     * Método que genera una conexión a la base de datos con información del objeto DBConfig. Tal conexión se almacena en la variable 
+     * conn de esta misma clase para ser utilizada por quien la necesite.
+     * @return true si la conexión se ha establecido, o false en caso contrario.
+     * @exception SQLException
+     * @exception ClassNotFoundException
+     */
     public boolean connect() throws SQLException, ClassNotFoundException
     {
         if (this.conn == null)
@@ -74,6 +56,12 @@ public class LocalDB
         return true;
     }
 
+    /**
+     * Método que ejecuta una consulta a la base de datos.
+     * @param query contiene el String con la consulta a ejecutar.
+     * @return ResultSet si la query ejecutada fué exitosa, o null en caso contrario.
+     * @exception SQLException
+     */
     public ResultSet executeQuery(String query) throws SQLException
     {
         if (conn != null)
@@ -84,7 +72,29 @@ public class LocalDB
         }
         return null;
     }
+    
+    /**
+     * Método que ejecuta una consulta a la base de datos.
+     * @param query contiene el String con la consulta a ejecutar.
+     * @return un valor correspondiente al result(mayor a 0 es exitoso), o 0 en caso contrario.
+     * @exception SQLException
+     */
+    public int executeQueryInt(String query) throws SQLException
+    {
 
+        if (conn != null)
+        {
+            Statement stmt = conn.createStatement();
+            int result = stmt.executeUpdate(query);
+            return result;
+        }
+        return 0;
+    }
+
+    /**
+     * Método que cierra la conexión a la base de datos.
+     * @exception SQLException
+     */
     public void close() throws SQLException
     {
         if (this.conn != null)
@@ -94,6 +104,11 @@ public class LocalDB
         }
     }
     
+    /**
+     * Método que realiza una prueba de conexión a la base de datos con información de configuración existente. 
+     * Dependiendo de si la conexión fue exitosa o fallida, se desplegará un Alert informando del resultado.
+     * @return true si la prueba de conexión fué exitosa, o false en caso contrario.
+     */
     public boolean probarDBConection()
     {
         Alert alertAux=CommandNames.generaMensaje("Conectando a la Base de datos", 

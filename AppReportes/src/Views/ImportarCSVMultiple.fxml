@@ -90,7 +90,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Carpeta contenedora de archivos:" GridPane.columnIndex="1" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="textField_fileDir" disable="true" text="No ha seleccionado CSV" HBox.hgrow="ALWAYS">
+                              <TextField fx:id="textField_fileDir" editable="false" text="No ha seleccionado CSV" HBox.hgrow="ALWAYS">
                                  <HBox.margin>
                                     <Insets right="5.0" />
                                  </HBox.margin>
